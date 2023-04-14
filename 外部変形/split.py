@@ -1327,18 +1327,22 @@ line_flag_q = False
 #infomationの行数の取得
 for i in info:
   line_count += 1
-  # print("デバッグ" + str(i))
+  print("デバッグ" + str(i))
+
+print("line_count:" + str(line_count))
+info = open('外部変形/information.txt','r',encoding='shift_jis')
 
 if line_count == 6:
   #カウントの初期化
   line_count = 0
-
+  print("line_count:" + str(line_count))
   #infomationの中身を取得
   for line in info:
+    print("デバッグ１")
     #一行ごとに読み込み
     xy=line.split()
     print(xy)
-    print(len(xy))
+    # print(len(xy))
     #間口の読み込み
     if line_count == 0:
       maguti = float(xy[0])
@@ -1348,7 +1352,7 @@ if line_count == 6:
     #接道辺の読み込み
     elif line_count == 2:
       for i in range(0, len(xy), 2):
-        print(i)
+        # print(i)
         road_edge_pt.append([float(xy[i]), float(xy[i + 1])])
     #道幅の読み込み
     elif line_count == 3:
@@ -1362,22 +1366,23 @@ if line_count == 6:
       make_road_edge = [[float(xy[0]), float(xy[1])], [float(xy[2]), float(xy[3])]]
     #次行に移動
     line_count += 1
+  print("デバッグ２")
 
 
   print("road_edge_pt:" + str(road_edge_pt))
-  print("road_edge_pt:" + str(road_edge_pt[0]))
-  print("road_edge_pt:" + str(road_edge_pt[1]))
-  print("road_edge_pt:" + str(road_edge_pt[0][0]))
+  # print("road_edge_pt:" + str(road_edge_pt[0]))
+  # print("road_edge_pt:" + str(road_edge_pt[1]))
+  # print("road_edge_pt:" + str(road_edge_pt[0][0]))
 
   #ふたつずつ座標をまとめる：road_edge
   for i in range(int(len(road_edge_pt) / 2)):
     road_edge.append([road_edge_pt[i * 2], road_edge_pt[i * 2 + 1]])
 
   print("road_edge:" + str(road_edge))
-  print("road_edge:" + str(road_edge[0]))
-  print("road_edge:" + str(road_edge[1]))
-  print("road_edge:" + str(road_edge[0][0]))
-  print("road_edge:" + str(road_edge[1][0]))
+  # print("road_edge:" + str(road_edge[0]))
+  # print("road_edge:" + str(road_edge[1]))
+  # print("road_edge:" + str(road_edge[0][0]))
+  # print("road_edge:" + str(road_edge[1][0]))
 
   print(str(len(road_edge)))
   print("make_road_edge:" + str(make_road_edge))
