@@ -1181,7 +1181,7 @@ def parcel_allocation(deep_make_road_edge, make_road_edge, parcel_frame, road_wi
     print("instant_b:" + str(instant_coor_b))
     print("road_mid_line:" + str(road_mid_line))
     print("late_parcel:" + str(late_parcel))
-    print("################## " + str(road_distance) + " " + str(maguti))
+    # print("################## " + str(road_distance) + " " + str(maguti))
     #家が建てられない場合
     if home_cnt == 0:
       print("操作終了")
@@ -1225,7 +1225,7 @@ def parcel_allocation(deep_make_road_edge, make_road_edge, parcel_frame, road_wi
     print("instant_b:" + str(instant_coor_b))
     print("road_mid_line:" + str(road_mid_line))
     print("late_parcel:" + str(late_parcel))
-    print("################## " + str(road_distance) + " " + str(maguti))
+    # print("################## " + str(road_distance) + " " + str(maguti))
     #一つも宅地が作れない場合
     if home_cnt == 0:
       print("操作終了")
