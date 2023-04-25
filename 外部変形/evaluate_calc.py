@@ -79,10 +79,27 @@ def area_rate_calc(pt, goal_area):
   cp_pt = copy.deepcopy(pt)
   print("面積計算に使うリスト" + str(cp_pt))
   area = Calc.main_calc(cp_pt)
-  #宅地二つ分を最大値(30点)に設定し，一次関数で得点計算
-  tilt = 30 / (goal_area * 2)
-  #得点計算
-  area_score += tilt * area
+  if area >= goal_area:
+    #宅地二つ分を最大値(30点)に設定し，一次関数で得点計算
+    tilt = 30 / (goal_area * 2)
+    #得点計算
+    area_score += tilt * area
+  #算出結果を返却
+  return area_score
+
+#marginを用意した面積スコアの算出
+def area_rate_calc_margin(pt, goal_area):
+  #面積スコアを70点満点で計算(素点40点)
+  area_score = 40
+  #面積を計算
+  cp_pt = copy.deepcopy(pt)
+  print("面積計算に使うリスト" + str(cp_pt))
+  area = Calc.main_calc(cp_pt)
+  if area >= (goal_area - 5000000):
+    #宅地二つ分を最大値(30点)に設定し，一次関数で得点計算
+    tilt = 30 / (goal_area * 2)
+    #得点計算
+    area_score += tilt * area
   #算出結果を返却
   return area_score
 
@@ -192,6 +209,7 @@ def eval(road_frame, section, road_width, goal_area):
   #結果記入用配列・総合得点
   result = []
   total_score = 0
+  total_score_margin = 0
 
   #区画の戸数分ループ
   for i in range(len(section)):
@@ -215,14 +233,20 @@ def eval(road_frame, section, road_width, goal_area):
     #各宅地の敷地面積を70点満点で評価
     ind_result.append(area_rate_calc(section[i], goal_area))
 
+    #5平米の余裕を持たせた面積の評価
+    ind_result.append(area_rate_calc_margin(section[i], goal_area))
+
     #点数計算([間口+向き+面積] * 接道スコア)
     total_score += (ind_result[1] + ind_result[2] + ind_result[3]) * ind_result[0]
+
+    #点数計算([間口+向き+面積] * 接道スコア)
+    total_score_margin += (ind_result[1] + ind_result[2] + ind_result[4]) * ind_result[0]
 
     #個別結果を全体結果配列に格納
     result.append(ind_result)
 
   #評価結果・合計得点を返却
-  return result, total_score
+  return result, total_score, total_score_margin
 
 #道を作成しない場合の面積スコア
 def unload_area_rate(pt, goal_area):
@@ -251,7 +275,7 @@ def unload_eval(section, goal_area):
     ind_result = []
 
     #各宅地の敷地面積を70点満点で評価
-    result.append(area_rate_calc(section[i], goal_area))
+    result.append(unload_area_rate(section[i], goal_area))
 
   #合計得点を返却
   return result

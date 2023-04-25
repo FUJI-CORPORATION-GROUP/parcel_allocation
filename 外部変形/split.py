@@ -1280,15 +1280,16 @@ def parcel_allocation(deep_make_road_edge, make_road_edge, parcel_frame, road_wi
   print("街区における道路辺配列:" + str(fin_road_edge))
 
   #評価の実行
-  detail_list, total_score = evaluate_calc.eval(fin_road_edge, cp_evaluation, road_width, goal_area)
+  detail_list, total_score, total_score_margin = evaluate_calc.eval(fin_road_edge, cp_evaluation, road_width, goal_area)
   print("detail_list:" + str(detail_list))
   print("total_score:" + str(total_score))
+  print("total_score_marigin:" + str(total_score_margin))
   print("cp_parcel_frame:" + str(cp_parcel_frame))
   print("cp_evaluation:" + str(cp_evaluation))
 
   #街区を計算用のリストに更新
   # calc_parcel_frame = cp_parcel_frame.remove(cp_parcel_frame[0][-1])
-  # print("calc_parcel_frame:" + str(calc_parcel_frame)) 
+  # print("calc_parcel_frame:" + str(calc_parcel_frame))
 
   #有効宅地面積の計算
   yuko_menseki = evaluate_calc.yuko_calc(cp_evaluation, cp_parcel_frame[:-1])
@@ -1298,7 +1299,7 @@ def parcel_allocation(deep_make_road_edge, make_road_edge, parcel_frame, road_wi
   #結果の返却
   print("デバッグ:" + str(road_mid_line) + " " + str(road_inter_coor))
   print("result:" + str(result))
-  return result, detail_list, total_score, evaluation
+  return result, detail_list, total_score, evaluation, total_score_margin
 
 #####メインプログラム#####
 #読み込み用のファイルを展開
@@ -1424,6 +1425,7 @@ if line_count == 6:
   #上位描画用のリスト作成
   result_index = []
   score_index = []
+  score_index_margin = []
   detail_index = []
   evaluation_index = []
 
@@ -1435,12 +1437,13 @@ if line_count == 6:
     print("現在の図面" + str(draw_cnt) + "個目")
 
     #区画割の実行
-    result, detail_list, total_score, evaluation = parcel_allocation(deep_make_road_edge, make_road_edge, cp_frame, road_width, road_edge, maguti, goal_area)
+    result, detail_list, total_score, evaluation, total_score_margin = parcel_allocation(deep_make_road_edge, make_road_edge, cp_frame, road_width, road_edge, maguti, goal_area)
     #リスト化
     result = list(result)
     #結果をそれぞれのindexに追加
     result_index.append(result)
     score_index.append(total_score)
+    score_index_margin.append(total_score_margin)
     detail_index.append(detail_list)
     evaluation_index.append(evaluation)
 
@@ -1545,6 +1548,108 @@ if line_count == 6:
       print("cp_frame:" + str(cp_frame))
       write_count += 1
 
+  print(score_index_margin)
+  print(sorted(score_index_margin)[-1])
+  #上位要素順に並び替え
+  index_index = []
+  #格納対象配列の高得点を上位から任意の個数抽出
+  for i in range(1, 21, 1):
+    target_num = sorted(score_index_margin)[-i]
+    index_index.append(target_num)
+
+  print(index_index)
+  #同じ得点の得点と個数を抽出
+  material = [k for k, v in collections.Counter(index_index).items() if v > 1]
+  count = [v for k, v in collections.Counter(index_index).items() if v > 1]
+  #同じ得点のものは小さい加点で差をつける
+  for i in range(len(material)):
+    for j in range(count[i]):
+      print(score_index_margin.index(material[i]))
+      score_index_margin[score_index_margin.index(material[i])] = score_index_margin[score_index_margin.index(material[i])] + 0.0001 * j
+  #点数を調整して再度任意の個数を抽出
+  index_index = []
+  cp_result_index = []
+  cp_detail_index = []
+  cp_score_index_margin = []
+  cp_evaluation_index = []
+
+  debag = []
+
+  #任意の個数上位要素をresultとdetailに追加
+  for i in range(1, 21, 1):
+    #任意の上位個数を抽出
+    target_num = sorted(score_index_margin)[-i]
+    index_index.append(target_num)
+    cp_result_index.append(result_index[score_index_margin.index(target_num)])
+    cp_detail_index.append(detail_index[score_index_margin.index(target_num)])
+    cp_score_index_margin.append(score_index_margin[score_index_margin.index(target_num)])
+    cp_evaluation_index.append(evaluation_index[score_index_margin.index(target_num)])
+    debag.append(score_index_margin.index(target_num))
+
+  print("まとめ")
+  kosu_count = []
+  for i in range(len(cp_evaluation_index)):
+    kosu_count.append(len(cp_evaluation_index[i]))
+  print("cp_result_index:" + str(cp_result_index))
+  print("cp_detail_index:" + str(cp_detail_index))
+  print("cp_score_index_margin:" + str(cp_score_index_margin))
+  print("cp_evaluation_index:" + str(cp_evaluation_index))
+  print("それぞれの戸数:" + str(kosu_count))
+  print("index_index:" + str(index_index))
+  print("result_index:" + str(result_index))
+  print("detail_index:" + str(detail_index))
+  print("score_index_margin:" + str(score_index_margin))
+  print("evaluation_index:" + str(evaluation_index))
+  print("debag:" + str(debag))
+
+  #20回描画
+  write_count = 0
+  for j in range(5):
+    for k in range(4):
+      cp_frame = copy.deepcopy(frame)
+      write_frame = []
+      write_result = []
+      detail_list = []
+
+      print("frame:" + str(frame))
+      print("cp_frame:" + str(cp_frame))
+      print("write_count:" + str(write_count))
+
+      #描画用配列の作成
+      for i in range(len(cp_frame) - 1):
+        # write_frame.append([[cp_frame[i][0] - 100000, cp_frame[i][1] - 100000], [cp_frame[i + 1][0] - 80000, cp_frame[i + 1][1] - 80000]])
+        write_frame.append([cp_frame[i], cp_frame[i + 1]])
+      write_result = copy.deepcopy(cp_result_index[write_count])
+      print(write_frame)
+
+      #枠の描画
+      for i in range(len(cp_frame) - 1):
+        #直線を作成
+        write_frame[i][0] = list(write_frame[i][0])
+        write_frame[i][1] = list(write_frame[i][1])
+        write_frame[i][0][0] = write_frame[i][0][0] - (j + 2) * 100000
+        write_frame[i][1][0] = write_frame[i][1][0] - (j + 2) * 100000
+        write_frame[i][0][1] = write_frame[i][0][1] + k * 80000
+        write_frame[i][1][1] = write_frame[i][1][1] + k * 80000
+        print("write_frame:" + str(write_frame[i]))
+        msp.add_line(start=write_frame[i][0], end=write_frame[i][1])
+
+      #枠の描画
+      for i in range(len(write_result)):
+        #直線を作成
+        write_result[i][0] = list(write_result[i][0])
+        write_result[i][1] = list(write_result[i][1])
+        write_result[i][0][0] = write_result[i][0][0] - (j + 2) * 100000
+        write_result[i][1][0] = write_result[i][1][0] - (j + 2) * 100000
+        write_result[i][0][1] = write_result[i][0][1] + k * 80000
+        write_result[i][1][1] = write_result[i][1][1] + k * 80000
+        msp.add_line(start=write_result[i][0], end=write_result[i][1])
+
+      #枠データの再度読み込み
+      frame = cp_frame
+      print("cp_frame:" + str(cp_frame))
+      write_count += 1
+
   #有効宅地面積リスト
   yuko_list = []
   #有効宅地面積リストの作成
@@ -1556,7 +1661,7 @@ if line_count == 6:
   print("cp_result_index:" + str(cp_result_index))
   print("cp_detail_index:" + str(cp_detail_index))
   print("yuko_list:" + str(yuko_list))
-  print("cp_score_index:" + str(cp_score_index))
+  print("cp_score_index_margin:" + str(cp_score_index_margin))
   print("cp_evaluation_index:" + str(cp_evaluation_index))
   print("debag:" + str(debag))
   print("それぞれの戸数:" + str(kosu_count))
