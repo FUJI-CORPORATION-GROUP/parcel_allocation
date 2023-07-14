@@ -1,10 +1,14 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import codecs
 import sys
 import re
 
+
 #書き込み用のファイルを展開
+# info = codecs.open('外部変形/information.txt','w',"shift-jis")
 info = codecs.open('外部変形/information.txt','a',"shift-jis")
-# print("どうなっとん" + str(info))
 
 #コマンドライン引数(temp.txt)の受け取り
 least_maguti=6800
@@ -48,6 +52,7 @@ for i in range(len(frame)):
     print(" " + str(frame[i][j - 1]) + " " + str(frame[i][j]))
 f.close()
 
+# 街区
 for i in range(len(frame)):
   if i == len(frame) - 1:
     info.write(str(frame[i][0]) + " " + str(frame[i][1]) + "\n")

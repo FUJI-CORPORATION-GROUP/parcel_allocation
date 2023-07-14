@@ -9,7 +9,9 @@ import evaluate_calc
 
 ####道を作成しないケースの区画割の実行####
 def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
-	print("道を作成しない区画割")
+	print("\t================================")
+	print("\t道を作成しない区画割の実行 unload_parcel_allocation")
+	print("\t================================")
 	exist_flag = False
 	result = []
 	detail_list = []
@@ -26,7 +28,7 @@ def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
 	#道路に隣接している辺の数だけ区画を作成
 	for k in range(len(road_edge)):
 		# parcel_frame = copy.deepcopy(frame)
-		print("----------" + str(k + 1) + "周目----------")
+		print("\t----------" + str(k + 1) + "周目----------")
 		#指定街区の辺の長さ
 		a=np.array(road_edge[k][0])
 		b=np.array(road_edge[k][1])
@@ -44,19 +46,19 @@ def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
 		maguti_deviation = [(road_edge[k][1][0] - road_edge[k][0][0]) / road_distance, (road_edge[k][1][1] - road_edge[k][0][1]) / road_distance]
 		#直角内側(左に折れる)のベクトルの算出
 		depth_deviation = [-maguti_deviation[1] * home_depth, maguti_deviation[0] * home_depth]
-		print("vector_calc:" + str(road_edge[k][1][0] - road_edge[k][0][0]))
-		print("maguti_deviation:" + str(maguti_deviation))
-		print("depth_deviation:" + str(depth_deviation))
+		print("\tvector_calc:" + str(road_edge[k][1][0] - road_edge[k][0][0]))
+		print("\tmaguti_deviation:" + str(maguti_deviation))
+		print("\tdepth_deviation:" + str(depth_deviation))
 		#奥行き座標(一つ目)の算出
 		right_coor_x, right_coor_y = road_edge[k][0][0] + depth_deviation[0], road_edge[k][0][1] + depth_deviation[1]
 		#奥行座標と間口間ベクトルで構成された直線と枠線の交点（二点）を算出
 		for i in range(1, len(parcel_frame)):
 			intersection = Calc.line_cross_point(parcel_frame[i - 1], parcel_frame[i], [right_coor_x, right_coor_y], [right_coor_x + maguti_deviation[0], right_coor_y + maguti_deviation[1]])
-			print("parcel_" + str(i - 1) + ":" + str(parcel_frame[i - 1]))
-			print("parcel_" + str(i) + ":" + str(parcel_frame[i]))
-			print("right_coor_x:" + str(right_coor_x))
-			print("right_coor_y:" + str(right_coor_y))
-			print("intersection:" + str(intersection))
+			print("\t\tparcel_" + str(i - 1) + ":" + str(parcel_frame[i - 1]))
+			print("\t\tparcel_" + str(i) + ":" + str(parcel_frame[i]))
+			print("\t\tright_coor_x:" + str(right_coor_x))
+			print("\t\tright_coor_y:" + str(right_coor_y))
+			print("\t\tintersection:" + str(intersection))
 			#交点を追加
 			if intersection is not None:
 				inter_coor.append(intersection)
@@ -67,13 +69,13 @@ def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
 			#結果リストに格納(本来は図形内にあるかの確認が必要！！！)
 			result.append([[inter_coor[0][0], inter_coor[0][1]], [inter_coor[1][0], inter_coor[1][1]]])
 			#各種数値の出力（デバッグ）
-			print("road_distance:" + str(road_distance))
-			print("home_cnt:" + str(home_cnt))
-			print("real_maguti:" + str(use_maguti))
-			print("home_depth:" + str(home_depth))
-			print("least_maguti:" + str(least_maguti))
-			print("inter_coor:" + str(inter_coor))
-			print("result:" + str(result))
+			print("\troad_distance:" + str(road_distance))
+			print("\thome_cnt:" + str(home_cnt))
+			print("\treal_maguti:" + str(use_maguti))
+			print("\thome_depth:" + str(home_depth))
+			print("\tleast_maguti:" + str(least_maguti))
+			print("\tinter_coor:" + str(inter_coor))
+			print("\tresult:" + str(result))
 			#
 			#各家の座標を格納(間口間ベクトル参照)
 			for i in range(1, home_cnt):
@@ -95,8 +97,8 @@ def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
 				eva_coor.append(instant_result[1])
 				instant_result = []
 				#結果の確認(デバッグ用)
-				print("result:" + str(result))
-				print("eva_coor:" + str(eva_coor))
+				print("\tresult:" + str(result))
+				print("\teva_coor:" + str(eva_coor))
 				if exist_flag:
 					if k % 2 == 0:
 						if i == 1:
@@ -131,12 +133,12 @@ def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
 						parcel_frame[i] = [inter_coor[j][0], inter_coor[j][1]]
 			eva_coor = []
 			inter_coor = []
-			print("evaluation:" + str(evaluation))
-			print("parcel_frame:" + str(parcel_frame))
-			print("result:" + str(result))
-			print("----------" + str(k + 1) + "週目終わり----------")
+			print("\tevaluation:" + str(evaluation))
+			print("\tparcel_frame:" + str(parcel_frame))
+			print("\tresult:" + str(result))
+			print("\t----------" + str(k + 1) + "週目終わり----------")
 
-	print("評価要素：" + str(evaluation))
+	print("\n\t評価要素：" + str(evaluation))
 	cp_evaluation = copy.deepcopy(evaluation)
 
 	#評価用の配列の定義

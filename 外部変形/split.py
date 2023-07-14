@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from audioop import reverse
+# from audioop import reverse
 import codecs
 import importlib
 import math
@@ -105,6 +105,10 @@ def line_cross_point(P0, P1, Q0, Q1):
 
 #####区画割の実行#####
 def parcel_allocation(deep_make_road_edge, make_road_edge, parcel_frame, road_width, road_edge, maguti, goal_area):
+
+  print("\n\n================================")
+  print("区画割の実行 parcel_allocation")
+  print("================================")
 
   print("make_road_edge:" + str(make_road_edge))
   print("parcel_frame:" + str(parcel_frame))
@@ -1301,8 +1305,16 @@ def parcel_allocation(deep_make_road_edge, make_road_edge, parcel_frame, road_wi
   print("result:" + str(result))
   return result, detail_list, total_score, evaluation, total_score_margin
 
+
+
+
+
+
 #####メインプログラム#####
 #読み込み用のファイルを展開
+print("================================")
+print("メインプログラム split.py")
+print("================================")
 info = open('外部変形/information.txt','r',encoding='shift_jis')
 print("hd")
 
@@ -1676,10 +1688,11 @@ elif line_count == 5: #道作成しない場合の処理
   line_count = 0
 
   #infomationの中身を取得
+  print("infomation")
   for line in info:
     #一行ごとに読み込み
     xy=line.split()
-    print("LINEスプリット：" + str(xy))
+    print("\tLINEスプリット：" + str(xy))
     # print(len(xy))
     #間口の読み込み
     if line_count == 0:
