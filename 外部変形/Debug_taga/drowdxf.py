@@ -6,9 +6,6 @@ import numpy as np
     ベクトルのリストを受け取り、それを線分としてdxfファイルに出力する
 """
 def drowLine(vecs):
-    # 座標を出力したい
-    # dxfのversion指定
-    # doc = ezdxf.new("R2010")
     doc = ezdxf.readfile(r"./debug_taga.dxf")
 
     #モデル空間に新しいエンティティを作成
@@ -21,6 +18,9 @@ def drowLine(vecs):
     doc.saveas('debug_taga.dxf')
 
 
+"""_summary_
+    dxfファイルをクリアする
+"""
 def cleardxf():
     doc = ezdxf.new("R2010")
     doc.saveas('debug_taga.dxf')
