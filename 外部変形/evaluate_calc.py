@@ -254,7 +254,7 @@ def unload_area_rate(pt, goal_area):
   area_score = 50
   #面積を計算
   cp_pt = copy.deepcopy(pt)
-  print("面積計算に使うリスト" + str(cp_pt))
+  print("\t\t面積計算に使うリスト" + str(cp_pt))
   area = Calc.main_calc(cp_pt)
   if area >= goal_area:
     #宅地二つ分を最大値(50点)に設定し，一次関数で得点計算

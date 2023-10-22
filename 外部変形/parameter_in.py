@@ -2,6 +2,8 @@ import codecs
 import sys
 import re
 
+print("---parameter_in.py---")
+
 #書き込み用のファイルを展開
 info = codecs.open('外部変形/information.txt','w',"shift-jis")
 
@@ -55,6 +57,7 @@ for i in range(len(frame)):
     print(" " + str(frame[i][j - 1]) + " " + str(frame[i][j]))
 f.close()
 
+# 道路と設置している辺の座標の取得
 for i in range(len(frame)):
   if i == len(frame) - 1:
     info.write(str(frame[i][0]) + " " + str(frame[i][1]) + "\n")
