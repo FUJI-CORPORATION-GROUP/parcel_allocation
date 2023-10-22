@@ -3,7 +3,8 @@ import sys
 import re
 
 #書き込み用のファイルを展開
-info = codecs.open('外部変形/information.txt','a',"shift-jis")
+info = codecs.open('外部変形/information.txt','w',"shift-jis")
+# info = codecs.open('外部変形/information.txt','a',"shift-jis")
 
 #コマンドライン引数（道幅，間口，目標面積）
 road_width=4000

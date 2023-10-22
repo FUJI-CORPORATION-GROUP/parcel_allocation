@@ -9,7 +9,9 @@ import evaluate_calc
 
 ####道を作成しないケースの区画割の実行####
 def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
-	print("道を作成しない区画割")
+	print("\t================================")
+	print("\t道を作成しない区画割の実行 unload_parcel_allocation")
+	print("\t================================")
 	exist_flag = False
 	result = []
 	# detail_list = []
@@ -29,7 +31,7 @@ def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
 	#道路に隣接している辺の数だけ区画を作成
 	for k in range(len(road_edge)):
 		# parcel_frame = copy.deepcopy(frame)
-		print("----------" + str(k + 1) + "周目----------")
+		print("\t----------" + str(k + 1) + "周目----------")
 		#指定街区の辺の長さ
 		a=np.array(road_edge[k][0])
 		b=np.array(road_edge[k][1])
@@ -163,7 +165,7 @@ def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
 				print("result:" + str(result))
 			print("----------" + str(k + 1) + "週目終わり----------")
 
-	print("評価要素：" + str(evaluation))
+	print("\n\t評価要素：" + str(evaluation))
 	cp_evaluation = copy.deepcopy(evaluation)
 
 	#評価用の配列の定義
