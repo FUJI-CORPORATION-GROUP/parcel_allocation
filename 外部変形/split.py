@@ -20,6 +20,7 @@ import Calc
 import evaluate_calc
 import collections
 import un_load
+import un_load_binary
 
 #点が図形内部あるかどうかの判定
 def inside_polygon(p0, qs):
@@ -1776,7 +1777,8 @@ elif line_count == 5: #道作成しない場合の処理
     print("現在の図面" + str(draw_cnt) + "個目")
 
     # 区画割の実行
-    result, point_list, total_score, evaluation = un_load.unload_parcel_allocation(cp_frame, road_edge, maguti, least_maguti, goal_area)
+    # result, point_list, total_score, evaluation = un_load.unload_parcel_allocation(cp_frame, road_edge, maguti, least_maguti, goal_area)
+    result, point_list, total_score, evaluation = un_load_binary.unload_parcel_allocation(cp_frame, road_edge, maguti, least_maguti, goal_area)
     #リスト化
     result = list(result)
     #結果をそれぞれのindexに追加
