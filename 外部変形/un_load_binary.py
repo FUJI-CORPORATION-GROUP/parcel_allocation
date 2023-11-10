@@ -170,6 +170,13 @@ def end_area_calc(goal_area, home_depth, maguti_vector, depth_vector, frame):
 def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
     """進入経路を確保しない際の区画割実行関数
 
+    Args:
+                    frame (list): _区画割に使用する街区のリスト
+                    road_edge (list): _街区が道路に接している辺のリスト
+                    maguti (int): _間口の広さ
+                    least_maguti (int): _間口の下限(上限)値
+                    goal_area (int): _目標面積
+
     Returns:
                     result: _結果の座標リスト jwへの描画用に[[A, B], [B, C]]の形式で記述
                     point_list: _評価結果得点の集合リスト [向き, 広さ, 面積]の順に格納
