@@ -52,13 +52,23 @@ def get_side_parcel():
 
 # 探索軸の最大最小の取得
 def get_search_range(search_frame, search_line):
+  """探索軸の最大最小の取得
+
+  Args:
+    search_frame (list): _探索領域のArray
+    search_line (list): _探索対象の線分
+
+  Returns:
+    max (float): _最大値
+    min (float): _最小値
+  """
   max = Point(10,10)
   min = Point(0,0)
 
   # 判定軸上の座標取得
   # Get_vertical_intersection()
 
-  return max,min
+  return max, min
 
 
 # 2分探索をするよ
@@ -83,8 +93,15 @@ def binary_search(search_frame, search_range ,move_line, target_area):
 
 # 判定軸上指定した点から，奥行ベクトルを伸ばし，一時的な区画を取得する
 def get_tmp_parcel(search_frame,move_line,point):
-  """
-  
+  """判定軸上指定した点から，奥行ベクトルを伸ばし，一時的な区画を取得する
+
+  Args:
+    search_frame (list): _探索領域のArray
+    move_line (list): _探索対象の線分
+    point (Point): _判定軸上の指定した点
+
+  Returns:
+    pointlist (Pointlist): _作成した図形の集合
   """
   # TODO: search_frameと，pointから引いたmove_lineの交点求める
 
