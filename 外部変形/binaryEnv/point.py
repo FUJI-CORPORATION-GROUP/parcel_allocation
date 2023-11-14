@@ -54,11 +54,11 @@ class Point:
         array = np.array([self.x,self.y])
         return array
 
-# サンプルの直線ABと点Pを設定
-pointA = Point(2, 2)
-pointB = Point(6, 4)
-pointP = Point(4, 5)
+# # サンプルの直線ABと点Pを設定
+# pointA = Point(2, 2)
+# pointB = Point(6, 4)
+# pointP = Point(4, 5)
 
-# 点Pから直線ABへの距離を計算
-distance = pointP.point_to_line_distance(pointA, pointB)
-print("点Pから直線ABへの距離:", distance)
+# # 点Pから直線ABへの距離を計算
+# distance = pointP.point_to_line_distance(pointA, pointB)
+# print("点Pから直線ABへの距離:", distance)
