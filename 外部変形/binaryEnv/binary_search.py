@@ -61,10 +61,8 @@ def get_search_range(search_frame, search_line):
   """
   search_line_start_point = search_line[0]
   search_line_end_point = search_line[1]
-  max = search_line_start_point
-  min = search_line_end_point
-  pointlist = []
-
+  min = search_line_start_point
+  max = search_line_end_point
   # 判定軸上の座標取得
   for i in range(len(search_frame)):
     point = Get_vertical_intersection(search_line_start_point,search_line_end_point,search_frame[i])
@@ -79,10 +77,7 @@ def get_search_range(search_frame, search_line):
         min = point
       else:
         max = point    
-    # pointlist.append(point)
   
-  # search_line_range = [max, min]
-  # return search_line_range
   return max, min
 
 
