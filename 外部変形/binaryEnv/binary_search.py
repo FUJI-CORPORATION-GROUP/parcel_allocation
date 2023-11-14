@@ -118,14 +118,13 @@ def get_tmp_parcel(search_frame, move_line, point):
   # frame型に変換
   search_frame = Frame(search_frame)
   
-  # TODO: search_frameと，pointから引いたmove_lineの交点求める
+  # search_frameと，pointから引いたmove_lineの交点求める
   cross_points = search_frame.get_cross_points(point, move_line)
-  print(cross_points)
-  print(cross_points[0].get_str())
-  print(cross_points[1].get_str())
 
-  return cross_points
   # TODO: 取得した交点を使って，区画のPoint配列取得
+  
+  # Debug用に一時的に交点を返しているよ
+  return cross_points
   # return pointlist
 
 # 直線AB上の点Pから垂直に落とした点Hを求める
@@ -154,17 +153,11 @@ def debug_main():
   search_line_start_point = load_frame[0]
   search_line_end_point = load_frame[1]
   search_line = [search_line_start_point,search_line_end_point]
-
-  # デバッグ
-  print(Frame(search_frame))
-  print(Frame(search_frame).points[0].x)
   
   # 探索範囲の取得
   max, min = get_search_range(search_frame,search_line)
-  print("max:",max.get_str()," min:",min.get_str())
   search_line_range = [min, max]
-  
-  
+    
   # 一時的なポイント処理
   tmp_point = Point((min.x + max.x) / 2,(min.y + max.y) / 2)
   tmp_move_line = Point(10,50)
