@@ -7,7 +7,7 @@ from point import Point
 """
 # Point型
 def drowLine_by_point(pointlist):
-    cleardxf()
+    # cleardxf()
     
     doc = ezdxf.readfile(r"./output.dxf")
 

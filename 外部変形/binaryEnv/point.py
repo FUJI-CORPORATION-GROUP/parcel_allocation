@@ -17,13 +17,14 @@ class Point:
         """距離を求める関数
 
         Args:
-            self (list): _距離を求めたい点リスト
-            other (list): _もう一個の点
+            self (Point): _距離を求めたい点リスト
+            other (Point): _もう一個の点
 
         Returns:
             distance (float): _点と点の距離
         """
-        distance = ((self.x - other.x) ** 2 + (self.y - other.y) ** 2) ** 0.5
+        distance_vec = np.array([other.x - self.x, other.y - self.y])
+        distance = np.linalg.norm(distance_vec)
         return distance
 
     def point_to_line_distance(self, line_pointA, line_pointB):
@@ -53,6 +54,9 @@ class Point:
         """
         array = np.array([self.x,self.y])
         return array
+    
+    def print(self):
+        print(self.x, self.y)
 
 # # サンプルの直線ABと点Pを設定
 # pointA = Point(2, 2)
