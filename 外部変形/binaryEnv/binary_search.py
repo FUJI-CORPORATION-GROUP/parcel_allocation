@@ -13,20 +13,17 @@ frame = [
 search_frame = [
   Point(0,0),
   Point(300,0),
-  Point(300,100),
-  Point(0,100),
+  Point(500,100),
+  Point(100,100),
+]
+
+load_frame = [
+  search_frame[0],
+  search_frame[1]
 ]
 
 target_area = 100
 
-
-def debug_main():
-  # 判定領域
-
-  drowdxf.drowLine_by_point(search_frame)
-
-
-debug_main()
 
 def get_side_parcel():
   """端の区画割を行う関数
@@ -62,12 +59,25 @@ def get_search_range(search_frame, search_line):
     max (float): _最大値
     min (float): _最小値
   """
-  max = Point(10,10)
-  min = Point(0,0)
-
+  search_line_start_point = search_line[0]
+  search_line_end_point = search_line[1]
+  min = search_line_start_point
+  max = search_line_end_point
   # 判定軸上の座標取得
-  # Get_vertical_intersection()
-
+  for i in range(len(search_frame)):
+    point = Get_vertical_intersection(search_line_start_point,search_line_end_point,search_frame[i])
+    
+    default_distance = max.distance(min)
+    
+    max_distance = max.distance(point)
+    min_distance = min.distance(point)
+    
+    if(default_distance != max_distance + min_distance):
+      if(max_distance > min_distance):
+        min = point
+      else:
+        max = point    
+  
   return max, min
 
 
@@ -108,23 +118,40 @@ def get_tmp_parcel(search_frame,move_line,point):
   # TODO: 取得した交点を使って，区画のPoint配列取得
   # return pointlist
 
-# 直線AB上の点Pから垂直に落とした点を求める
-def Get_vertical_intersection(O, A, B):
+# 直線AB上の点Pから垂直に落とした点Hを求める
+def Get_vertical_intersection(A, B, P):
   """直線AB上の点Pから垂直に落とした点を求める
 
   Args:
-    O (list): _AとBの二点のリスト
-    A (list): _奥行ベクトル
-    B (list): _奥行ベクトル
+    A (Point): _探索軸の始点
+    B (Point): _探索軸の終点
+    P (Point): _AとBの二点のリスト
 
   Returns:
     point_on_judge_line (Point): _判定軸上の点
   """
-  print("Get_vertical_intersection")
-  OA = Point(A.x - O.x, A.y - O.y)
-  OB = Point(B.x - O.x, B.y - O.y)
+  AB = Point(B.x - A.x, B.y - A.y)
+  AP = Point(P.x - A.x, P.y - A.y)
 
-  k = np.dot(OA, OB) / (np.linalg.norm(OA) ** 2)
-  OP = k * OA
-  point_on_judge_line =  Point(OP.x + O.x, OP.y + O.y)
+  k = Point.dot(AB, AP) / (AB.magnitude() ** 2)
+  OH = Point(k * AB.x, k * AB.y)
+  point_on_judge_line =  Point(OH.x + A.x, OH.y + A.y)
   return point_on_judge_line
+
+def debug_main():
+  # 判定領域
+  # 探索軸の決定
+  search_line_start_point = load_frame[0]
+  search_line_end_point = load_frame[1]
+  search_line = [search_line_start_point,search_line_end_point]
+  
+  # 探索範囲の取得
+  max, min = get_search_range(search_frame,search_line)
+  print("max:",max.get_str()," min:",min.get_str())
+  search_line_range = [min, max]
+  drowdxf.cleardxf()
+  drowdxf.drowLine_by_point(search_frame)
+  drowdxf.drowLine_by_point(search_line_range)
+
+
+debug_main()
