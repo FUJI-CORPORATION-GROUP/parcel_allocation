@@ -147,8 +147,7 @@ def debug_main():
   
   # 探索範囲の取得
   max, min = get_search_range(search_frame,search_line)
-  print("max:",max.get_str())
-  print("min:",min.get_str())
+  print("max:",max.get_str()," min:",min.get_str())
   search_line_range = [min, max]
   drowdxf.cleardxf()
   drowdxf.drowLine_by_point(search_frame)
