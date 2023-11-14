@@ -57,3 +57,14 @@ class Point:
     
     def get_str(self):
         return f"({self.x}, {self.y})"
+    
+    # ABの内席取得
+    def dot(A,B):
+        A = np.array([A.x,A.y])
+        B = np.array([B.x,B.y])
+        return np.dot(A, B)
+    
+    # ベクトルの大きさの取得
+    def magnitude(self):
+        self = np.array([self.x,self.y])
+        return np.linalg.norm(self)

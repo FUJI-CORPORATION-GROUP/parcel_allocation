@@ -130,13 +130,12 @@ def Get_vertical_intersection(A, B, P):
   Returns:
     point_on_judge_line (Point): _判定軸上の点
   """
-  print("Get_vertical_intersection")
-  AB = [B.x - A.x, B.y - A.y]
-  AP = [P.x - A.x, P.y - A.y]
+  AB = Point(B.x - A.x, B.y - A.y)
+  AP = Point(P.x - A.x, P.y - A.y)
 
-  k = np.dot(AB, AP) / (np.linalg.norm(AB) ** 2)
-  OH = [k * AB[0], k * AB[1]]
-  point_on_judge_line =  Point(OH[0] + A.x, OH[1] + A.y)
+  k = Point.dot(AB, AP) / (AB.magnitude() ** 2)
+  OH = Point(k * AB.x, k * AB.y)
+  point_on_judge_line =  Point(OH.x + A.x, OH.y + A.y)
   return point_on_judge_line
 
 def debug_main():
