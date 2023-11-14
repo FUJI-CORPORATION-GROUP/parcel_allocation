@@ -1,5 +1,6 @@
 import numpy as np
 from point import Point
+from frame import Frame
 import drowdxf
 
 
@@ -102,19 +103,28 @@ def binary_search(search_frame, search_range ,move_line, target_area):
 
 
 # 判定軸上指定した点から，奥行ベクトルを伸ばし，一時的な区画を取得する
-def get_tmp_parcel(search_frame,move_line,point):
+def get_tmp_parcel(search_frame, move_line, point):
   """判定軸上指定した点から，奥行ベクトルを伸ばし，一時的な区画を取得する
 
   Args:
     search_frame (list): _探索領域のArray
-    move_line (list): _探索対象の線分
+    move_line (list): _奥行を示す単位ベクトル
     point (Point): _判定軸上の指定した点
 
   Returns:
     pointlist (Pointlist): _作成した図形の集合
   """
+  
+  # frame型に変換
+  search_frame = Frame(search_frame)
+  
   # TODO: search_frameと，pointから引いたmove_lineの交点求める
+  cross_points = search_frame.get_cross_points(point, move_line)
+  print(cross_points)
+  print(cross_points[0].get_str())
+  print(cross_points[1].get_str())
 
+  return cross_points
   # TODO: 取得した交点を使って，区画のPoint配列取得
   # return pointlist
 
@@ -144,14 +154,26 @@ def debug_main():
   search_line_start_point = load_frame[0]
   search_line_end_point = load_frame[1]
   search_line = [search_line_start_point,search_line_end_point]
+
+  # デバッグ
+  print(Frame(search_frame))
+  print(Frame(search_frame).points[0].x)
   
   # 探索範囲の取得
   max, min = get_search_range(search_frame,search_line)
   print("max:",max.get_str()," min:",min.get_str())
   search_line_range = [min, max]
+  
+  
+  # 一時的なポイント処理
+  tmp_point = Point((min.x + max.x) / 2,(min.y + max.y) / 2)
+  tmp_move_line = Point(10,50)
+  tmp_parcel = get_tmp_parcel(search_frame,tmp_move_line,tmp_point)
+  
   drowdxf.cleardxf()
   drowdxf.drowLine_by_point(search_frame)
   drowdxf.drowLine_by_point(search_line_range)
+  drowdxf.drowLine_by_point_color(tmp_parcel,1)
 
 
 debug_main()
