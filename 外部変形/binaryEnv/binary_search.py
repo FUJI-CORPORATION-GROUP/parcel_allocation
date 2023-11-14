@@ -150,6 +150,7 @@ def debug_main():
   print("max:",max.get_str())
   print("min:",min.get_str())
   search_line_range = [min, max]
+  drowdxf.cleardxf()
   drowdxf.drowLine_by_point(search_frame)
   drowdxf.drowLine_by_point(search_line_range)
 
