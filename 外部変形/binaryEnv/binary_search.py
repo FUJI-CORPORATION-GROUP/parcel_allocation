@@ -11,16 +11,16 @@ frame = [
   [34262, 19199]
   ]
 
-search_frame = [
+search_frame = Frame([
   Point(0,0),
   Point(300,0),
   Point(500,100),
   Point(100,100),
-]
+])
 
 load_frame = [
-  search_frame[0],
-  search_frame[1]
+  search_frame.points[0],
+  search_frame.points[1]
 ]
 
 target_area = 100
@@ -53,13 +53,14 @@ def get_search_range(search_frame, search_line):
   """探索軸の最大最小の取得
 
   Args:
-    search_frame (list): _探索領域のArray
+    search_frame (frame): _探索領域のArray
     search_line (list): _探索対象の線分
 
   Returns:
     max (float): _最大値
     min (float): _最小値
   """
+  search_frame = search_frame.points
   search_line_start_point = search_line[0]
   search_line_end_point = search_line[1]
   min = search_line_start_point
@@ -115,8 +116,6 @@ def get_tmp_parcel(search_frame, move_line, point):
     pointlist (Pointlist): _作成した図形の集合
   """
   
-  # frame型に変換
-  search_frame = Frame(search_frame)
   
   point_list = search_frame.get_tmp_frame(point, move_line)
   
@@ -145,6 +144,7 @@ def Get_vertical_intersection(A, B, P):
 def debug_main():
   # 判定領域
   # 探索軸の決定
+  # search_frame = Frame(search_frame)
   search_line_start_point = load_frame[0]
   search_line_end_point = load_frame[1]
   search_line = [search_line_start_point,search_line_end_point]
@@ -156,11 +156,10 @@ def debug_main():
   # 一時的なポイント処理
   # tmp_point = Point((min.x + max.x) / 2,(min.y + max.y) / 2)
   tmp_move_line = Point(0,50)
-  search_frame = Frame(search_frame)
   tmp_parcel = binary_search(search_frame, search_line_range ,tmp_move_line, target_area)
   
   drowdxf.cleardxf()
-  drowdxf.drowLine_by_point(search_frame)
+  drowdxf.drowLine_by_point(search_frame.points)
   drowdxf.drowLine_by_point(search_line_range)
   drowdxf.drowLine_by_point_color(tmp_parcel.points,1)
 
