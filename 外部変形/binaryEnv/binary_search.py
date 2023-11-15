@@ -90,7 +90,7 @@ def binary_search(search_frame, search_range ,move_line, target_area):
   """二分探索を行う関数
 
   Args:
-    search_frame (list): _探索領域のArray
+    search_frame (Frame): _探索領域のArray
     search_range (list): 探索軸の最大最小
     move_line (vector): _奥行ベクトル
     target_area (int): _その時点の目標面積
@@ -154,9 +154,10 @@ def debug_main():
   search_line_range = [min, max]
     
   # 一時的なポイント処理
-  tmp_point = Point((min.x + max.x) / 2,(min.y + max.y) / 2)
+  # tmp_point = Point((min.x + max.x) / 2,(min.y + max.y) / 2)
   tmp_move_line = Point(0,50)
-  tmp_parcel = get_tmp_parcel(search_frame,tmp_move_line,tmp_point)
+  search_frame = Frame(search_frame)
+  tmp_parcel = binary_search(search_frame, search_line_range ,tmp_move_line, target_area)
   
   drowdxf.cleardxf()
   drowdxf.drowLine_by_point(search_frame)
