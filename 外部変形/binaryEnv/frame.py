@@ -31,6 +31,7 @@ class Frame:
     def __init__(self, points):
       self.points = points
 
+    # 直線ABで区切られる区画を返す
     def get_tmp_frame(self, point_A, point_B):
       tmp_points = []
       

@@ -118,11 +118,9 @@ def get_tmp_parcel(search_frame, move_line, point):
   # frame型に変換
   search_frame = Frame(search_frame)
   
-  # search_frameと，pointから引いたmove_lineの交点求める
-  pointlist = search_frame.get_tmp_frame(point, move_line)
+  point_list = search_frame.get_tmp_frame(point, move_line)
   
-  # Debug用に一時的に交点を返しているよ
-  return pointlist
+  return point_list
 
 # 直線AB上の点Pから垂直に落とした点Hを求める
 def Get_vertical_intersection(A, B, P):
@@ -157,7 +155,7 @@ def debug_main():
     
   # 一時的なポイント処理
   tmp_point = Point((min.x + max.x) / 2,(min.y + max.y) / 2)
-  tmp_move_line = Point(80,50)
+  tmp_move_line = Point(0,50)
   tmp_parcel = get_tmp_parcel(search_frame,tmp_move_line,tmp_point)
   
   drowdxf.cleardxf()
