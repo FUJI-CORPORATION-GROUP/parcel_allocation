@@ -100,9 +100,9 @@ def binary_search(search_frame, search_range ,move_line, target_area):
     binary_point (Frame): _二分探索結果の座標
   """  
   first_min = search_range[0]
-  farst_max = search_range[1]
+  first_max = search_range[1]
   min = first_min
-  max = farst_max
+  max = first_max
   tmp_point = Point.get_middle_point(max,min)
   calc_count = 0
   
@@ -128,13 +128,13 @@ def binary_search(search_frame, search_range ,move_line, target_area):
     tmp_inc_point_diff = math.fabs(target_area - tmp_inc_frame.area)
     tmp_dec_point_diff = math.fabs(target_area - tmp_dec_frame.area)
     
+    calc_count += 1
     if(tmp_point_diff > tmp_inc_point_diff):
       min = tmp_point
     elif(tmp_point_diff > tmp_dec_point_diff):
       max = tmp_point
     else:
       break
-    calc_count += 1
     
     if(calc_count > 50):
       print("計算回数過多")
@@ -159,8 +159,6 @@ def get_tmp_parcel(search_frame, move_line, point):
   Returns:
     pointlist (Pointlist): _作成した図形の集合
   """
-  
-  
   point_list = search_frame.get_tmp_frame(point, move_line)
   
   return point_list
