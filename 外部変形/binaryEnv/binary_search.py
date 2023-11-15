@@ -1,3 +1,4 @@
+import math
 import numpy as np
 from point import Point
 from frame import Frame
@@ -22,8 +23,7 @@ load_frame = [
   search_frame.points[0],
   search_frame.points[1]
 ]
-
-target_area = 100
+target_area = 28000
 
 
 def get_side_parcel():
@@ -99,8 +99,54 @@ def binary_search(search_frame, search_range ,move_line, target_area):
   Returns:
     binary_point (list): _二分探索結果の座標
   """
-  print("binary_search")
-  return 
+  print(search_range)
+  
+  farst_min = search_range[0]
+  farst_max = search_range[1]
+  min = farst_min
+  max = farst_max
+  tmp_point = Point.get_middle_point(max,min)
+  calc_count = 0
+  
+  inc_point = Point(max.x - min.x, max.y - min.y).unit()
+  dec_point = Point(min.x - max.x, min.y - max.y).unit()
+  
+  # 2分探索で適切な点を決定する
+  while (farst_min.distance(min) < farst_min.distance(max)):
+    # 中央値取得
+    tmp_point = Point.get_middle_point(max,min)
+    tmp_frame = get_tmp_parcel(search_frame, move_line, tmp_point)
+    
+    # プラス側
+    tmp_inc_point = tmp_point.add(inc_point)
+    tmp_inc_frame = get_tmp_parcel(search_frame, move_line, tmp_inc_point)
+    
+    # マイナス側
+    tmp_dec_point = tmp_point.add(dec_point)
+    tmp_dec_frame = get_tmp_parcel(search_frame, move_line, tmp_dec_point)
+    
+    
+    tmp_point_diff = math.fabs(target_area - tmp_frame.area)
+    tmp_inc_point_diff = math.fabs(target_area - tmp_inc_frame.area)
+    tmp_dec_point_diff = math.fabs(target_area - tmp_dec_frame.area)
+    
+    if(tmp_point_diff > tmp_inc_point_diff):
+      min = tmp_point
+    elif(tmp_point_diff > tmp_dec_point_diff):
+      max = tmp_point
+    else:
+      break
+    calc_count += 1
+    
+    if(calc_count > 50):
+      print("計算回数過多")
+      break
+  
+  # 決定した点で取得できるFrame取得
+  final_frame = get_tmp_parcel(search_frame, move_line,tmp_point)
+  
+  print(f"2分探索酋長 計算回数:{calc_count} 回 面積:{final_frame.area}")
+  return final_frame
 
 
 # 判定軸上指定した点から，奥行ベクトルを伸ばし，一時的な区画を取得する
