@@ -31,14 +31,21 @@ class Frame:
     def __init__(self, points):
       self.points = points
 
-    def get_cross_points(self, point_A, point_B):
+    def get_tmp_frame(self, point_A, point_B):
       tmp_points = []
+      
       point_B = Point((point_A.x + point_B.x),(point_A.y + point_B.y))
+      get_frame_flag = True
       for i in range(len(self.points)):
         point_s = self.points[i]
         point_e = self.points[i + 1] if(i+1<len(self.points)) else self.points[0]
         line_cross = line_cross_point(point_s, point_e, point_A, point_B)
+        
+        if(get_frame_flag):
+          tmp_points.append(point_s)
+        
         if (line_cross != None):
           tmp_points.append(line_cross)
+          get_frame_flag = not get_frame_flag
       
       return tmp_points
