@@ -49,4 +49,6 @@ class Frame:
           tmp_points.append(line_cross)
           get_frame_flag = not get_frame_flag
       
-      return tmp_points
+      tmp_frame = Frame(tmp_points)
+      
+      return tmp_frame
