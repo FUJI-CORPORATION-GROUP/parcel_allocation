@@ -161,7 +161,7 @@ def debug_main():
   drowdxf.cleardxf()
   drowdxf.drowLine_by_point(search_frame)
   drowdxf.drowLine_by_point(search_line_range)
-  drowdxf.drowLine_by_point_color(tmp_parcel,1)
+  drowdxf.drowLine_by_point_color(tmp_parcel.points,1)
 
 
 debug_main()
