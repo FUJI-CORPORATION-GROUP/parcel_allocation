@@ -93,17 +93,15 @@ def binary_search(search_frame, search_range ,move_line, target_area):
   Args:
     search_frame (Frame): _探索領域のArray
     search_range (list): 探索軸の最大最小
-    move_line (vector): _奥行ベクトル
+    move_line (Point): _奥行ベクトル
     target_area (int): _その時点の目標面積
 
   Returns:
-    binary_point (list): _二分探索結果の座標
-  """
-  print(search_range)
-  
-  farst_min = search_range[0]
+    binary_point (Frame): _二分探索結果の座標
+  """  
+  first_min = search_range[0]
   farst_max = search_range[1]
-  min = farst_min
+  min = first_min
   max = farst_max
   tmp_point = Point.get_middle_point(max,min)
   calc_count = 0
@@ -112,7 +110,7 @@ def binary_search(search_frame, search_range ,move_line, target_area):
   dec_point = Point(min.x - max.x, min.y - max.y).unit()
   
   # 2分探索で適切な点を決定する
-  while (farst_min.distance(min) < farst_min.distance(max)):
+  while (first_min.distance(min) < first_min.distance(max)):
     # 中央値取得
     tmp_point = Point.get_middle_point(max,min)
     tmp_frame = get_tmp_parcel(search_frame, move_line, tmp_point)
@@ -125,7 +123,7 @@ def binary_search(search_frame, search_range ,move_line, target_area):
     tmp_dec_point = tmp_point.add(dec_point)
     tmp_dec_frame = get_tmp_parcel(search_frame, move_line, tmp_dec_point)
     
-    
+    # それぞれの目標値との差分を取得
     tmp_point_diff = math.fabs(target_area - tmp_frame.area)
     tmp_inc_point_diff = math.fabs(target_area - tmp_inc_frame.area)
     tmp_dec_point_diff = math.fabs(target_area - tmp_dec_frame.area)
@@ -145,7 +143,7 @@ def binary_search(search_frame, search_range ,move_line, target_area):
   # 決定した点で取得できるFrame取得
   final_frame = get_tmp_parcel(search_frame, move_line,tmp_point)
   
-  print(f"2分探索酋長 計算回数:{calc_count} 回 面積:{final_frame.area}")
+  print(f"2分探索酋長 計算回数:{calc_count} 回 面積:{final_frame.area} / 目標面積：{target_area}")
   return final_frame
 
 
