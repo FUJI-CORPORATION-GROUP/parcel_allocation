@@ -1,22 +1,6 @@
 import numpy as np
 from point import Point
-
-# 線分ABと直線CDの交点
-def line_cross_point(A, B, C, D):
-  AB = Point((B.x - A.x), (B.y - A.y))
-  CD = Point((D.x - C.x), (D.y - C.y))
-  d = AB.x*CD.y - CD.x*AB.y
-  if d == 0:
-    # 並行の場合
-    return None
-  # 交点計算
-  sn = CD.y * (C.x-A.x) - CD.x * (C.y-A.y)
-  x = A.x + AB.x*sn/d
-  y = A.y + AB.y*sn/d
-  P = Point(x,y)
-  if(A.distance(B) ==  (P.distance(A) + P.distance(B))):
-    return P
-
+import Calc
 
 class Frame:
     """区画を扱うクラス
@@ -27,9 +11,11 @@ class Frame:
 
     """
     points = []
+    area = 0
 
     def __init__(self, points):
       self.points = points
+      self.area = Calc.calc_area(self)
 
     # 直線ABで区切られる区画を返す
     def get_tmp_frame(self, point_A, point_B):
@@ -40,7 +26,7 @@ class Frame:
       for i in range(len(self.points)):
         point_s = self.points[i]
         point_e = self.points[i + 1] if(i+1<len(self.points)) else self.points[0]
-        line_cross = line_cross_point(point_s, point_e, point_A, point_B)
+        line_cross = Calc.line_cross_point(point_s, point_e, point_A, point_B)
         
         if(get_frame_flag):
           tmp_points.append(point_s)
@@ -52,3 +38,13 @@ class Frame:
       tmp_frame = Frame(tmp_points)
       
       return tmp_frame
+
+
+# search_frame = [
+#   Point(0,0),
+#   Point(300,0),
+#   Point(500,100),
+#   Point(100,100),
+# ]
+# search_frame = Frame(search_frame)
+# print(search_frame.area)
