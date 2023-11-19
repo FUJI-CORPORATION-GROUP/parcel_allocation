@@ -68,3 +68,13 @@ class Point:
     def magnitude(self):
         self = np.array([self.x,self.y])
         return np.linalg.norm(self)
+    
+    # 点A,点Bの中点の取得
+    def get_middle_point(A,B):
+        return Point((A.x + B.x)/2,(A.y + B.y)/2)
+    
+    def add(self,point):
+        return Point (self.x + point.x,self.y + point.y)
+    
+    def unit(self):
+        return Point(self.x / self.magnitude(),self.y / self.magnitude())
