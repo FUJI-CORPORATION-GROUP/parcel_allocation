@@ -1,7 +1,7 @@
 from point import Point
 from frame import Frame
 import binary_search
-import drowdxf
+import draw_dxf
 
 
 #####メインプログラム#####
@@ -83,10 +83,42 @@ for i in range(len(load_edge)):
     load_frame[i][k] = Point(load_edge[i][k][0], load_edge[i][k][1])
 
 # デバッグ用
-target_area = 28000
+# target_area = 28000
 
 # 二分探索の実行
 # 道に接する辺の数だけ実行
 # 計算毎にseach_frameを変更しながら計算する
-for i in range(len(load_edge)):
-  binary_search.debug_main(load_edge[i], frame, target_area)
+# for i in range(len(load_edge)):
+#   binary_search.debug_main(load_edge[i], frame, target_area)
+
+# 探索領域
+search_frame = frame
+move_line = Point(0,50)
+
+draw_dxf.clear_dxf()
+draw_dxf.draw_line_by_point(search_frame.points)
+binary_parcel_list = []
+count = 0
+target_area = 9000
+
+print(f"search_frame : {search_frame.get_points_str()}")
+
+# 探索領域が目標面積取れなくなるまで区画割
+while(True):
+  print(f"\n{count} 回目")
+  parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,load_frame[0],target_area,move_line)
+  
+  count += 1
+  binary_parcel_list.append(parcel_frame)
+  
+  if(target_area > remain_frame.area):
+    print(f"探索終了 残り面積{remain_frame.area}")
+    break
+  
+  if(count > 30):
+    # 念のため
+    break
+  
+  search_frame = remain_frame
+
+draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
