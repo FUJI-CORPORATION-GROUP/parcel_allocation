@@ -178,6 +178,11 @@ def Get_vertical_intersection(A, B, P):
 
 # デバッグ用メイン関数
 def debug_main():
+  """2分探索デバッグ用メイン関数
+
+  Returns:
+      Frame[]: 2分探索した結果の区画のリスト
+  """
   
   binary_parcel_list = []
   
@@ -202,25 +207,25 @@ def debug_main():
   
   print(f"search_frame : {search_frame.get_points_str()}")
   
+  # 探索領域が目標面積取れなくなるまで区画割
   while(True):
     print(f"\n{count} 回目")
     parcel_frame, remain_frame = get_side_parcel(search_frame,load_frame,target_area,move_line)
     
     count += 1
-    # draw_dxf.draw_line_by_point_color(parcel_frame.points,count)
     binary_parcel_list.append(parcel_frame)
     
     if(target_area > remain_frame.area):
       print(f"探索終了 残り面積{remain_frame.area}")
       break
     
-    if(count > 10):
+    if(count > 30):
+      # 念のため
       break
     
     search_frame = remain_frame
   
   draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
   return binary_parcel_list
-  
   
 debug_main()
