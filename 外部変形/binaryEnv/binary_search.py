@@ -14,7 +14,8 @@ def get_side_parcel(search_frame,load_frame,target_area,move_line):
     move_line(Point): _奥行ベクトル
 
   Returns:
-    binary_parcel(frame): _2分探索で確保した区画
+    parcel_frame(Frame): _2分探索で確保した区画
+    remain_frame(Frame): _2分探索で確保した区画
   """
   
   # 探索軸の決定
@@ -26,7 +27,7 @@ def get_side_parcel(search_frame,load_frame,target_area,move_line):
   # 探索範囲の取得
   max, min = get_search_range(search_frame,search_line)
   search_line_range = [min, max]
-    
+
   # 一時的なポイント処理
   parcel_frame, remain_frame = binary_search(search_frame, search_line_range ,move_line, target_area)  
   return parcel_frame,remain_frame
@@ -173,7 +174,13 @@ def Get_vertical_intersection(A, B, P):
   point_on_judge_line =  Point(OH.x + A.x, OH.y + A.y)
   return point_on_judge_line
 
+
+
+# デバッグ用メイン関数
 def debug_main():
+  
+  binary_parcel_list = []
+  
   move_line = Point(0,50)
   search_frame = Frame([
     Point(0,0),
@@ -181,17 +188,39 @@ def debug_main():
     Point(500,100),
     Point(100,100),
   ])
-
   load_frame = [
     search_frame.points[0],
     search_frame.points[1]
   ]  
-  target_area = 9000
-  parcel_frame, remain_frame = get_side_parcel(search_frame,load_frame,target_area,move_line)
   
-  print(parcel_frame)
-  drowdxf.drowLine_by_point_color(parcel_frame.points,1)
-  drowdxf.drowLine_by_point_color(remain_frame.points,2)
-
-
+  # DEX準備
+  draw_dxf.clear_dxf()
+  draw_dxf.draw_line_by_point(search_frame.points)
+  
+  target_area = 9000
+  count = 0
+  
+  print(f"search_frame : {search_frame.get_points_str()}")
+  
+  while(True):
+    print(f"\n{count} 回目")
+    parcel_frame, remain_frame = get_side_parcel(search_frame,load_frame,target_area,move_line)
+    
+    count += 1
+    # draw_dxf.draw_line_by_point_color(parcel_frame.points,count)
+    binary_parcel_list.append(parcel_frame)
+    
+    if(target_area > remain_frame.area):
+      print(f"探索終了 残り面積{remain_frame.area}")
+      break
+    
+    if(count > 10):
+      break
+    
+    search_frame = remain_frame
+  
+  draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
+  return binary_parcel_list
+  
+  
 debug_main()
