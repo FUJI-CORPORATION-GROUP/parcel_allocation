@@ -28,14 +28,8 @@ def get_side_parcel(search_frame,load_frame,target_area,move_line):
   search_line_range = [min, max]
     
   # 一時的なポイント処理
-  binary_parcel = binary_search(search_frame, search_line_range ,move_line, target_area)
-  
-  drowdxf.cleardxf()
-  drowdxf.drowLine_by_point(search_frame.points)
-  drowdxf.drowLine_by_point(search_line_range)
-  drowdxf.drowLine_by_point_color(binary_parcel.points,1)
-  
-  return binary_parcel
+  parcel_frame, remain_frame = binary_search(search_frame, search_line_range ,move_line, target_area)  
+  return parcel_frame,remain_frame
 
 
 # 探索軸の最大最小の取得
@@ -103,15 +97,15 @@ def binary_search(search_frame, search_range ,move_line, target_area):
   while (first_min.distance(min) < first_min.distance(max)):
     # 中央値取得
     tmp_point = Point.get_middle_point(max,min)
-    tmp_frame = get_tmp_parcel(search_frame, move_line, tmp_point)
+    tmp_frame = get_tmp_parcel(search_frame, move_line, tmp_point)[0]
     
     # プラス側
     tmp_inc_point = tmp_point.add(inc_point)
-    tmp_inc_frame = get_tmp_parcel(search_frame, move_line, tmp_inc_point)
+    tmp_inc_frame = get_tmp_parcel(search_frame, move_line, tmp_inc_point)[0]
     
     # マイナス側
     tmp_dec_point = tmp_point.add(dec_point)
-    tmp_dec_frame = get_tmp_parcel(search_frame, move_line, tmp_dec_point)
+    tmp_dec_frame = get_tmp_parcel(search_frame, move_line, tmp_dec_point)[0]
     
     # それぞれの目標値との差分を取得
     tmp_point_diff = math.fabs(target_area - tmp_frame.area)
@@ -131,10 +125,9 @@ def binary_search(search_frame, search_range ,move_line, target_area):
       break
   
   # 決定した点で取得できるFrame取得
-  final_frame = get_tmp_parcel(search_frame, move_line,tmp_point)
-  
-  print(f"2分探索酋長 計算回数:{calc_count} 回 面積:{final_frame.area} / 目標面積：{target_area}")
-  return final_frame
+  parcel_frame, remain_frame = get_tmp_parcel(search_frame, move_line,tmp_point)
+  print(f"2分探索酋長 計算回数:{calc_count} 回 面積:{parcel_frame.area} / 目標面積：{target_area}")
+  return parcel_frame, remain_frame
 
 
 # 判定軸上指定した点から，奥行ベクトルを伸ばし，一時的な区画を取得する
@@ -147,11 +140,12 @@ def get_tmp_parcel(search_frame, move_line, point):
     point (Point): _判定軸上の指定した点
 
   Returns:
-    pointlist (Pointlist): _作成した図形の集合
+    parcel_frame (Frame): _作成した図形の集合
+    remain_frame (Frame): _作成した図形の集合
   """
-  point_list = search_frame.get_tmp_frame(point, move_line)
+  parcel_frame, remain_frame = Frame.get_tmp_frame(search_frame, point, move_line)
   
-  return point_list
+  return parcel_frame, remain_frame
 
 # 直線AB上の点Pから垂直に落とした点Hを求める
 def Get_vertical_intersection(A, B, P):
@@ -185,9 +179,13 @@ def debug_main():
   load_frame = [
     search_frame.points[0],
     search_frame.points[1]
-  ]
+  ]  
   target_area = 9000
-  get_side_parcel(search_frame,load_frame,target_area,move_line)
+  parcel_frame, remain_frame = get_side_parcel(search_frame,load_frame,target_area,move_line)
+  
+  print(parcel_frame)
+  drowdxf.drowLine_by_point_color(parcel_frame.points,1)
+  drowdxf.drowLine_by_point_color(remain_frame.points,2)
 
 
 debug_main()
