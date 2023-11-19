@@ -47,13 +47,19 @@ def get_search_range(search_frame, search_line):
   search_frame = search_frame.points
   search_line_start_point = search_line[0]
   search_line_end_point = search_line[1]
-  min = search_line_start_point
-  max = search_line_end_point
+  # TODO: minとmaxの初期化
+  max, min = search_line_start_point, search_line_end_point
+  
   # 判定軸上の座標取得
   for i in range(len(search_frame)):
     point = Get_vertical_intersection(search_line_start_point,search_line_end_point,search_frame[i])
     
     default_distance = max.distance(min)
+    
+    if (i == 0):
+      max = point
+      min = point
+      continue
     
     max_distance = max.distance(point)
     min_distance = min.distance(point)
