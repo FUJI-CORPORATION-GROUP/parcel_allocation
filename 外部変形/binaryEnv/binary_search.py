@@ -174,26 +174,20 @@ def Get_vertical_intersection(A, B, P):
   return point_on_judge_line
 
 def debug_main():
-  # 判定領域
-  # 探索軸の決定
-  # search_frame = Frame(search_frame)
-  search_line_start_point = load_frame[0]
-  search_line_end_point = load_frame[1]
-  search_line = [search_line_start_point,search_line_end_point]
-  
-  # 探索範囲の取得
-  max, min = get_search_range(search_frame,search_line)
-  search_line_range = [min, max]
-    
-  # 一時的なポイント処理
-  # tmp_point = Point((min.x + max.x) / 2,(min.y + max.y) / 2)
-  tmp_move_line = Point(0,50)
-  tmp_parcel = binary_search(search_frame, search_line_range ,tmp_move_line, target_area)
-  
-  drowdxf.cleardxf()
-  drowdxf.drowLine_by_point(search_frame.points)
-  drowdxf.drowLine_by_point(search_line_range)
-  drowdxf.drowLine_by_point_color(tmp_parcel.points,1)
+  move_line = Point(0,50)
+  search_frame = Frame([
+    Point(0,0),
+    Point(300,0),
+    Point(500,100),
+    Point(100,100),
+  ])
+
+  load_frame = [
+    search_frame.points[0],
+    search_frame.points[1]
+  ]
+  target_area = 9000
+  get_side_parcel(search_frame,load_frame,target_area,move_line)
 
 
 debug_main()
