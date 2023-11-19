@@ -2,50 +2,35 @@ import math
 import numpy as np
 from point import Point
 from frame import Frame
-import drowdxf
+import draw_dxf
 
-
-frame = [
-  [34262, 19199],
-  [-40496, 19256],
-  [-40505, -2442],
-  [34262, 19199]
-  ]
-
-search_frame = Frame([
-  Point(0,0),
-  Point(300,0),
-  Point(500,100),
-  Point(100,100),
-])
-
-load_frame = [
-  search_frame.points[0],
-  search_frame.points[1]
-]
-target_area = 28000
-
-
-def get_side_parcel():
+def get_side_parcel(search_frame,load_frame,target_area,move_line):
   """端の区画割を行う関数
 
   Args:
-    vecs (list): _枠のarray
-    point (int): _点
+    search_frame (frame): _探索領域
+    load_frame (list[Point]): _道路と接する選
+    target_area (int): _目標面積
+    move_line(Point): _奥行ベクトル
 
   Returns:
-    array: _交点の二点
+    parcel_frame(Frame): _2分探索で確保した区画
+    remain_frame(Frame): _2分探索で確保した区画
   """
+  
+  # 探索軸の決定
+  # TODO: 2本より多い道路の場合の決定方法について検討&実装
+  search_line_start_point = load_frame[0]
+  search_line_end_point = load_frame[1]
+  search_line = [search_line_start_point,search_line_end_point]
+  
+  # 探索範囲の取得
+  max, min = get_search_range(search_frame,search_line)
+  search_line_range = [min, max]
 
-  # Point型への変換
-
-  # 2分探索の探索軸の最大最小を種痘
-  # search_range = get_search_range()
-
-  # 2分探索で範囲取得
-  # binary_search()
-
-  # return 
+  # 一時的なポイント処理
+  parcel_frame, remain_frame = binary_search(search_frame, search_line_range ,move_line, target_area)  
+  return parcel_frame,remain_frame
 
 
 # 探索軸の最大最小の取得
@@ -63,13 +48,19 @@ def get_search_range(search_frame, search_line):
   search_frame = search_frame.points
   search_line_start_point = search_line[0]
   search_line_end_point = search_line[1]
-  min = search_line_start_point
-  max = search_line_end_point
+  # TODO: minとmaxの初期化
+  max, min = search_line_start_point, search_line_end_point
+  
   # 判定軸上の座標取得
   for i in range(len(search_frame)):
     point = Get_vertical_intersection(search_line_start_point,search_line_end_point,search_frame[i])
     
     default_distance = max.distance(min)
+    
+    if (i == 0):
+      max = point
+      min = point
+      continue
     
     max_distance = max.distance(point)
     min_distance = min.distance(point)
@@ -113,15 +104,15 @@ def binary_search(search_frame, search_range ,move_line, target_area):
   while (first_min.distance(min) < first_min.distance(max)):
     # 中央値取得
     tmp_point = Point.get_middle_point(max,min)
-    tmp_frame = get_tmp_parcel(search_frame, move_line, tmp_point)
+    tmp_frame = get_tmp_parcel(search_frame, move_line, tmp_point)[0]
     
     # プラス側
     tmp_inc_point = tmp_point.add(inc_point)
-    tmp_inc_frame = get_tmp_parcel(search_frame, move_line, tmp_inc_point)
+    tmp_inc_frame = get_tmp_parcel(search_frame, move_line, tmp_inc_point)[0]
     
     # マイナス側
     tmp_dec_point = tmp_point.add(dec_point)
-    tmp_dec_frame = get_tmp_parcel(search_frame, move_line, tmp_dec_point)
+    tmp_dec_frame = get_tmp_parcel(search_frame, move_line, tmp_dec_point)[0]
     
     # それぞれの目標値との差分を取得
     tmp_point_diff = math.fabs(target_area - tmp_frame.area)
@@ -141,10 +132,9 @@ def binary_search(search_frame, search_range ,move_line, target_area):
       break
   
   # 決定した点で取得できるFrame取得
-  final_frame = get_tmp_parcel(search_frame, move_line,tmp_point)
-  
-  print(f"2分探索酋長 計算回数:{calc_count} 回 面積:{final_frame.area} / 目標面積：{target_area}")
-  return final_frame
+  parcel_frame, remain_frame = get_tmp_parcel(search_frame, move_line,tmp_point)
+  print(f"2分探索酋長 計算回数:{calc_count} 回 面積:{parcel_frame.area} / 目標面積：{target_area}")
+  return parcel_frame, remain_frame
 
 
 # 判定軸上指定した点から，奥行ベクトルを伸ばし，一時的な区画を取得する
@@ -157,11 +147,12 @@ def get_tmp_parcel(search_frame, move_line, point):
     point (Point): _判定軸上の指定した点
 
   Returns:
-    pointlist (Pointlist): _作成した図形の集合
+    parcel_frame (Frame): _作成した図形の集合
+    remain_frame (Frame): _作成した図形の集合
   """
-  point_list = search_frame.get_tmp_frame(point, move_line)
+  parcel_frame, remain_frame = Frame.get_tmp_frame(search_frame, point, move_line)
   
-  return point_list
+  return parcel_frame, remain_frame
 
 # 直線AB上の点Pから垂直に落とした点Hを求める
 def Get_vertical_intersection(A, B, P):
@@ -183,27 +174,58 @@ def Get_vertical_intersection(A, B, P):
   point_on_judge_line =  Point(OH.x + A.x, OH.y + A.y)
   return point_on_judge_line
 
+
+
+# デバッグ用メイン関数
 def debug_main():
-  # 判定領域
-  # 探索軸の決定
-  # search_frame = Frame(search_frame)
-  search_line_start_point = load_frame[0]
-  search_line_end_point = load_frame[1]
-  search_line = [search_line_start_point,search_line_end_point]
+  """2分探索デバッグ用メイン関数
+
+  Returns:
+      Frame[]: 2分探索した結果の区画のリスト
+  """
   
-  # 探索範囲の取得
-  max, min = get_search_range(search_frame,search_line)
-  search_line_range = [min, max]
+  binary_parcel_list = []
+  
+  move_line = Point(0,50)
+  search_frame = Frame([
+    Point(0,0),
+    Point(300,0),
+    Point(500,100),
+    Point(100,100),
+  ])
+  load_frame = [
+    search_frame.points[0],
+    search_frame.points[1]
+  ]  
+  
+  # DEX準備
+  draw_dxf.clear_dxf()
+  draw_dxf.draw_line_by_point(search_frame.points)
+  
+  target_area = 9000
+  count = 0
+  
+  print(f"search_frame : {search_frame.get_points_str()}")
+  
+  # 探索領域が目標面積取れなくなるまで区画割
+  while(True):
+    print(f"\n{count} 回目")
+    parcel_frame, remain_frame = get_side_parcel(search_frame,load_frame,target_area,move_line)
     
-  # 一時的なポイント処理
-  # tmp_point = Point((min.x + max.x) / 2,(min.y + max.y) / 2)
-  tmp_move_line = Point(0,50)
-  tmp_parcel = binary_search(search_frame, search_line_range ,tmp_move_line, target_area)
+    count += 1
+    binary_parcel_list.append(parcel_frame)
+    
+    if(target_area > remain_frame.area):
+      print(f"探索終了 残り面積{remain_frame.area}")
+      break
+    
+    if(count > 30):
+      # 念のため
+      break
+    
+    search_frame = remain_frame
   
-  drowdxf.cleardxf()
-  drowdxf.drowLine_by_point(search_frame.points)
-  drowdxf.drowLine_by_point(search_line_range)
-  drowdxf.drowLine_by_point_color(tmp_parcel.points,1)
-
-
+  draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
+  return binary_parcel_list
+  
 debug_main()
