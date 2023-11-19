@@ -54,6 +54,17 @@ class Frame:
       remain_frame = Frame(remain_frame_points)
       
       return parcel_frame, remain_frame
+    
+    def move_frame(self, point):
+      for i in range(len(self.points)):
+        self.points[i] = self.points[i].add(point)
+      return self
+
+    def get_points_str(self):
+      str = ""
+      for i in range(len(self.points)):
+        str = f"{str} {self.points[i].get_str()}"
+      return str
 
 
 # search_frame = [
