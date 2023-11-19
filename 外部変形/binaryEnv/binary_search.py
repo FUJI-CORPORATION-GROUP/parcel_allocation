@@ -4,48 +4,38 @@ from point import Point
 from frame import Frame
 import drowdxf
 
-
-frame = [
-  [34262, 19199],
-  [-40496, 19256],
-  [-40505, -2442],
-  [34262, 19199]
-  ]
-
-search_frame = Frame([
-  Point(0,0),
-  Point(300,0),
-  Point(500,100),
-  Point(100,100),
-])
-
-load_frame = [
-  search_frame.points[0],
-  search_frame.points[1]
-]
-target_area = 28000
-
-
-def get_side_parcel():
+def get_side_parcel(search_frame,load_frame,target_area,move_line):
   """端の区画割を行う関数
 
   Args:
-    vecs (list): _枠のarray
-    point (int): _点
+    search_frame (frame): _探索領域
+    load_frame (list[Point]): _道路と接する選
+    target_area (int): _目標面積
+    move_line(Point): _奥行ベクトル
 
   Returns:
-    array: _交点の二点
+    binary_parcel(frame): _2分探索で確保した区画
   """
-
-  # Point型への変換
-
-  # 2分探索の探索軸の最大最小を種痘
-  # search_range = get_search_range()
-
-  # 2分探索で範囲取得
-  # binary_search()
-
-  # return 
+  
+  # 探索軸の決定
+  # TODO: 2本より多い道路の場合の決定方法について検討&実装
+  search_line_start_point = load_frame[0]
+  search_line_end_point = load_frame[1]
+  search_line = [search_line_start_point,search_line_end_point]
+  
+  # 探索範囲の取得
+  max, min = get_search_range(search_frame,search_line)
+  search_line_range = [min, max]
+    
+  # 一時的なポイント処理
+  binary_parcel = binary_search(search_frame, search_line_range ,move_line, target_area)
+  
+  drowdxf.cleardxf()
+  drowdxf.drowLine_by_point(search_frame.points)
+  drowdxf.drowLine_by_point(search_line_range)
+  drowdxf.drowLine_by_point_color(binary_parcel.points,1)
+  
+  return binary_parcel
 
 
 # 探索軸の最大最小の取得
