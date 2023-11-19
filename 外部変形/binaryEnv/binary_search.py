@@ -2,7 +2,7 @@ import math
 import numpy as np
 from point import Point
 from frame import Frame
-import drowdxf
+import draw_dxf
 
 def get_side_parcel(search_frame,load_frame,target_area,move_line):
   """端の区画割を行う関数
