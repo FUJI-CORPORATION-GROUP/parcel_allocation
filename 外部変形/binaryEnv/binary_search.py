@@ -32,7 +32,6 @@ def get_side_parcel(search_frame,load_frame,target_area,move_line):
   parcel_frame, remain_frame = binary_search(search_frame, search_line_range ,move_line, target_area)  
   return parcel_frame,remain_frame
 
-
 # 探索軸の最大最小の取得
 def get_search_range(search_frame, search_line):
   """探索軸の最大最小の取得
@@ -97,6 +96,7 @@ def binary_search(search_frame, search_range ,move_line, target_area):
   tmp_point = Point.get_middle_point(max,min)
   calc_count = 0
   
+  # TODO: 小さすぎると反映されない
   inc_point = Point(max.x - min.x, max.y - min.y).unit()
   dec_point = Point(min.x - max.x, min.y - max.y).unit()
   
@@ -228,4 +228,4 @@ def debug_main():
   draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
   return binary_parcel_list
   
-debug_main()
+# debug_main()
