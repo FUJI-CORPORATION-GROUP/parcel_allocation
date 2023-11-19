@@ -19,7 +19,19 @@ class Frame:
 
     # 直線ABで区切られる区画を返す
     def get_tmp_frame(self, point_A, point_B):
-      tmp_points = []
+      """探索領域を直線ABで区切り,区画と残りの探索領域を取得する
+
+      Args:
+          point_A (Point): _description_
+          point_B (Point): _description_
+
+      Returns:
+          parcel_frame (Frame): _区画_
+          remain_frame (Frame): _残りの探索領域_
+      """
+
+      parcel_points = []
+      remain_frame_points = []
       
       point_B = Point((point_A.x + point_B.x),(point_A.y + point_B.y))
       get_frame_flag = True
@@ -29,15 +41,19 @@ class Frame:
         line_cross = Calc.line_cross_point(point_s, point_e, point_A, point_B)
         
         if(get_frame_flag):
-          tmp_points.append(point_s)
+          parcel_points.append(point_s)
+        else:
+          remain_frame_points.append(point_s)
         
         if (line_cross != None):
-          tmp_points.append(line_cross)
+          parcel_points.append(line_cross)
+          remain_frame_points.append(line_cross)
           get_frame_flag = not get_frame_flag
       
-      tmp_frame = Frame(tmp_points)
+      parcel_frame = Frame(parcel_points)
+      remain_frame = Frame(remain_frame_points)
       
-      return tmp_frame
+      return parcel_frame, remain_frame
 
 
 # search_frame = [
