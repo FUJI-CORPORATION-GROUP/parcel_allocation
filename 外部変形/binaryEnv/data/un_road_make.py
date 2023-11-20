@@ -55,6 +55,6 @@ f.close()
 # 街区
 for i in range(len(frame)):
   if i == len(frame) - 1:
-    info.write(str(frame[i][0]/100000) + " " + str(frame[i][1]/100000) + "\n")
+    info.write(str(frame[i][0]) + " " + str(frame[i][1]) + "\n")
   else:
-    info.write(str(frame[i][0]/100000) + " " + str(frame[i][1]/100000) + " ")
+    info.write(str(frame[i][0]) + " " + str(frame[i][1]) + " ")
