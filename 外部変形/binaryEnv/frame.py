@@ -60,6 +60,12 @@ class Frame:
         self.points[i] = self.points[i].add(point)
       return self
 
+    def debug_move_frame(self, point):
+      debug_points = []
+      for i in range(len(self.points)):
+        debug_points.append(self.points[i].add(point))
+      return Frame(debug_points)
+
     def get_points_str(self):
       str = ""
       for i in range(len(self.points)):
