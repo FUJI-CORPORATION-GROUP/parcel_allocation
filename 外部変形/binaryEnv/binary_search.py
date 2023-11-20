@@ -133,7 +133,7 @@ def binary_search(search_frame, search_range ,move_line, target_area):
   
   # 決定した点で取得できるFrame取得
   parcel_frame, remain_frame = get_tmp_parcel(search_frame, move_line,tmp_point)
-  print(f"2分探索酋長 計算回数:{calc_count} 回 面積:{parcel_frame.area} / 目標面積：{target_area}")
+  print(f"探索終了 計算回数:{calc_count}回 比率：{math.floor(int(parcel_frame.area) / int (target_area)*1000) / 1000}  面積:{math.floor(int(parcel_frame.area)/1000000*1000)/1000}㎡ / 目標面積：{int (target_area)/1000000}㎡")
   return parcel_frame, remain_frame
 
 
