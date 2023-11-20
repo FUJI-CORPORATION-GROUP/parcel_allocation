@@ -13,7 +13,7 @@ def line_cross_point(A, B, C, D, count, calc_count):
   x = A.x + AB.x*sn/d
   y = A.y + AB.y*sn/d
   P = Point(x,y)
-  if(A.distance(B) ==  (P.distance(A) + P.distance(B))):
+  if(A.x <= P.x <= B.x and A.y <= P.y <= B.y) or (A.x >= P.x >= B.x and A.y >= P.y >= B.y) or (A.x <= P.x <= B.x and A.y >= P.y >= B.y) or (A.x >= P.x >= B.x and A.y <= P.y <= B.y):
     return P
 
 # 渡されたframeの面積を計算する関数
