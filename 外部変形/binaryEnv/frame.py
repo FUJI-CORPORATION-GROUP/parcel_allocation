@@ -65,7 +65,21 @@ class Frame:
       for i in range(len(self.points)):
         str = f"{str} {self.points[i].get_str()}"
       return str
-
+    
+    def get_list_xy(self):
+      list_x , list_y = [], []
+      for i in range(len(self.points)):
+        list_x.append(self.points[i].x)
+        list_y.append(self.points[i].x)
+      return list_x,list_y
+    
+    def move_positive(self):
+      list_x, list_y = self.get_list_xy()
+      min_x = abs(min(list_x)) if (min(list_x) < 0) else 0
+      min_y = abs(min(list_y)) if (min(list_y) < 0) else 0
+      
+      move_positive_point = Point(min_x, min_y) 
+      self = self.move_frame(move_positive_point)
 
 # search_frame = [
 #   Point(0,0),
