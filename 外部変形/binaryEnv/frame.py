@@ -1,6 +1,7 @@
 import numpy as np
 from point import Point
 import Calc
+import draw_dxf
 
 class Frame:
     """区画を扱うクラス
@@ -18,7 +19,8 @@ class Frame:
       self.area = Calc.calc_area(self)
 
     # 直線ABで区切られる区画を返す
-    def get_tmp_frame(self, point_A, point_B):
+    def get_tmp_frame(self, point_A, point_B, count,calc_count):
+    # def get_tmp_frame(self, point_A, point_B):
       """探索領域を直線ABで区切り,区画と残りの探索領域を取得する
 
       Args:
@@ -38,7 +40,7 @@ class Frame:
       for i in range(len(self.points)):
         point_s = self.points[i]
         point_e = self.points[i + 1] if(i+1<len(self.points)) else self.points[0]
-        line_cross = Calc.line_cross_point(point_s, point_e, point_A, point_B)
+        line_cross = Calc.line_cross_point(point_s, point_e, point_A, point_B, count,calc_count)
         
         if(get_frame_flag):
           parcel_points.append(point_s)
@@ -86,12 +88,3 @@ class Frame:
       
       move_positive_point = Point(min_x, min_y) 
       self = self.move_frame(move_positive_point)
-
-# search_frame = [
-#   Point(0,0),
-#   Point(300,0),
-#   Point(500,100),
-#   Point(100,100),
-# ]
-# search_frame = Frame(search_frame)
-# print(search_frame.area)

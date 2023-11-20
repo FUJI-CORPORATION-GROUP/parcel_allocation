@@ -1,7 +1,7 @@
 from point import Point
 
 # 線分ABと直線CDの交点
-def line_cross_point(A, B, C, D):
+def line_cross_point(A, B, C, D, count, calc_count):
   AB = Point((B.x - A.x), (B.y - A.y))
   CD = Point((D.x - C.x), (D.y - C.y))
   d = AB.x*CD.y - CD.x*AB.y
