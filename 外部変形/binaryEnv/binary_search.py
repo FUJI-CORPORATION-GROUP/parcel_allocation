@@ -119,10 +119,6 @@ def binary_search(search_frame, search_range ,move_line, target_area,count):
     tmp_inc_point_diff = math.fabs(target_area - tmp_inc_frame.area)
     tmp_dec_point_diff = math.fabs(target_area - tmp_dec_frame.area)
 
-    if(calc_count < 5):
-      tmp_move_frame = tmp_frame.debug_move_frame(Point(0,30000*calc_count))
-      draw_dxf.draw_line_by_point_color(tmp_move_frame.points, calc_count)
-
     calc_count += 1
     if(tmp_point_diff > tmp_inc_point_diff):
       min = tmp_point
@@ -137,9 +133,6 @@ def binary_search(search_frame, search_range ,move_line, target_area,count):
   
   # 決定した点で取得できるFrame取得
   parcel_frame, remain_frame = Frame.get_tmp_frame(search_frame, move_line,tmp_point, first_min,count,calc_count)
-  if(count == 2):
-    draw_dxf.draw_line_by_point_color(parcel_frame.points, 1)
-    draw_dxf.draw_line_by_point_color(remain_frame.points, 5)
   
   print(f"探索終了 計算回数:{calc_count}回 比率：{math.floor(int(parcel_frame.area) / int (target_area)*1000) / 1000}  面積:{math.floor(int(parcel_frame.area)/1000000*1000)/1000}㎡ / 目標面積：{int (target_area)/1000000}㎡")
   return parcel_frame, remain_frame
@@ -215,7 +208,7 @@ def debug_main():
     
     search_frame = remain_frame
   
-  draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
+  # draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
   return binary_parcel_list
   
 # debug_main()

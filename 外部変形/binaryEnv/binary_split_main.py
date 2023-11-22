@@ -108,8 +108,6 @@ def main():
 
   # 探索領域が目標面積取れなくなるまで区画割
   while(True):
-    if(count >= 3):
-      break
     print(f"\n{count} 回目")
     parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,load_frame[0],target_area,move_line,count)
     
@@ -127,7 +125,7 @@ def main():
     
     search_frame = remain_frame
 
-  # draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
+  draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
   
   
 main()
