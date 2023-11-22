@@ -35,10 +35,7 @@ class Frame:
 
       point_list_A = []
       point_list_B = []
-      
-      point_B = Point((point_A.x + point_B.x),(point_A.y + point_B.y))
-      # TODO True/Falseの決定
-    
+      point_A = Point((point_A.x + point_B.x),(point_A.y + point_B.y))
       get_frame_flag = True
       for i in range(len(self.points)):
         point_s = self.points[i]
