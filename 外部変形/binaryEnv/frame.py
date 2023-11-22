@@ -78,7 +78,7 @@ class Frame:
       list_x , list_y = [], []
       for i in range(len(self.points)):
         list_x.append(self.points[i].x)
-        list_y.append(self.points[i].x)
+        list_y.append(self.points[i].y)
       return list_x,list_y
     
     def move_positive(self):
@@ -88,3 +88,9 @@ class Frame:
       
       move_positive_point = Point(min_x, min_y) 
       self = self.move_frame(move_positive_point)
+    
+    def move_zero(self):
+      list_x, list_y = self.get_list_xy()
+      min_x,min_y = min(list_x),min(list_y)
+      move_zero_point = Point(-1 * min_x, -1 * min_y) 
+      self = self.move_frame(move_zero_point)

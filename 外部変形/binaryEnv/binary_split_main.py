@@ -77,7 +77,7 @@ def main():
     frame[i] = Point(frame[i][0], frame[i][1])
   frame = Frame(frame)
   print("Before"+frame.get_points_str())
-  frame.move_positive()
+  frame.move_zero()
   print("After"+frame.get_points_str())
   
   load_frame = load_edge
