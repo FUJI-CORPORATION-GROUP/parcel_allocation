@@ -95,25 +95,25 @@ def binary_search(search_frame, search_range ,move_line, target_area,count):
   max = first_max
   tmp_point = Point.get_middle_point(max,min)
   calc_count = 0
-  
+
   # TODO: 小さすぎると反映されない
   inc_point = Point(max.x - min.x, max.y - min.y).unit()
   dec_point = Point(min.x - max.x, min.y - max.y).unit()
-  
+
   # 2分探索で適切な点を決定する
   while (first_min.distance(min) < first_min.distance(max)):
     # 中央値取得
     tmp_point = Point.get_middle_point(max,min)
-    tmp_frame = get_tmp_parcel(search_frame, move_line, tmp_point,count,calc_count)[0]
-    
+    tmp_frame = Frame.get_tmp_frame(search_frame, move_line, tmp_point,count,calc_count)[0]
+
     # プラス側
     tmp_inc_point = tmp_point.add(inc_point)
-    tmp_inc_frame = get_tmp_parcel(search_frame, move_line, tmp_inc_point,count,calc_count)[0]
-    
+    tmp_inc_frame = Frame.get_tmp_frame(search_frame, move_line, tmp_inc_point,count,calc_count)[0]
+
     # マイナス側
     tmp_dec_point = tmp_point.add(dec_point)
-    tmp_dec_frame = get_tmp_parcel(search_frame, move_line, tmp_dec_point,count,calc_count)[0]
-    
+    tmp_dec_frame = Frame.get_tmp_frame(search_frame, move_line, tmp_dec_point,count,calc_count)[0]
+
     # それぞれの目標値との差分を取得
     tmp_point_diff = math.fabs(target_area - tmp_frame.area)
     tmp_inc_point_diff = math.fabs(target_area - tmp_inc_frame.area)
@@ -132,26 +132,9 @@ def binary_search(search_frame, search_range ,move_line, target_area,count):
       break
   
   # 決定した点で取得できるFrame取得
-  parcel_frame, remain_frame = get_tmp_parcel(search_frame, move_line,tmp_point, count,calc_count)
-  print(f"探索終了 計算回数:{calc_count}回 比率：{math.floor(int(parcel_frame.area) / int (target_area)*1000) / 1000}  面積:{math.floor(int(parcel_frame.area)/1000000*1000)/1000}㎡ / 目標面積：{int (target_area)/1000000}㎡")
-  return parcel_frame, remain_frame
-
-
-# 判定軸上指定した点から，奥行ベクトルを伸ばし，一時的な区画を取得する
-def get_tmp_parcel(search_frame, move_line, point, count, calc_count):
-  """判定軸上指定した点から，奥行ベクトルを伸ばし，一時的な区画を取得する
-
-  Args:
-    search_frame (list): _探索領域のArray
-    move_line (list): _奥行を示す単位ベクトル
-    point (Point): _判定軸上の指定した点
-
-  Returns:
-    parcel_frame (Frame): _作成した図形の集合
-    remain_frame (Frame): _作成した図形の集合
-  """
-  parcel_frame, remain_frame = Frame.get_tmp_frame(search_frame, point, move_line, count, calc_count)
+  parcel_frame, remain_frame = Frame.get_tmp_frame(search_frame, move_line,tmp_point, count,calc_count)
   
+  print(f"探索終了 計算回数:{calc_count}回 比率：{math.floor(int(parcel_frame.area) / int (target_area)*1000) / 1000}  面積:{math.floor(int(parcel_frame.area)/1000000*1000)/1000}㎡ / 目標面積：{int (target_area)/1000000}㎡")
   return parcel_frame, remain_frame
 
 # 直線AB上の点Pから垂直に落とした点Hを求める
