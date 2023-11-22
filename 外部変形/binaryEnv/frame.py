@@ -19,23 +19,26 @@ class Frame:
       self.area = Calc.calc_area(self)
 
     # 直線ABで区切られる区画を返す
-    def get_tmp_frame(self, point_A, point_B, count,calc_count):
+    def get_tmp_frame(self, point_A, point_B, min_point, count,calc_count):
     # def get_tmp_frame(self, point_A, point_B):
       """探索領域を直線ABで区切り,区画と残りの探索領域を取得する
 
       Args:
           point_A (Point): _description_
           point_B (Point): _description_
+          min_point (Point): _探索範囲の最小値_
 
       Returns:
           parcel_frame (Frame): _区画_
           remain_frame (Frame): _残りの探索領域_
       """
 
-      parcel_points = []
-      remain_frame_points = []
+      point_list_A = []
+      point_list_B = []
       
       point_B = Point((point_A.x + point_B.x),(point_A.y + point_B.y))
+      # TODO True/Falseの決定
+    
       get_frame_flag = True
       for i in range(len(self.points)):
         point_s = self.points[i]
@@ -43,17 +46,31 @@ class Frame:
         line_cross = Calc.line_cross_point(point_s, point_e, point_A, point_B, count,calc_count)
         
         if(get_frame_flag):
-          parcel_points.append(point_s)
+          point_list_A.append(point_s)
         else:
-          remain_frame_points.append(point_s)
+          point_list_B.append(point_s)
         
         if (line_cross != None):
-          parcel_points.append(line_cross)
-          remain_frame_points.append(line_cross)
+          point_list_A.append(line_cross)
+          point_list_B.append(line_cross)
           get_frame_flag = not get_frame_flag
       
-      parcel_frame = Frame(parcel_points)
-      remain_frame = Frame(remain_frame_points)
+      
+      tmp_frame_A = Frame(point_list_A)
+      tmp_frame_B = Frame(point_list_B)
+      
+      # どっちのFrameを採用するかの判定
+      tmp_barycenter_A = tmp_frame_A.get_barycenter()
+      tmp_barycenter_B = tmp_frame_B.get_barycenter()
+      tmp_distance_A = tmp_barycenter_A.distance(min_point)
+      tmp_distance_B = tmp_barycenter_B.distance(min_point)
+      if(tmp_distance_A < tmp_distance_B):
+        parcel_frame = tmp_frame_A
+        remain_frame = tmp_frame_B
+      else:
+        parcel_frame = tmp_frame_B
+        remain_frame = tmp_frame_A
+      
       
       return parcel_frame, remain_frame
     
@@ -94,3 +111,16 @@ class Frame:
       min_x,min_y = min(list_x),min(list_y)
       move_zero_point = Point(-1 * min_x, -1 * min_y) 
       self = self.move_frame(move_zero_point)
+    
+    def get_barycenter(self):
+      num_points = len(self.points)
+
+      if num_points == 0:
+          raise ValueError("pointsないよ")
+
+      sum_x = sum(point.x for point in self.points)
+      sum_y = sum(point.y for point in self.points)
+
+      barycenter = Point(sum_x / num_points, sum_y / num_points)
+
+      return barycenter

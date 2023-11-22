@@ -76,9 +76,7 @@ def main():
   for i in range(len(frame)):
     frame[i] = Point(frame[i][0], frame[i][1])
   frame = Frame(frame)
-  print("Before"+frame.get_points_str())
   frame.move_zero()
-  print("After"+frame.get_points_str())
   
   load_frame = load_edge
   for i in range(len(load_edge)):
@@ -104,12 +102,15 @@ def main():
   count = 0
   # target_area = 1000
 
-  print(f"search_frame : {search_frame.get_points_str()}")
+  # print(f"search_frame : {search_frame.get_points_str()}")
 
   # 探索領域が目標面積取れなくなるまで区画割
   while(True):
+    if(count >= 3):
+      break
     print(f"\n{count} 回目")
     parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,load_frame[0],target_area,move_line,count)
+    
     
     count += 1
     binary_parcel_list.append(parcel_frame)
@@ -124,7 +125,7 @@ def main():
     
     search_frame = remain_frame
 
-  draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
+  # draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
   
   
 main()
