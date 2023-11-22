@@ -19,28 +19,26 @@ class Frame:
       self.area = Calc.calc_area(self)
 
     # 直線ABで区切られる区画を返す
-    def get_tmp_frame(self, point_A, point_B, min_point, count,calc_count):
-    # def get_tmp_frame(self, point_A, point_B):
+    def get_tmp_frame(self, move_line_point, binary_point, min_point, count,calc_count):
       """探索領域を直線ABで区切り,区画と残りの探索領域を取得する
 
       Args:
-          point_A (Point): _description_
-          point_B (Point): _description_
+          move_line_point (Point): _奥行ベクトル_
+          binary_point (Point): _2分探索中の点_
           min_point (Point): _探索範囲の最小値_
 
       Returns:
           parcel_frame (Frame): _区画_
           remain_frame (Frame): _残りの探索領域_
       """
-      point_list_A = []
-      point_list_B = []
-      point_A = Point((point_A.x + point_B.x),(point_A.y + point_B.y))
+      point_list_A, point_list_B = [], []
+      move_line_point = move_line_point.add(binary_point)
 
       get_frame_flag = True
       for i in range(len(self.points)):
         point_s = self.points[i]
         point_e = self.points[i + 1] if(i+1<len(self.points)) else self.points[0]
-        line_cross = Calc.line_cross_point(point_s, point_e, point_A, point_B, count,calc_count)
+        line_cross = Calc.line_cross_point(point_s, point_e, move_line_point, binary_point, count,calc_count)
         
         if(get_frame_flag):
           point_list_A.append(point_s)
@@ -52,22 +50,16 @@ class Frame:
           point_list_B.append(line_cross)
           get_frame_flag = not get_frame_flag
       
-      
       tmp_frame_A = Frame(point_list_A)
       tmp_frame_B = Frame(point_list_B)
       
-      # どっちのFrameを採用するかの判定
+      # Frame判定
       tmp_barycenter_A = tmp_frame_A.get_barycenter()
       tmp_barycenter_B = tmp_frame_B.get_barycenter()
-      tmp_distance_A = tmp_barycenter_A.distance(min_point)
-      tmp_distance_B = tmp_barycenter_B.distance(min_point)
-      if(tmp_distance_A < tmp_distance_B):
-        parcel_frame = tmp_frame_A
-        remain_frame = tmp_frame_B
-      else:
-        parcel_frame = tmp_frame_B
-        remain_frame = tmp_frame_A
-      
+      tmp_distance_A_min = tmp_barycenter_A.distance(min_point)
+      tmp_distance_B_min = tmp_barycenter_B.distance(min_point)
+      parcel_frame = tmp_frame_A if(tmp_distance_A_min < tmp_distance_B_min) else tmp_frame_B
+      remain_frame = tmp_frame_B if(tmp_distance_A_min < tmp_distance_B_min) else tmp_frame_A
       
       return parcel_frame, remain_frame
     
