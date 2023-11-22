@@ -94,6 +94,8 @@ def main():
 
   # 探索領域
   search_frame = frame
+  
+  # TODO: 奥行ベクトルの作成
   move_line = Point(0,50)
 
   draw_dxf.clear_dxf()
