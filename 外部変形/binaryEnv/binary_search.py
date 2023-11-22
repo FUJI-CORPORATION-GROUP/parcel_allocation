@@ -4,7 +4,7 @@ from point import Point
 from frame import Frame
 import draw_dxf
 
-def get_side_parcel(search_frame,load_frame,target_area,move_line):
+def get_side_parcel(search_frame,load_frame,target_area,move_line,count):
   """端の区画割を行う関数
 
   Args:
@@ -29,7 +29,7 @@ def get_side_parcel(search_frame,load_frame,target_area,move_line):
   search_line_range = [min, max]
 
   # 一時的なポイント処理
-  parcel_frame, remain_frame = binary_search(search_frame, search_line_range ,move_line, target_area)  
+  parcel_frame, remain_frame = binary_search(search_frame, search_line_range ,move_line, target_area, count)  
   return parcel_frame,remain_frame
 
 # 探索軸の最大最小の取得
@@ -77,7 +77,7 @@ def get_search_range(search_frame, search_line):
 # 探索領域のArr
 # 奥行ベクトル
 # 目標面積
-def binary_search(search_frame, search_range ,move_line, target_area):
+def binary_search(search_frame, search_range ,move_line, target_area,count):
   """二分探索を行う関数
 
   Args:
@@ -104,15 +104,15 @@ def binary_search(search_frame, search_range ,move_line, target_area):
   while (first_min.distance(min) < first_min.distance(max)):
     # 中央値取得
     tmp_point = Point.get_middle_point(max,min)
-    tmp_frame = get_tmp_parcel(search_frame, move_line, tmp_point)[0]
+    tmp_frame = get_tmp_parcel(search_frame, move_line, tmp_point,count,calc_count)[0]
     
     # プラス側
     tmp_inc_point = tmp_point.add(inc_point)
-    tmp_inc_frame = get_tmp_parcel(search_frame, move_line, tmp_inc_point)[0]
+    tmp_inc_frame = get_tmp_parcel(search_frame, move_line, tmp_inc_point,count,calc_count)[0]
     
     # マイナス側
     tmp_dec_point = tmp_point.add(dec_point)
-    tmp_dec_frame = get_tmp_parcel(search_frame, move_line, tmp_dec_point)[0]
+    tmp_dec_frame = get_tmp_parcel(search_frame, move_line, tmp_dec_point,count,calc_count)[0]
     
     # それぞれの目標値との差分を取得
     tmp_point_diff = math.fabs(target_area - tmp_frame.area)
@@ -132,13 +132,13 @@ def binary_search(search_frame, search_range ,move_line, target_area):
       break
   
   # 決定した点で取得できるFrame取得
-  parcel_frame, remain_frame = get_tmp_parcel(search_frame, move_line,tmp_point)
-  print(f"2分探索酋長 計算回数:{calc_count} 回 面積:{parcel_frame.area} / 目標面積：{target_area}")
+  parcel_frame, remain_frame = get_tmp_parcel(search_frame, move_line,tmp_point, count,calc_count)
+  print(f"探索終了 計算回数:{calc_count}回 比率：{math.floor(int(parcel_frame.area) / int (target_area)*1000) / 1000}  面積:{math.floor(int(parcel_frame.area)/1000000*1000)/1000}㎡ / 目標面積：{int (target_area)/1000000}㎡")
   return parcel_frame, remain_frame
 
 
 # 判定軸上指定した点から，奥行ベクトルを伸ばし，一時的な区画を取得する
-def get_tmp_parcel(search_frame, move_line, point):
+def get_tmp_parcel(search_frame, move_line, point, count, calc_count):
   """判定軸上指定した点から，奥行ベクトルを伸ばし，一時的な区画を取得する
 
   Args:
@@ -150,7 +150,7 @@ def get_tmp_parcel(search_frame, move_line, point):
     parcel_frame (Frame): _作成した図形の集合
     remain_frame (Frame): _作成した図形の集合
   """
-  parcel_frame, remain_frame = Frame.get_tmp_frame(search_frame, point, move_line)
+  parcel_frame, remain_frame = Frame.get_tmp_frame(search_frame, point, move_line, count, calc_count)
   
   return parcel_frame, remain_frame
 

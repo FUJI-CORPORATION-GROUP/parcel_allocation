@@ -109,7 +109,7 @@ def main():
   # 探索領域が目標面積取れなくなるまで区画割
   while(True):
     print(f"\n{count} 回目")
-    parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,load_frame[0],target_area,move_line)
+    parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,load_frame[0],target_area,move_line,count)
     
     count += 1
     binary_parcel_list.append(parcel_frame)

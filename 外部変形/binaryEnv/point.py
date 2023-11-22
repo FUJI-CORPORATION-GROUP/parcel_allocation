@@ -56,7 +56,7 @@ class Point:
         return array
     
     def get_str(self):
-        return f"({self.x}, {self.y})"
+        return f"({int(self.x)}, {int(self.y)})"
     
     # ABの内席取得
     def dot(A,B):
