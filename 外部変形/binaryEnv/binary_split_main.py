@@ -76,9 +76,7 @@ def main():
   for i in range(len(frame)):
     frame[i] = Point(frame[i][0], frame[i][1])
   frame = Frame(frame)
-  print("Before"+frame.get_points_str())
-  frame.move_positive()
-  print("After"+frame.get_points_str())
+  frame.move_zero()
   
   load_frame = load_edge
   for i in range(len(load_edge)):
@@ -96,6 +94,8 @@ def main():
 
   # 探索領域
   search_frame = frame
+  
+  # TODO: 奥行ベクトルの作成
   move_line = Point(0,50)
 
   draw_dxf.clear_dxf()
@@ -104,12 +104,13 @@ def main():
   count = 0
   # target_area = 1000
 
-  print(f"search_frame : {search_frame.get_points_str()}")
+  # print(f"search_frame : {search_frame.get_points_str()}")
 
   # 探索領域が目標面積取れなくなるまで区画割
   while(True):
     print(f"\n{count} 回目")
     parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,load_frame[0],target_area,move_line,count)
+    
     
     count += 1
     binary_parcel_list.append(parcel_frame)
