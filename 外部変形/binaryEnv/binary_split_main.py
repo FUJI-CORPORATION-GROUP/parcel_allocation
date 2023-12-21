@@ -1,3 +1,5 @@
+import math
+import random
 from point import Point
 from frame import Frame
 import binary_search
@@ -103,12 +105,13 @@ def main():
   binary_parcel_list = []
   count = 0
   # target_area = 1000
-
-  # print(f"search_frame : {search_frame.get_points_str()}")
+  target_min_area = 90000000
+  target_max_area = 110000000
 
   # 探索領域が目標面積取れなくなるまで区画割
   while(True):
-    print(f"\n{count} 回目")
+    target_area = random.randint(target_min_area,target_max_area)
+    print(f"\n{count} 回目 探索開始 目標面積：{target_area}")
     parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,load_frame[0],target_area,move_line,count)
     
     
@@ -116,7 +119,7 @@ def main():
     binary_parcel_list.append(parcel_frame)
     
     if(target_area > remain_frame.area):
-      print(f"探索終了 残り面積{remain_frame.area}")
+      print(f"探索終了 残り面積{math.floor(remain_frame.area/1000000)}㎡")
       break
     
     if(count > 30):
