@@ -76,5 +76,8 @@ class Point:
     def add(self,point):
         return Point (self.x + point.x,self.y + point.y)
     
+    def sub(self,point):
+        return Point (self.x - point.x,self.y - point.y)
+    
     def unit(self):
         return Point(self.x / self.magnitude(),self.y / self.magnitude())

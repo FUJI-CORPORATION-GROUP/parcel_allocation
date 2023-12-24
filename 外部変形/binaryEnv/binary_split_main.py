@@ -108,6 +108,19 @@ def main():
   target_min_area = 90000000
   target_max_area = 110000000
 
+  if(len(road_frame) > 1):
+    print("道路が2本以上あります")
+    exit()
+  elif(len(road_frame) == 0):
+    print("道路がありません")
+    exit()
+
+  # 道路方向ベクトル取得
+  # TODO:0番目しかないと仮定．今後の入力形態に入力形態によって変更
+  road_vec = road_frame[0][1].sub(road_frame[0][0])
+  # 道路方向ベクトルを回転させてMoveLineを取得
+  move_line = Point(-1 * road_vec.y, road_vec.x)
+
   # 探索領域が目標面積取れなくなるまで区画割
   while(True):
     target_area = random.randint(target_min_area,target_max_area)
