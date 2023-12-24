@@ -64,23 +64,50 @@ class Frame:
       return parcel_frame, remain_frame
     
     def move_frame(self, point):
+      """区画自体を移動量ベクトル方向に動かす
+
+      Args:
+          point (Point): 移動する方向ベクトル
+
+      Returns:
+          Frame: 移動した区画
+      """
       for i in range(len(self.points)):
         self.points[i] = self.points[i].add(point)
       return self
 
     def debug_move_frame(self, point):
+      """デバッグ用：移動量ベクトル移動した区画を取得する（区画自体は移動しない）
+
+      Args:
+          point (Point): 移動する方向ベクトル
+
+      Returns:
+          Frame: 移動した場合の新しい区画
+      """
       debug_points = []
       for i in range(len(self.points)):
         debug_points.append(self.points[i].add(point))
       return Frame(debug_points)
 
     def get_points_str(self):
+      """区画の座標を文字列で取得する
+
+      Returns:
+          str: 座標文字列
+      """
       str = ""
       for i in range(len(self.points)):
         str = f"{str} {self.points[i].get_str()}"
       return str
     
     def get_list_xy(self):
+      """区画の座標をリストで取得する
+
+      Returns:
+          list: x座標リスト
+          list: y座標リスト
+      """
       list_x , list_y = [], []
       for i in range(len(self.points)):
         list_x.append(self.points[i].x)
@@ -88,6 +115,8 @@ class Frame:
       return list_x,list_y
     
     def move_positive(self):
+      """区画を第一象限に移動する
+      """
       list_x, list_y = self.get_list_xy()
       min_x = abs(min(list_x)) if (min(list_x) < 0) else 0
       min_y = abs(min(list_y)) if (min(list_y) < 0) else 0
@@ -96,12 +125,22 @@ class Frame:
       self = self.move_frame(move_positive_point)
     
     def move_zero(self):
+      """区画を原点に移動する
+      """
       list_x, list_y = self.get_list_xy()
       min_x,min_y = min(list_x),min(list_y)
       move_zero_point = Point(-1 * min_x, -1 * min_y) 
       self = self.move_frame(move_zero_point)
     
     def get_barycenter(self):
+      """区画の重心を取得する
+
+      Raises:
+          ValueError: pointsがない場合
+
+      Returns:
+          Point: 区画の重心
+      """
       num_points = len(self.points)
 
       if num_points == 0:
