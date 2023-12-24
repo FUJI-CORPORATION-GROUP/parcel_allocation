@@ -53,13 +53,24 @@ class Frame:
       tmp_frame_A = Frame(point_list_A)
       tmp_frame_B = Frame(point_list_B)
       
-      # Frame判定
-      tmp_barycenter_A = tmp_frame_A.get_barycenter()
-      tmp_barycenter_B = tmp_frame_B.get_barycenter()
-      tmp_distance_A_min = tmp_barycenter_A.distance(min_point)
-      tmp_distance_B_min = tmp_barycenter_B.distance(min_point)
-      parcel_frame = tmp_frame_A if(tmp_distance_A_min < tmp_distance_B_min) else tmp_frame_B
-      remain_frame = tmp_frame_B if(tmp_distance_A_min < tmp_distance_B_min) else tmp_frame_A
+      if(tmp_frame_A.get_point_counts() < 0 and tmp_frame_B.get_point_counts() < 0):
+        # ERR
+        print("ERR: 2分探索失敗")
+        raise ValueError("2分探索失敗")
+        exit()
+      elif(tmp_frame_A.get_point_counts() < 1):
+        parcel_frame = tmp_frame_A
+        remain_frame = tmp_frame_B
+      elif(tmp_frame_B.get_point_counts() < 1):
+        parcel_frame = tmp_frame_B
+        remain_frame = tmp_frame_A
+      else:
+        tmp_barycenter_A = tmp_frame_A.get_barycenter()
+        tmp_barycenter_B = tmp_frame_B.get_barycenter()
+        tmp_distance_A_min = tmp_barycenter_A.distance(min_point)
+        tmp_distance_B_min = tmp_barycenter_B.distance(min_point)
+        parcel_frame = tmp_frame_A if(tmp_distance_A_min < tmp_distance_B_min) else tmp_frame_B
+        remain_frame = tmp_frame_B if(tmp_distance_A_min < tmp_distance_B_min) else tmp_frame_A
       
       return parcel_frame, remain_frame
     
