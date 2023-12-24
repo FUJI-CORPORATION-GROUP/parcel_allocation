@@ -103,8 +103,9 @@ def main():
   binary_parcel_list = []
   count = 0
   # target_area = 1000
-  target_min_area = 90000000
-  target_max_area = 110000000
+  rate = 1000000
+  target_min_area = 90000000 * rate
+  target_max_area = 110000000 * rate
 
   if(len(road_frame) > 1):
     print("道路が2本以上あります")
