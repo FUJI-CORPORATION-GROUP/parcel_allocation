@@ -122,15 +122,20 @@ def main():
 
   # 探索領域が目標面積取れなくなるまで区画割
   while(True):
-    target_area = random.randint(target_min_area,target_max_area)
-    print(f"\n{count} 回目 探索開始 目標面積：{target_area}")
+    if(search_frame.area > target_max_area):
+      target_area = random.randint(target_min_area,target_max_area)
+      print(f"\n{count} 回目 探索開始 ランダム目標面積：{target_area}")
+    else:
+      target_area = target_max_area
+      print(f"\n{count} 回目 探索開始 最小目標面積：{target_area}")
+  
     parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,road_frame[0],target_area,move_line,count)
     
     
     count += 1
     binary_parcel_list.append(parcel_frame)
     
-    if(target_area > remain_frame.area):
+    if(target_min_area > remain_frame.area):
       print(f"探索終了 残り面積{math.floor(remain_frame.area/1000000)}㎡")
       break
     
