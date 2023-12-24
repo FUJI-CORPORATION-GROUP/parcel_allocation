@@ -58,26 +58,67 @@ class Point:
     def get_str(self):
         return f"({int(self.x)}, {int(self.y)})"
     
-    # ABの内席取得
     def dot(A,B):
+        """内積を求める関数
+
+        Args:
+            A (Point): 点Aの座標
+            B (Point): 点Bの座標
+
+        Returns:
+            float: 内積
+        """
         A = np.array([A.x,A.y])
         B = np.array([B.x,B.y])
         return np.dot(A, B)
     
-    # ベクトルの大きさの取得
     def magnitude(self):
+        """ベクトルの大きさを求める関数
+
+        Returns:
+            float: ベクトルの大きさ
+        """
         self = np.array([self.x,self.y])
         return np.linalg.norm(self)
     
-    # 点A,点Bの中点の取得
     def get_middle_point(A,B):
+        """点A,点Bの中点を求める関数
+
+        Args:
+            A (Point): 点Aの座標
+            B (Point): 点Bの座標
+
+        Returns:
+            Point: 点A,点Bの中点
+        """
         return Point((A.x + B.x)/2,(A.y + B.y)/2)
     
     def add(self,point):
+        """点同士の足し算
+
+        Args:
+            point (Point): 加算する点
+
+        Returns:
+            Point: 加算した点
+        """
         return Point (self.x + point.x,self.y + point.y)
     
     def sub(self,point):
+        """点同士の引き算
+
+        Args:
+            point (Point): 減算する点
+
+        Returns:
+            _type_: 減算した点
+        """
         return Point (self.x - point.x,self.y - point.y)
     
     def unit(self):
+        """単位ベクトルの取得
+
+        Returns:
+            Point: 単位ベクトル
+        """
         return Point(self.x / self.magnitude(),self.y / self.magnitude())

@@ -5,17 +5,18 @@ from frame import Frame
 import draw_dxf
 
 def get_side_parcel(search_frame,load_frame,target_area,move_line,count):
-  """端の区画割を行う関数
+  """探索領域を直線ABで区切り,区画と残りの探索領域を取得する
 
   Args:
-    search_frame (frame): _探索領域
-    load_frame (list[Point]): _道路と接する選
-    target_area (int): _目標面積
-    move_line(Point): _奥行ベクトル
+      search_frame (frame): _探索領域
+      load_frame (list[Point]): _道路と接する選
+      target_area (int): _目標面積
+      move_line(Point): _奥行ベクトル
+      count (int): _住戸確保回数
 
   Returns:
-    parcel_frame(Frame): _2分探索で確保した区画
-    remain_frame(Frame): _2分探索で確保した区画
+      parcel_frame(Frame): _2分探索で確保した区画
+      remain_frame(Frame): _残りの区画
   """
 
   # 探索軸の決定
@@ -85,6 +86,7 @@ def binary_search(search_frame, search_range ,move_line, target_area,count):
     search_range (list): 探索軸の最大最小
     move_line (Point): _奥行ベクトル
     target_area (int): _その時点の目標面積
+    count (int): _住戸確保回数
 
   Returns:
     binary_point (Frame): _二分探索結果の座標
