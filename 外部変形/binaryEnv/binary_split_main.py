@@ -18,7 +18,7 @@ def main():
   line_count = 0
   road_edge_pt = []
   frame = []
-  load_edge = []
+  road_edge = []
   rm_list = []
 
 
@@ -61,17 +61,17 @@ def main():
 
   #ふたつずつ座標をまとめる：road_edge
   for i in range(int(len(road_edge_pt) / 2)):
-    load_edge.append([road_edge_pt[i * 2], road_edge_pt[i * 2 + 1]])
+    road_edge.append([road_edge_pt[i * 2], road_edge_pt[i * 2 + 1]])
 
   #余計な道を削除
   for i in range(len(rm_list)):
-    load_edge.remove(load_edge[rm_list[i]])
+    road_edge.remove(road_edge[rm_list[i]])
 
 
   print(" ")
   print("goal_area:" + str(target_area))
   print("frame:" + str(frame))
-  print("road_edge:" + str(load_edge))
+  print("road_edge:" + str(road_edge))
   print(" ")
 
   # classの変更
@@ -79,20 +79,18 @@ def main():
     frame[i] = Point(frame[i][0], frame[i][1])
   frame = Frame(frame)
   frame.move_zero()
-  
-  load_frame = load_edge
-  for i in range(len(load_edge)):
-    for k in range(len(load_edge[i])):
-      load_frame[i][k] = Point(load_edge[i][k][0], load_edge[i][k][1])
-
+  road_frame = road_edge
+  for i in range(len(road_edge)):
+    for k in range(len(road_edge[i])):
+      road_frame[i][k] = Point(road_edge[i][k][0], road_edge[i][k][1])
   # デバッグ用
   # target_area = 28000
 
   # 二分探索の実行
   # 道に接する辺の数だけ実行
   # 計算毎にseach_frameを変更しながら計算する
-  # for i in range(len(load_edge)):
-  #   binary_search.debug_main(load_edge[i], frame, target_area)
+  # for i in range(len(road_edge)):
+  #   binary_search.debug_main(road_edge[i], frame, target_area)
 
   # 探索領域
   search_frame = frame
@@ -125,7 +123,7 @@ def main():
   while(True):
     target_area = random.randint(target_min_area,target_max_area)
     print(f"\n{count} 回目 探索開始 目標面積：{target_area}")
-    parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,load_frame[0],target_area,move_line,count)
+    parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,road_frame[0],target_area,move_line,count)
     
     
     count += 1
