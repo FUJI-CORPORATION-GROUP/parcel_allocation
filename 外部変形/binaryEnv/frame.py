@@ -80,6 +80,14 @@ class Frame:
         str = f"{str} {self.points[i].get_str()}"
       return str
     
+    def get_point_counts(self):
+      """区画の頂点数を取得する
+
+      Returns:
+          int: _区画の頂点数_
+      """
+      return len(self.points)
+    
     def get_list_xy(self):
       list_x , list_y = [], []
       for i in range(len(self.points)):
