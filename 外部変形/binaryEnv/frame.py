@@ -1,6 +1,6 @@
 import numpy as np
 from point import Point
-import Calc
+import binary_calc as Calc
 import draw_dxf
 
 class Frame:
@@ -19,7 +19,7 @@ class Frame:
       self.area = Calc.calc_area(self)
 
     # 直線ABで区切られる区画を返す
-    def get_tmp_frame(self, move_line_point, binary_point, min_point, count,calc_count):
+    def get_tmp_frame(self, move_line_point, binary_point, min_point,max_point, count,calc_count):
       """探索領域を直線ABで区切り,区画と残りの探索領域を取得する
 
       Args:
@@ -65,13 +65,13 @@ class Frame:
         parcel_frame = tmp_frame_B
         remain_frame = tmp_frame_A
       else:
-        tmp_barycenter_A = tmp_frame_A.get_barycenter()
-        tmp_barycenter_B = tmp_frame_B.get_barycenter()
+        tmp_barycenter_A = Calc.Get_vertical_intersection(min_point,max_point,tmp_frame_A.get_barycenter())
+        tmp_barycenter_B = Calc.Get_vertical_intersection(min_point,max_point,tmp_frame_B.get_barycenter())
         tmp_distance_A_min = tmp_barycenter_A.distance(min_point)
         tmp_distance_B_min = tmp_barycenter_B.distance(min_point)
         parcel_frame = tmp_frame_A if(tmp_distance_A_min < tmp_distance_B_min) else tmp_frame_B
         remain_frame = tmp_frame_B if(tmp_distance_A_min < tmp_distance_B_min) else tmp_frame_A
-      
+
       return parcel_frame, remain_frame
     
     def move_frame(self, point):
