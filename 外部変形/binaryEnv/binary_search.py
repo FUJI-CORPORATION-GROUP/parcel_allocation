@@ -2,6 +2,7 @@ import math
 import numpy as np
 from point import Point
 from frame import Frame
+import binary_calc as Calc
 import draw_dxf
 
 def get_side_parcel(search_frame,load_frame,target_area,move_line,count):
@@ -26,7 +27,7 @@ def get_side_parcel(search_frame,load_frame,target_area,move_line,count):
   search_line = [search_line_start_point,search_line_end_point]
 
   # 探索範囲の取得
-  max, min = get_search_range(search_frame,search_line)
+  max, min = get_search_range(search_frame,search_line,count)
   search_line_range = [min, max]
 
   # 一時的なポイント処理
@@ -34,7 +35,7 @@ def get_side_parcel(search_frame,load_frame,target_area,move_line,count):
   return parcel_frame,remain_frame
 
 # 探索軸の最大最小の取得
-def get_search_range(search_frame, search_line):
+def get_search_range(search_frame, search_line, count):
   """探索軸の最大最小の取得
 
   Args:
@@ -117,15 +118,15 @@ def binary_search(search_frame, search_range ,move_line, target_area,count):
   while (first_min.distance(min) < first_min.distance(max)):
     # 中央値取得
     tmp_point = Point.get_middle_point(max,min)
-    tmp_frame = Frame.get_tmp_frame(search_frame, move_line, tmp_point,first_min,count,calc_count)[0]
+    tmp_frame = Frame.get_tmp_frame(search_frame, move_line, tmp_point,first_min,first_max,count,calc_count)[0]
 
     # プラス側
     tmp_inc_point = tmp_point.add(inc_point)
-    tmp_inc_frame = Frame.get_tmp_frame(search_frame, move_line, tmp_inc_point,first_min,count,calc_count)[0]
+    tmp_inc_frame = Frame.get_tmp_frame(search_frame, move_line, tmp_inc_point,first_min,first_max,count,calc_count)[0]
 
     # マイナス側
     tmp_dec_point = tmp_point.add(dec_point)
-    tmp_dec_frame = Frame.get_tmp_frame(search_frame, move_line, tmp_dec_point,first_min,count,calc_count)[0]
+    tmp_dec_frame  = Frame.get_tmp_frame(search_frame, move_line, tmp_dec_point,first_min,first_max,count,calc_count)[0]
 
     # それぞれの目標値との差分を取得
     tmp_point_diff = math.fabs(target_area - tmp_frame.area)
@@ -145,31 +146,10 @@ def binary_search(search_frame, search_range ,move_line, target_area,count):
       break
   
   # 決定した点で取得できるFrame取得
-  parcel_frame, remain_frame = Frame.get_tmp_frame(search_frame, move_line,tmp_point, first_min,count,calc_count)
+  parcel_frame, remain_frame = Frame.get_tmp_frame(search_frame, move_line,tmp_point, first_min,first_max,count,calc_count)
   
   print(f"探索終了 計算回数:{calc_count}回 比率：{math.floor(int(parcel_frame.area) / int (target_area)*1000) / 1000}  面積:{math.floor(int(parcel_frame.area)/1000000*1000)/1000}㎡ / 目標面積：{int (target_area)/1000000}㎡")
   return parcel_frame, remain_frame
-
-# 直線AB上の点Pから垂直に落とした点Hを求める
-def Get_vertical_intersection(A, B, P):
-  """直線AB上の点Pから垂直に落とした点を求める
-
-  Args:
-    A (Point): _探索軸の始点
-    B (Point): _探索軸の終点
-    P (Point): _AとBの二点のリスト
-
-  Returns:
-    point_on_judge_line (Point): _判定軸上の点
-  """
-  AB = Point(B.x - A.x, B.y - A.y)
-  AP = Point(P.x - A.x, P.y - A.y)
-
-  k = Point.dot(AB, AP) / (AB.magnitude() ** 2)
-  OH = Point(k * AB.x, k * AB.y)
-  point_on_judge_line =  Point(OH.x + A.x, OH.y + A.y)
-  return point_on_judge_line
-
 
 
 # デバッグ用メイン関数
