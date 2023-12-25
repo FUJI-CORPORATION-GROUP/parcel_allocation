@@ -51,25 +51,36 @@ def get_search_range(search_frame, search_line):
   # TODO: minとmaxの初期化
   max, min = search_line_start_point, search_line_end_point
 
+  point_list_on_line = []
+
   # 判定軸上の座標取得
   for i in range(len(search_frame)):
-    point = Get_vertical_intersection(search_line_start_point,search_line_end_point,search_frame[i])
+    point = Calc.Get_vertical_intersection(search_line_start_point,search_line_end_point,search_frame[i])
+    point_list_on_line.append(point)
 
-    default_distance = max.distance(min)
+  distance_max_A = 0
+  for i in range(len(point_list_on_line)):
+    distance = point_list_on_line[i].distance(point_list_on_line[0])
+    if(distance > distance_max_A):
+      distance_max_A = distance
+      point_A = point_list_on_line[i]
 
-    if (i == 0):
-      max = point
-      min = point
-      continue
+  distance_max_B = 0
+  for i in range(len(point_list_on_line)):
+    distance = point_list_on_line[i].distance(point_A)
+    if(distance > distance_max_B):
+      distance_max_B = distance
+      point_B = point_list_on_line[i]
+  
+  search_line_vec = Point.sub(search_line_end_point,search_line_start_point)
+  edge_line_AB_vec = Point.sub(point_B,point_A)
 
-    max_distance = max.distance(point)
-    min_distance = min.distance(point)
-
-    if(default_distance != max_distance + min_distance):
-      if(max_distance > min_distance):
-        min = point
-      else:
-        max = point
+  if(search_line_vec.dot(edge_line_AB_vec) < 0):
+    max = point_A
+    min = point_B
+  else:
+    max = point_B
+    min = point_A
 
   return max, min
 
