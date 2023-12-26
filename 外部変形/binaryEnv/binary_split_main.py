@@ -38,12 +38,12 @@ def main():
     info_line=line.split()
     print("LINEスプリット：" + str(info_line))
     # print(len(xy))
-    #間口の読み込み
+    # 最小目標面積の読み込み
     if line_count == 0:
-      maguti = float(info_line[0])
-    #目標面積の読み込み
+      target_min_area = float(info_line[0])
+    # 最大目標面積の読み込み
     elif line_count == 1:
-      target_area = float(info_line[0])
+      target_max_area = float(info_line[0])
     #接道辺の読み込み
     elif line_count == 2:
       for i in range(0, len(info_line), 2):
@@ -69,9 +69,8 @@ def main():
 
 
   print(" ")
-  print("goal_area:" + str(target_area))
-  print("frame:" + str(frame))
-  print("road_edge:" + str(road_edge))
+  print("target_min_area" + str(target_min_area))
+  print("target_max_area" + str(target_max_area))
   print(" ")
 
   # classの変更
@@ -95,7 +94,6 @@ def main():
   # 探索領域
   search_frame = frame
   
-  # TODO: 奥行ベクトルの作成
   move_line = Point(0,50)
 
   draw_dxf.clear_dxf()
@@ -103,9 +101,9 @@ def main():
   binary_parcel_list = []
   count = 0
   # target_area = 1000
-  rate = 1000000
-  target_min_area = 90000000 * rate
-  target_max_area = 110000000 * rate
+  # rate = 1000000
+  # target_min_area = 90000000 * rate
+  # target_max_area = 110000000 * rate
 
   if(len(road_frame) > 1):
     print("道路が2本以上あります")

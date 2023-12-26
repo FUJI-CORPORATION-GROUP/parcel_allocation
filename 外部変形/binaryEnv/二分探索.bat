@@ -19,8 +19,8 @@ REM #10 道路を選択してください.(L)free (R)Read
 REM #11-%d道路を選択してください.(L)free (R)Read
 REM #12 道路を選択してください.(L)free (R)Read
 REM #99#
-@REM REM #c 間口 無指定:7.6m/_/b
-@REM REM #c 宅地面積 無指定:100㎡/_/c
+REM #c 最低目標面積 無指定:100㎡/_/b
+REM #c 最大目標面積 無指定:120㎡/_/c
 REM #hr
 REM #e
 
@@ -45,7 +45,7 @@ REM #e
 copy jwc_temp.txt data\jwc_temp1.txt
 echo "test"
 python data/parameter_in.py data/jwc_temp1.txt %2 %3
-@REM pause
+pause
 goto EXE-%1
 
 @REM 道路アリ指定_処理
@@ -58,7 +58,7 @@ goto END
 :2
 copy jwc_temp.txt data\jwc_temp2.txt
 python data/un_road_make.py data/jwc_temp2.txt %2
-@REM pause
+pause
 goto END
 
 :END
