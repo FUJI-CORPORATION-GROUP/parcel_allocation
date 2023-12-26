@@ -7,33 +7,33 @@ print("----parameter_in.py----")
 #書き込み用のファイルを展開
 info = codecs.open('data/information.txt','w',"shift-jis")
 
-#コマンドライン引数（道幅，間口，目標面積）
+#コマンドライン引数（最小目標面積，最大目標面積）
 road_width=4000
-maguti = 7600
-goal_area = 100000000
+goal_min_area = 100000000
+goal_max_area = 120000000
+# maguti = 7600
+# goal_area = 100000000
 
 # コマンドライン引数の二つ目から読み込み
 for i in range(2,len(sys.argv)):
-	#aから始まる情報はroad_width(道幅)に代入
-	if re.match(r"/a",sys.argv[i]):
-		road_width=float(sys.argv[i][2:len(sys.argv[i])]) * 1000
+  #aから始まる情報はroad_width(道幅)に代入
+  if re.match(r"/a",sys.argv[i]):
+    road_width=float(sys.argv[i][2:len(sys.argv[i])]) * 1000
   #bから始まる情報はmaguti(間口)に代入
-	elif re.match(r"/b",sys.argv[i]):
-		maguti=float(sys.argv[i][2:len(sys.argv[i])]) * 1000
+  elif re.match(r"/b",sys.argv[i]):
+    goal_min_area=float(sys.argv[i][2:len(sys.argv[i])]) * 1000000
   #cから始まる情報はgoal_area(目標面積)に代入
-	elif re.match(r"/c",sys.argv[i]):
-		goal_area=float(sys.argv[i][2:len(sys.argv[i])]) * 1000000
-	#
-#
+  elif re.match(r"/c",sys.argv[i]):
+    goal_max_area=float(sys.argv[i][2:len(sys.argv[i])]) * 1000000
 
 print(sys.argv)
 print(" ")
-print("maguti:" + str(maguti))
-print("goal_area:" + str(goal_area))
+print("goal_min_area:" + str(goal_min_area))
+print("goal_max_area:" + str(goal_max_area))
 print(" ")
 
-info.write(str(maguti) + "\n")
-info.write(str(goal_area) + "\n")
+info.write(str(goal_min_area) + "\n")
+info.write(str(goal_max_area) + "\n")
 
 #コマンドライン引数(temp.txt)の受け取り
 file = sys.argv[1]
