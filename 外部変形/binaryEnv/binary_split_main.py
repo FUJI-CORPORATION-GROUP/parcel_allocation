@@ -97,7 +97,7 @@ def main():
   move_line = Point(0,50)
 
   draw_dxf.clear_dxf()
-  draw_dxf.draw_line_by_point(search_frame.points)
+  # draw_dxf.draw_line_by_point(search_frame.points)
   binary_parcel_list = []
   count = 0
   # target_area = 1000
