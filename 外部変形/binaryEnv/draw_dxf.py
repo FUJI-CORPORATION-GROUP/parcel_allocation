@@ -16,8 +16,8 @@ def draw_line_by_point(point_list):
     #モデル空間に新しいエンティティを作成
     msp = doc.modelspace()
     for i in range(len(point_list)):
-        s = point_list[i].to_np_array()*100000
-        e = point_list[i+1].to_np_array()*100000 if i+1 < len(point_list) else point_list[0].to_np_array()*100000
+        s = point_list[i].to_np_array()
+        e = point_list[i+1].to_np_array() if i+1 < len(point_list) else point_list[0].to_np_array()
         msp.add_line(s, e)
 
     doc.saveas('output.dxf')
@@ -38,8 +38,8 @@ def draw_line_by_point_color(point_list,color_index):
     #モデル空間に新しいエンティティを作成
     msp = doc.modelspace()
     for i in range(len(point_list)):
-        s = point_list[i].to_np_array()*100000
-        e = point_list[i+1].to_np_array()*100000 if i+1 < len(point_list) else point_list[0].to_np_array()*100000
+        s = point_list[i].to_np_array()
+        e = point_list[i+1].to_np_array() if i+1 < len(point_list) else point_list[0].to_np_array()
         msp.add_line(s, e,dxfattribs={'color':color_index})
 
     doc.saveas('output.dxf')
@@ -61,8 +61,8 @@ def draw_line_by_frame_list_color(frame_list,color_index):
         #モデル空間に新しいエンティティを作成
         point_list = frame_list[i].points
         for i in range(len(point_list)):
-            s = point_list[i].to_np_array()*100000
-            e = point_list[i+1].to_np_array()*100000 if i+1 < len(point_list) else point_list[0].to_np_array()*100000
+            s = point_list[i].to_np_array()
+            e = point_list[i+1].to_np_array() if i+1 < len(point_list) else point_list[0].to_np_array()
             msp.add_line(s, e,dxfattribs={'color':color_index})
 
     doc.saveas('output.dxf')
