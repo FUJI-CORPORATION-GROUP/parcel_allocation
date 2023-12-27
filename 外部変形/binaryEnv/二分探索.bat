@@ -45,7 +45,7 @@ REM #e
 copy jwc_temp.txt data\jwc_temp1.txt
 echo "test"
 python data/parameter_in.py data/jwc_temp1.txt %2 %3
-pause
+@REM pause
 goto EXE-%1
 
 @REM “¹˜HƒAƒŠw’è_ˆ—
@@ -58,7 +58,7 @@ goto END
 :2
 copy jwc_temp.txt data\jwc_temp2.txt
 python data/un_road_make.py data/jwc_temp2.txt %2
-pause
+@REM pause
 goto END
 
 :END
