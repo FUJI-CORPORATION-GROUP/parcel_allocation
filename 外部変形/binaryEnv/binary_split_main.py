@@ -5,7 +5,7 @@ from frame import Frame
 import binary_search
 import draw_dxf
 
-def main():
+def main(executions):
   #####メインプログラム#####
   #読み込み用のファイルを展開
   print("================================")
@@ -96,7 +96,9 @@ def main():
   
   move_line = Point(0,50)
 
-  draw_dxf.clear_dxf()
+  # 1回目の実行時のみ発火
+  if executions == 0:
+    draw_dxf.clear_dxf()
   # draw_dxf.draw_line_by_point(search_frame.points)
   binary_parcel_list = []
   count = 0
@@ -142,8 +144,14 @@ def main():
       break
     
     search_frame = remain_frame
-
+  
+  # 演算結果を結果リストに格納（合計で30個）
+  point_shift = Point((executions % 5) * 100000, (executions // 5) * 80000)
+  print(len(binary_parcel_list))
+  for j in range(len(binary_parcel_list)):
+    binary_parcel_list[j] = binary_parcel_list[j].move_frame(point_shift)
   draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
-  
-  
-main()
+
+# TODO:30回実行
+for executions in range(30):
+  main(executions)
