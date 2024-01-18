@@ -1,6 +1,8 @@
 import ezdxf
 import numpy as np
 from point import Point
+from frame import Frame
+from plan import Plan
 
 
 def draw_line_by_point(point_list):
@@ -66,6 +68,19 @@ def draw_line_by_frame_list_color(frame_list,color_index):
             msp.add_line(s, e,dxfattribs={'color':color_index})
 
     doc.saveas('output.dxf')
+
+def draw_dxf_by_plan(plan, color_index):
+    """PlanList型のリストと色指定してdxf出力
+
+    Args:
+        plan_list (list): PlanList型のリスト
+        color_index (int): 色
+    """
+    
+    print(plan)
+    
+    frame_list = plan.get_frame_list()
+    draw_line_by_frame_list_color(frame_list,color_index)    
 
 
 def clear_dxf():

@@ -1,7 +1,6 @@
 import numpy as np
 from point import Point
 import binary_calc as Calc
-import draw_dxf
 
 class Frame:
     """区画を扱うクラス
