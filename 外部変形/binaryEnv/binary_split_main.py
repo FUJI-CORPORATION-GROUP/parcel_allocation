@@ -139,6 +139,9 @@ def main():
   # rate = 1000000
   # target_min_area = 90000000 * rate
   # target_max_area = 110000000 * rate
+  
+  # 実行回数
+  executions_count = 30
 
   if(len(road_frame) > 1):
     print("道路が2本以上あります")
@@ -155,15 +158,20 @@ def main():
 
   # TODO:30回実行
   plan_list = []
-  for executions in range(30):
+  for i in range(executions_count):
     # frameListを作成して，Planを返す
     plan = get_plans(target_max_area, target_min_area, search_frame, count, road_frame, move_line)
     plan_list.append(plan)
 
+  search_frame_list = []
   for i in range(len(plan_list)):
     point_shift = Point((i % 5) * 100000, (i // 5) * 80000)
     plan_list[i].move_plan(point_shift)
 
+    tmp_search_frame_list = search_frame.debug_move_frame(point_shift)
+    search_frame_list.append(tmp_search_frame_list)
+
+  draw_dxf.draw_line_by_frame_list_color(search_frame_list, 2)
   draw_dxf.draw_dxf_by_plan_list(plan_list, 1)
 
 main()
