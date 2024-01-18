@@ -7,16 +7,18 @@ import draw_dxf
 from plan import Plan
 
 
-def get_plans(target_max_area, target_min_area, binary_parcel_list, search_frame, count, road_frame, move_line):
+def get_plans(target_max_area, target_min_area, search_frame, count, road_frame, move_line):
   # frameListを作成して，Planを返す
   # 探索領域が目標面積取れなくなるまで区画割
+  binary_parcel_list = []
+
   while(True):
     if(search_frame.area > target_max_area):
       target_area = random.randint(target_min_area,target_max_area)
-      print(f"\n{count} 回目 探索開始 ランダム目標面積：{target_area}")
+      # print(f"\n{count} 回目 探索開始 ランダム目標面積：{target_area}")
     else:
       target_area = target_max_area
-      print(f"\n{count} 回目 探索開始 最小目標面積：{target_area}")
+      # print(f"\n{count} 回目 探索開始 最小目標面積：{target_area}")
   
     parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,road_frame[0],target_area,move_line,count)
     
@@ -25,7 +27,7 @@ def get_plans(target_max_area, target_min_area, binary_parcel_list, search_frame
     binary_parcel_list.append(parcel_frame)
     
     if(target_min_area > remain_frame.area):
-      print(f"探索終了 残り面積{math.floor(remain_frame.area/1000000)}㎡")
+      # print(f"探索終了 残り面積{math.floor(remain_frame.area/1000000)}㎡")
       break
     
     if(count > 30):
@@ -132,7 +134,6 @@ def main():
   # 参照しているDXFファイルをリセット
   draw_dxf.clear_dxf()
   # draw_dxf.draw_line_by_point(search_frame.points)
-  binary_parcel_list = []
   count = 0
   # target_area = 1000
   # rate = 1000000
@@ -156,18 +157,13 @@ def main():
   plan_list = []
   for executions in range(30):
     # frameListを作成して，Planを返す
-    plan = get_plans(target_max_area, target_min_area, binary_parcel_list, search_frame, count, road_frame, move_line)
+    plan = get_plans(target_max_area, target_min_area, search_frame, count, road_frame, move_line)
     plan_list.append(plan)
 
-  print(plan_list)
-  # 描写開始
-  
   for i in range(len(plan_list)):
     point_shift = Point((i % 5) * 100000, (i // 5) * 80000)
-    plan_list[i] = plan_list[i].move_plan(point_shift)
-    # draw_dxf.draw_dxf_by_plan(plan_list[i].move_plan(point_shift), 1)
-    # draw_dxf.draw_dxf_by_plan(plan_list[i], 1)
-  
+    plan_list[i].move_plan(point_shift)
+
   draw_dxf.draw_dxf_by_plan_list(plan_list, 1)
 
 main()
