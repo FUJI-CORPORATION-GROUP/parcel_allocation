@@ -161,9 +161,13 @@ def main():
 
   print(plan_list)
   # 描写開始
+  
   for i in range(len(plan_list)):
     point_shift = Point((i % 5) * 100000, (i // 5) * 80000)
-    draw_dxf.draw_dxf_by_plan(plan_list[i].move_plan(point_shift), 1)
+    plan_list[i] = plan_list[i].move_plan(point_shift)
+    # draw_dxf.draw_dxf_by_plan(plan_list[i].move_plan(point_shift), 1)
     # draw_dxf.draw_dxf_by_plan(plan_list[i], 1)
+  
+  draw_dxf.draw_dxf_by_plan_list(plan_list, 1)
 
 main()
