@@ -4,6 +4,41 @@ from point import Point
 from frame import Frame
 import binary_search
 import draw_dxf
+from plan import Plan
+
+
+def get_plans(target_max_area, target_min_area, search_frame, count, road_frame, move_line):
+  # frameListを作成して，Planを返す
+  # 探索領域が目標面積取れなくなるまで区画割
+  binary_parcel_list = []
+
+  while(True):
+    if(search_frame.area > target_max_area):
+      target_area = random.randint(target_min_area,target_max_area)
+      # print(f"\n{count} 回目 探索開始 ランダム目標面積：{target_area}")
+    else:
+      target_area = target_max_area
+      # print(f"\n{count} 回目 探索開始 最小目標面積：{target_area}")
+  
+    parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,road_frame[0],target_area,move_line,count)
+    
+    
+    count += 1
+    binary_parcel_list.append(parcel_frame)
+    
+    if(target_min_area > remain_frame.area):
+      # print(f"探索終了 残り面積{math.floor(remain_frame.area/1000000)}㎡")
+      break
+    
+    if(count > 30):
+      # 念のため
+      break
+    
+    search_frame = remain_frame
+  
+  # ここでPlan生成
+  plan = Plan(binary_parcel_list)
+  return plan
 
 def main():
   #####メインプログラム#####
@@ -96,14 +131,17 @@ def main():
   
   move_line = Point(0,50)
 
+  # 参照しているDXFファイルをリセット
   draw_dxf.clear_dxf()
   # draw_dxf.draw_line_by_point(search_frame.points)
-  binary_parcel_list = []
   count = 0
   # target_area = 1000
   # rate = 1000000
   # target_min_area = 90000000 * rate
   # target_max_area = 110000000 * rate
+  
+  # 実行回数
+  executions_count = 30
 
   if(len(road_frame) > 1):
     print("道路が2本以上あります")
@@ -118,32 +156,22 @@ def main():
   # 道路方向ベクトルを回転させてMoveLineを取得
   move_line = Point(-1 * road_vec.y, road_vec.x)
 
-  # 探索領域が目標面積取れなくなるまで区画割
-  while(True):
-    if(search_frame.area > target_max_area):
-      target_area = random.randint(target_min_area,target_max_area)
-      print(f"\n{count} 回目 探索開始 ランダム目標面積：{target_area}")
-    else:
-      target_area = target_max_area
-      print(f"\n{count} 回目 探索開始 最小目標面積：{target_area}")
-  
-    parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,road_frame[0],target_area,move_line,count)
-    
-    
-    count += 1
-    binary_parcel_list.append(parcel_frame)
-    
-    if(target_min_area > remain_frame.area):
-      print(f"探索終了 残り面積{math.floor(remain_frame.area/1000000)}㎡")
-      break
-    
-    if(count > 30):
-      # 念のため
-      break
-    
-    search_frame = remain_frame
+  # TODO:30回実行
+  plan_list = []
+  for i in range(executions_count):
+    # frameListを作成して，Planを返す
+    plan = get_plans(target_max_area, target_min_area, search_frame, count, road_frame, move_line)
+    plan_list.append(plan)
 
-  draw_dxf.draw_line_by_frame_list_color(binary_parcel_list, 1)
-  
-  
+  search_frame_list = []
+  for i in range(len(plan_list)):
+    point_shift = Point((i % 5) * 100000, (i // 5) * 80000)
+    plan_list[i].move_plan(point_shift)
+
+    tmp_search_frame_list = search_frame.debug_move_frame(point_shift)
+    search_frame_list.append(tmp_search_frame_list)
+
+  draw_dxf.draw_line_by_frame_list_color(search_frame_list, 2)
+  draw_dxf.draw_dxf_by_plan_list(plan_list, 1)
+
 main()

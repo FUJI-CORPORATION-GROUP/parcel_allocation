@@ -1,7 +1,6 @@
 import numpy as np
 from point import Point
 import binary_calc as Calc
-import draw_dxf
 
 class Frame:
     """区画を扱うクラス
@@ -11,8 +10,6 @@ class Frame:
         point_to_line_distance (list, list, list): _点と直線の距離公式
 
     """
-    points = []
-    area = 0
 
     def __init__(self, points):
       self.points = points
@@ -85,7 +82,6 @@ class Frame:
       """
       for i in range(len(self.points)):
         self.points[i] = self.points[i].add(point)
-      return self
 
     def debug_move_frame(self, point):
       """デバッグ用：移動量ベクトル移動した区画を取得する（区画自体は移動しない）
