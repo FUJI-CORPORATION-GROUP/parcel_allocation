@@ -1,13 +1,3 @@
-# PR message template
-- - - -
-name: Pull Request Template
-about: DefaultTemplate
-title: ‘’
-labels: ‘’
-assignees: ‘’
-
-- - - -
-
 ## 概要
 
 
