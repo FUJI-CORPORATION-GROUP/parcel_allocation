@@ -5,6 +5,7 @@ class Plan:
   # プランを作成する
   def __init__(self, frame_list):
     self.frame_list = frame_list
+    self.frame_count = len(frame_list)
   
   def move_plan(self, move_point):
     for i in range(len(self.frame_list)):
