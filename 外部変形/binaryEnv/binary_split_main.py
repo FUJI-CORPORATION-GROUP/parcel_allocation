@@ -163,6 +163,9 @@ def main():
     plan = get_plans(target_max_area, target_min_area, search_frame, count, road_frame, move_line)
     plan_list.append(plan)
 
+  # ソート
+  plan_list.sort(key=lambda plan: plan.frame_count, reverse=True)
+
   search_frame_list = []
   for i in range(len(plan_list)):
     point_shift = Point((i % 5) * 100000, (i // 5) * 80000)
