@@ -126,23 +126,6 @@ def main():
   # for i in range(len(road_edge)):
   #   binary_search.debug_main(road_edge[i], frame, target_area)
 
-  # 探索領域
-  search_frame = frame
-  
-  move_line = Point(0,50)
-
-  # 参照しているDXFファイルをリセット
-  draw_dxf.clear_dxf()
-  # draw_dxf.draw_line_by_point(search_frame.points)
-  count = 0
-  # target_area = 1000
-  # rate = 1000000
-  # target_min_area = 90000000 * rate
-  # target_max_area = 110000000 * rate
-  
-  # 実行回数
-  executions_count = 30
-
   if(len(road_frame) > 1):
     print("道路が2本以上あります")
     exit()
@@ -150,6 +133,12 @@ def main():
     print("道路がありません")
     exit()
 
+  # 奥行の距離(Mock)
+  search_depth_distance = 11500
+  road_start_point = road_frame[0][0]
+  road_end_point = road_frame[0][1]
+  search_frame = binary_calc.Get_search_frame(frame, search_depth_distance, road_start_point, road_end_point)
+  
   # 道路方向ベクトル取得
   # TODO:0番目しかないと仮定．今後の入力形態に入力形態によって変更
   road_vec = road_frame[0][1].sub(road_frame[0][0])
