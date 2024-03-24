@@ -114,6 +114,16 @@ class Point:
             _type_: 減算した点
         """
         return Point (self.x - point.x,self.y - point.y)
+
+    def mul(self, scalar):
+        """スカラー倍
+        Args:
+            int (int): 翔数
+
+        Returns:
+            _type_: 乗算した点
+        """
+        return Point(self.x * scalar, self.y * scalar)
     
     def unit(self):
         """単位ベクトルの取得
