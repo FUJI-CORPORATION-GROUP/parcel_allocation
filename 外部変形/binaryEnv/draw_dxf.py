@@ -78,7 +78,6 @@ def draw_dxf_by_plan_list(plan_list, color_index):
     """
     doc = ezdxf.readfile(r"./output.dxf")
     msp = doc.modelspace()
-    
     for plan in plan_list:
         frame_list = plan.get_frame_list()        
         for i in range(len(frame_list)):
