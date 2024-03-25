@@ -118,7 +118,7 @@ class Point:
     def mul(self, scalar):
         """スカラー倍
         Args:
-            int (int): 翔数
+            int (int): かける数
 
         Returns:
             _type_: 乗算した点
