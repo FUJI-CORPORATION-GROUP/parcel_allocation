@@ -75,7 +75,6 @@ class Frame:
     def Get_search_frame(self ,target_frame, search_depth_distance, road_start_point, road_end_point):
       # 道路方向ベクトル取得
       # TODO:0番目しかないと仮定．今後の入力形態に入力形態によって変更
-      road_vec = road_start_point.sub(road_end_point)
       road_vec = road_end_point.sub(road_start_point)
 
       # 奥行ベクトル
@@ -179,6 +178,31 @@ class Frame:
       min_x,min_y = min(list_x),min(list_y)
       move_zero_point = Point(-1 * min_x, -1 * min_y) 
       self = self.move_frame(move_zero_point)
+
+    def move_frame_and_road(frame, road_frame):
+      """区画と道路区画を原点に移動する
+
+      Args:
+          frame (Frame): 区画のFrame
+          road_frame (list<Frame[]): 道路Frameのリスト
+
+      Returns:
+          _type_: 区画のFrame, 道路Frameのリスト
+      """
+      
+      # 区画を原点に移動
+      list_x, list_y = frame.get_list_xy()
+      min_x,min_y = min(list_x),min(list_y)
+      move_zero_point = Point(-1 * min_x, -1 * min_y) 
+      frame.move_frame(move_zero_point)
+
+      # 道路区画も同一距離移動
+      moved_road_frame_list = []
+      for i in range(len(road_frame)):
+        road_frame[i].move_frame(move_zero_point)
+        moved_road_frame_list.append(road_frame[i])
+        
+      return frame, moved_road_frame_list
     
     def get_barycenter(self):
       """区画の重心を取得する

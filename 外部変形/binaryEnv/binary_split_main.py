@@ -18,7 +18,7 @@ def get_plan(target_max_area, target_min_area, binary_parcel_list, search_frame,
       target_area = target_max_area
       print(f"\n{count} 回目 探索開始 最小目標面積：{target_area}")
   
-    parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,road_frame[0],target_area,move_line,count)
+    parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,road_frame,target_area,move_line,count)
     
     
     count += 1
@@ -109,12 +109,17 @@ def main():
   # classの変更
   for i in range(len(frame)):
     frame[i] = Point(frame[i][0], frame[i][1])
+  road_frame_list = []
   frame = Frame(frame)
-  frame.move_zero()
-  road_frame = road_edge
   for i in range(len(road_edge)):
-    for k in range(len(road_edge[i])):
-      road_frame[i][k] = Point(road_edge[i][k][0], road_edge[i][k][1])
+    road_start_point_list = Point(road_edge[i][0][0], road_edge[i][0][1])
+    road_end_point_list = Point(road_edge[i][1][0], road_edge[i][1][1])
+    road_frame = Frame([road_start_point_list, road_end_point_list])
+    road_frame_list.append(road_frame)
+  
+  # 区画・道路を原点に移動
+  frame, road_frame_list = Frame.move_frame_and_road(frame, road_frame_list)
+
   # デバッグ用
   # target_area = 28000
 
@@ -124,36 +129,40 @@ def main():
   # for i in range(len(road_edge)):
   #   binary_search.debug_main(road_edge[i], frame, target_area)
 
-  if(len(road_frame) > 1):
+  if(len(road_frame_list) > 1):
     print("道路が2本以上あります")
     exit()
-  elif(len(road_frame) == 0):
+  elif(len(road_frame_list) == 0):
     print("道路がありません")
     exit()
 
+  # 今回は0番目の道路を採用
+  # TODO: 他の道路も採用できるようにする
+  target_road_frame = road_frame_list[0]
+
   # 奥行の距離(Mock)
+  # TODO: 動的に求める
   search_depth_distance = 11500
-  road_start_point = road_frame[0][0]
-  road_end_point = road_frame[0][1]
+
+  road_start_point = target_road_frame.points[0]
+  road_end_point = target_road_frame.points[1]
   search_frame = frame.Get_search_frame(
       frame, search_depth_distance, road_start_point, road_end_point)
-
 
   # 探索領域
   # search_frame = frame
   
   # 道路方向ベクトル取得
-  # TODO:0番目しかないと仮定．今後の入力形態に入力形態によって変更
-  road_vec = road_frame[0][1].sub(road_frame[0][0])
+  road_vec = road_end_point.sub(road_start_point)
+
   # 道路方向ベクトルを回転させてMoveLineを取得
   move_line = Point(-1 * road_vec.y, road_vec.x)
-  # move_line = Point(0,50)
 
   # 参照しているDXFファイルをリセット
   draw_dxf.clear_dxf()
-  # draw_dxf.draw_line_by_point(search_frame.points)
   binary_parcel_list = []
   count = 0
+
   # target_area = 1000
   # rate = 1000000
   # target_min_area = 90000000 * rate
@@ -164,7 +173,7 @@ def main():
   plan_list = []
   for executions in range(1):
     # frameListを作成して，Planを返す
-    plan = get_plan(target_max_area, target_min_area, binary_parcel_list, search_frame, count, road_frame, move_line)
+    plan = get_plan(target_max_area, target_min_area, binary_parcel_list, search_frame, count, target_road_frame, move_line)
     plan_list.append(plan)
 
   # print(plan_list)
