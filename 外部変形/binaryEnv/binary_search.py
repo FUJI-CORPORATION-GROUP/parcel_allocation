@@ -22,8 +22,8 @@ def get_side_parcel(search_frame,load_frame,target_area,move_line,count):
 
   # 探索軸の決定
   # TODO: 2本より多い道路の場合の決定方法について検討&実装
-  search_line_start_point = load_frame[0]
-  search_line_end_point = load_frame[1]
+  search_line_start_point = load_frame.points[0]
+  search_line_end_point = load_frame.points[1]
   search_line = [search_line_start_point,search_line_end_point]
 
   # 探索範囲の取得
