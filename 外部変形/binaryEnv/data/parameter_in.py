@@ -14,15 +14,16 @@ target_max_area = 120000000
 
 # コマンドライン引数の二つ目から読み込み
 for i in range(2,len(sys.argv)):
-  #aから始まる情報はroad_width(道幅)に代入
-  if re.match(r"/a",sys.argv[i]):
-    road_width=float(sys.argv[i][2:len(sys.argv[i])]) * 1000
-  #bから始まる情報はmaguti(間口)に代入
-  elif re.match(r"/b",sys.argv[i]):
-    target_min_area=float(sys.argv[i][2:len(sys.argv[i])]) * 1000000
-  #cから始まる情報はgoal_area(目標面積)に代入
-  elif re.match(r"/c",sys.argv[i]):
-    target_max_area=float(sys.argv[i][2:len(sys.argv[i])]) * 1000000
+  data = sys.argv[i]
+  #road_width(道幅)に代入
+  if re.match(r"/road_width",data):
+    road_width=float(data.split(':')[1]) * 1000
+  #maguti(間口)に代入
+  elif re.match(r"/target_min_area",data):
+    target_min_area=float(data.split(':')[1]) * 1000000
+  #goal_area(目標面積)に代入
+  elif re.match(r"/target_max_area",data):
+    target_max_area=float(data.split(':')[1]) * 1000000
 
 print(sys.argv)
 print(" ")

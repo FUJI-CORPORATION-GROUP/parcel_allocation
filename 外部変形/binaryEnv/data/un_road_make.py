@@ -11,9 +11,9 @@ least_maguti=6800
 
 #コマンドライン引数の二つ目から読み込み
 for i in range(2,len(sys.argv)):
-	#aから始まる情報はroad_width(道幅)に代入
-	if re.match(r"/a",sys.argv[i]):
-		least_maguti=float(sys.argv[i][2:len(sys.argv[i])]) * 1000
+	#road_width(道幅)に代入
+	if re.match(r"/road_width",sys.argv[i]):
+		least_maguti=float(sys.argv[i].split(':')[1]) * 1000
 
 
 #変数を宣言（接道辺，道作成辺，街区，座標，選択された連続線，枠上判定）
