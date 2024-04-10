@@ -1,6 +1,7 @@
 import codecs
 import sys
 import re
+import json
 
 print("----parameter_in.py----")
 # 道路情報を入力している？
@@ -64,3 +65,15 @@ for i in range(len(road_frame)):
     info.write(str(road_frame[i][0]) + " " + str(road_frame[i][1]) + "\n")
   else:
     info.write(str(road_frame[i][0]) + " " + str(road_frame[i][1]) + " ")
+
+# 道路情報をjsonファイルに書き込む
+def input_to_json(road_width, goal_min_area, goal_max_area, road_frame):
+  # TODO: のちのちInputの構造体を作るとよりわかりやすい
+  input_data = {'road_width': road_width, 'goal_min_area': goal_min_area, 'goal_max_area': goal_max_area, 'road_frame': road_frame}
+  
+  input_json_data = json.dumps(input_data, indent=4)
+  
+  with open('data/road_input_data.json', 'w') as f:
+    f.write(input_json_data)
+
+input_to_json(road_width, goal_min_area, goal_max_area, road_frame)
