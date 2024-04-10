@@ -1,8 +1,8 @@
 {
     "road_width": 4000,
-    "goal_min_area": 100000000,
-    "goal_max_area": 121000000.0,
-    "road_frame": [
+    "target_min_area": 100000000,
+    "target_max_area": 120000000,
+    "road_edge_point_list": [
         [
             0.0,
             4000000000.0
