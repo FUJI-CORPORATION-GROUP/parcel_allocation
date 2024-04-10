@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import codecs
+import json
 import sys
 import re
 
@@ -32,11 +33,8 @@ f=open(file,mode="r")
 # print("デバッグ：" + str(f))
 
 #変数を宣言（接道辺，道作成辺，街区，座標，選択された連続線，枠上判定）
-make_road_edge = []
 frame = []
 xy = []
-datas = []
-hp_count = 0
 
 #tempの中身を取得
 for line in f:
@@ -58,3 +56,16 @@ for i in range(len(frame)):
     info.write(str(frame[i][0]) + " " + str(frame[i][1]) + "\n")
   else:
     info.write(str(frame[i][0]) + " " + str(frame[i][1]) + " ")
+
+
+# 街区情報をjsonファイルに書き込む
+def input_to_json(least_maguti,frame):
+  # TODO: のちのちInputの構造体を作るとよりわかりやすい
+  input_data = {'least_maguti': least_maguti, 'frame': frame}
+  
+  input_json_data = json.dumps(input_data, indent=4)
+  
+  with open('data/frame_input_data.json', 'w') as f:
+    f.write(input_json_data)
+
+input_to_json(least_maguti,frame)
