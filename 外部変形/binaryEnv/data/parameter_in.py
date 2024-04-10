@@ -3,6 +3,7 @@ import sys
 import re
 
 print("----parameter_in.py----")
+# 道路情報を入力している？
 
 #書き込み用のファイルを展開
 info = codecs.open('data/information.txt','w',"shift-jis")
@@ -43,7 +44,7 @@ f=open(file,mode="r")
 
 #変数を宣言（接道辺，道作成辺，街区，座標，選択された連続線，枠上判定）
 make_road_edge = []
-frame = []
+road_frame = []
 xy = []
 
 #tempの中身を取得
@@ -51,15 +52,15 @@ for line in f:
   if re.match(r"hp",line):
     #一行ごとに読み込み
     xy=line.split()
-    frame.append([float(xy[1]), float(xy[2])])
-for i in range(len(frame)):
-  for j in range(1, len(frame[i])):
-    print(" " + str(frame[i][j - 1]) + " " + str(frame[i][j]))
+    road_frame.append([float(xy[1]), float(xy[2])])
+for i in range(len(road_frame)):
+  for j in range(1, len(road_frame[i])):
+    print(" " + str(road_frame[i][j - 1]) + " " + str(road_frame[i][j]))
 f.close()
 
 # 道路と設置している辺の座標の取得
-for i in range(len(frame)):
-  if i == len(frame) - 1:
-    info.write(str(frame[i][0]) + " " + str(frame[i][1]) + "\n")
+for i in range(len(road_frame)):
+  if i == len(road_frame) - 1:
+    info.write(str(road_frame[i][0]) + " " + str(road_frame[i][1]) + "\n")
   else:
-    info.write(str(frame[i][0]) + " " + str(frame[i][1]) + " ")
+    info.write(str(road_frame[i][0]) + " " + str(road_frame[i][1]) + " ")
