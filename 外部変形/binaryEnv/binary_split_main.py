@@ -48,9 +48,7 @@ def main():
   
   # # 変数宣言
   frame = []
-  road_edge = []
-  rm_list = [] # TODO: 不要な可能性
-  
+  road_edge = []  
   
   # Json形式で取得する
   road_data_open = open('data/road_input_data.json', 'r')
@@ -70,11 +68,6 @@ def main():
   for i in range(int(len(road_edge_point_list) / 2)):
     road_edge.append([road_edge_point_list[i * 2], road_edge_point_list[i * 2 + 1]])
 
-  #余計な道を削除
-  # TODO: この処理が何をしているかみなりんにきく
-  for i in range(len(rm_list)):
-    road_edge.remove(road_edge[rm_list[i]])
-
   # classの変更
   for i in range(len(frame)):
     frame[i] = Point(frame[i][0], frame[i][1])
@@ -88,15 +81,6 @@ def main():
   
   # 区画・道路を原点に移動
   frame, road_frame_list = Frame.move_frame_and_road(frame, road_frame_list)
-
-  # デバッグ用
-  # target_area = 28000
-
-  # 二分探索の実行
-  # 道に接する辺の数だけ実行
-  # 計算毎にseach_frameを変更しながら計算する
-  # for i in range(len(road_edge)):
-  #   binary_search.debug_main(road_edge[i], frame, target_area)
 
   if(len(road_frame_list) > 1):
     print("道路が2本以上あります")
