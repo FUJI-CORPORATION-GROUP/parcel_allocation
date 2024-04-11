@@ -4,6 +4,7 @@ from point import Point
 from frame import Frame
 import binary_search
 import draw_dxf
+import json
 from plan import Plan
 
 
@@ -44,67 +45,28 @@ def main():
   print("================================")
   print("メインプログラム split.py")
   print("================================")
-  info = open('data/information.txt','r',encoding='shift_jis')
-  print("hd")
-
-  # 変数宣言
-  line_count = 0
-  road_edge_pt = []
+  
+  # # 変数宣言
   frame = []
-  road_edge = []
-  rm_list = []
-
-
-  #infomationの行数の取得
-  for i in info:
-    line_count += 1
-    print(str(line_count), "番目：",str(i), end="")
-
-  print("")
-  info = open('data/information.txt','r',encoding='shift_jis')
-  #カウントの初期化
-  line_count = 0
-
-  #infomationの中身を取得
-  for line in info:
-    #一行ごとに読み込み
-    info_line=line.split()
-    print("LINEスプリット：" + str(info_line))
-    # print(len(xy))
-    # 最小目標面積の読み込み
-    if line_count == 0:
-      target_min_area = float(info_line[0])
-    # 最大目標面積の読み込み
-    elif line_count == 1:
-      target_max_area = float(info_line[0])
-    #接道辺の読み込み
-    elif line_count == 2:
-      for i in range(0, len(info_line), 2):
-        # print(i)
-        road_edge_pt.append([float(info_line[i]), float(info_line[i + 1])])
-    #道幅の読み込み
-    elif line_count == 3:
-      least_maguti = float(info_line[0])
-    #街区の読み込み
-    elif line_count == 4:
-      for i in range(0, len(info_line), 2):
-        frame.append([float(info_line[i]), float(info_line[i + 1])])
-    #次行に移動
-    line_count += 1
-
+  road_edge = []  
+  
+  # Json形式で取得する
+  road_data_open = open('data/road_input_data.json', 'r')
+  frame_data_open = open('data/frame_input_data.json', 'r')
+  road_data = json.load(road_data_open)
+  frame_data = json.load(frame_data_open)
+  
+  road_width = road_data["road_width"] # 使用していないっぽい
+  road_edge_point_list = road_data["road_edge_point_list"]
+  target_min_area = road_data["target_min_area"]
+  target_max_area = road_data["target_max_area"]
+  frame = frame_data["frame"]
+  least_maguti = frame_data["least_maguti"] # 使用していないっぽい
+  
   #ふたつずつ座標をまとめる：road_edge
-  for i in range(int(len(road_edge_pt) / 2)):
-    road_edge.append([road_edge_pt[i * 2], road_edge_pt[i * 2 + 1]])
-
-  #余計な道を削除
-  for i in range(len(rm_list)):
-    road_edge.remove(road_edge[rm_list[i]])
-
-
-  print(" ")
-  print("target_min_area" + str(target_min_area))
-  print("target_max_area" + str(target_max_area))
-  print(" ")
+  # TODO: この処理はun_road_make.pyで行ってJsonに入れてもいいかも？
+  for i in range(int(len(road_edge_point_list) / 2)):
+    road_edge.append([road_edge_point_list[i * 2], road_edge_point_list[i * 2 + 1]])
 
   # classの変更
   for i in range(len(frame)):
@@ -119,15 +81,6 @@ def main():
   
   # 区画・道路を原点に移動
   frame, road_frame_list = Frame.move_frame_and_road(frame, road_frame_list)
-
-  # デバッグ用
-  # target_area = 28000
-
-  # 二分探索の実行
-  # 道に接する辺の数だけ実行
-  # 計算毎にseach_frameを変更しながら計算する
-  # for i in range(len(road_edge)):
-  #   binary_search.debug_main(road_edge[i], frame, target_area)
 
   if(len(road_frame_list) > 1):
     print("道路が2本以上あります")

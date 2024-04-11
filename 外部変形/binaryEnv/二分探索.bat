@@ -19,14 +19,14 @@ REM #10 道路を選択してください.(L)free (R)Read
 REM #11-%d道路を選択してください.(L)free (R)Read
 REM #12 道路を選択してください.(L)free (R)Read
 REM #99#
-REM #c 最低目標面積 無指定:100㎡/_/b
-REM #c 最大目標面積 無指定:120㎡/_/c
+REM #c 最低目標面積 無指定:100㎡/_/target_min_area:
+REM #c 最大目標面積 無指定:120㎡/_/target_max_area:
 REM #hr
 REM #e
 
 @REM 道路アリ指定
 REM #:3
-REM #c 道路幅 無指定:4m/_/a
+REM #c 道路幅 無指定:4m/_/road_width:
 REM #3-%d 道を作成する辺を選択してください．(L)free (R)Read
 REM #4 道を作成する辺を選択してください．(L)free (R)Read
 REM #5-%d街区を選択してください.(L)free (R)Read
@@ -35,7 +35,7 @@ REM #e
 
 @REM 道路ナシ指定
 REM #:2
-@REM REM #c 間口下限 無指定:6.8m/_/a
+@REM REM #c 間口下限 無指定:6.8m/_/road_width:
 REM #3-%d街区を選択してください.(L)free (R)Read
 REM #99#
 REM #e
