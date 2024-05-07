@@ -5,35 +5,21 @@ import numpy as np
 output_file_name = "output.dxf"
 output_file_path = "./out/" + output_file_name
 
-
-def draw_line_by_point(point_list):
+def draw_line_by_point(point_list , color_index = 2):
     """Point型のリストからdxf出力
     Args:
         point_list (list): Point型のリスト
     """
-    dxfattribs = {'color': 7}
+    dxfattribs = {'color': color_index}
     doc = ezdxf.readfile(output_file_path)
     msp = doc.modelspace()
     draw_line_list(msp, point_list,dxfattribs)
 
     doc.saveas(output_file_path)
 
-# Point型
-def draw_line_by_point_color(point_list, color_index):
-    """Point型のリストと色指定してdxf出力
-
-    Args:
-        point_list (list): Point型のリスト
-        color_index (int): 色
-    """
-    dxfattribs = {'color': color_index}
-    doc = ezdxf.readfile(output_file_path)
-    msp = doc.modelspace()
-    draw_line_list(msp, point_list, dxfattribs)
-    doc.saveas(output_file_path)
-
 # FrameList型
-def draw_line_by_frame_list_color(frame_list, color_index):
+# TODO: Frame内のメソッドとして実装してもいいかも
+def draw_line_by_frame_list(frame_list, color_index = 2):
     """FrameList型のリストと色指定してdxf出力
 
     Args:
@@ -50,7 +36,7 @@ def draw_line_by_frame_list_color(frame_list, color_index):
     doc.saveas(output_file_path)
 
 
-def draw_dxf_by_plan_list(plan_list, color_index):
+def draw_dxf_by_plan_list(plan_list, color_index = 2):
     """PlanList型のリストと色指定してdxf出力
 
     Args:
