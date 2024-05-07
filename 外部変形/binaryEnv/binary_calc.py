@@ -1,4 +1,4 @@
-from point import Point
+from components.point import Point
 
 def line_cross_point(A, B, C, D, count, calc_count):
   """線分ABと直線CDの交点を返す

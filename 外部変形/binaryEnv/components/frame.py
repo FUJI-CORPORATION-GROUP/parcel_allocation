@@ -1,5 +1,5 @@
 import numpy as np
-from point import Point
+from components.point import Point
 import binary_calc as Calc
 
 class Frame:

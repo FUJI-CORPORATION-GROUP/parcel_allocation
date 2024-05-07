@@ -1,11 +1,11 @@
 import math
 import random
-from point import Point
-from frame import Frame
+from components.point import Point
+from components.frame import Frame
+from components.plan import Plan
 import binary_search
 import draw_dxf
 import json
-from plan import Plan
 
 
 def get_plan(target_max_area, target_min_area, binary_parcel_list, search_frame, count, road_frame, move_line):
@@ -51,8 +51,9 @@ def main():
   road_edge = []  
   
   # Json形式で取得する
-  road_data_open = open('data/road_input_data.json', 'r')
-  frame_data_open = open('data/frame_input_data.json', 'r')
+  # TODO: pathの指定を変更 変数に入れる，相対パス？
+  road_data_open = open('./data/road_input_data.json', 'r')
+  frame_data_open = open('./data/frame_input_data.json', 'r')
   road_data = json.load(road_data_open)
   frame_data = json.load(frame_data_open)
   
