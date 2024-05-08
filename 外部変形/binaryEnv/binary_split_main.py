@@ -93,7 +93,10 @@ def main():
 
   # 奥行の距離(Mock)
   # TODO: 動的に求める
-  search_depth_distance = 11500
+  min_maguti_distance = 7000
+  max_maguti_distance = 8000
+  maguti_distance = random.randint(min_maguti_distance, max_maguti_distance)
+  search_depth_distance = get_depth_distance(maguti_distance, (target_min_area + target_max_area) / 2)
 
   road_start_point = target_road_frame.points[0]
   road_end_point = target_road_frame.points[1]
@@ -127,5 +130,11 @@ def main():
   #   # draw_dxf.draw_dxf_by_plan(plan_list[i], 1)
   # print("plan_list" + str(plan_list))
   draw_dxf.draw_dxf_by_plan_list(plan_list, 1)
+
+def get_depth_distance(maguti_distance, target_area):
+  # 奥行の距離の取得
+  depth_distance = target_area / maguti_distance
+  return depth_distance
+
 
 main()
