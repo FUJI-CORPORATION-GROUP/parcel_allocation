@@ -226,7 +226,7 @@ class Frame:
 
       return barycenter
 
-    def draw_frame(self, color_index):
+    def draw_frame(self, color_index=1):
       """区画をdxfファイルに描画する
 
       Args:

@@ -21,7 +21,6 @@ def get_plan(target_max_area, target_min_area, binary_parcel_list, search_frame,
   
     parcel_frame, remain_frame = binary_search.get_side_parcel(search_frame,road_frame,target_area,move_line,count)
     
-    
     count += 1
     binary_parcel_list.append(parcel_frame)
     
@@ -57,12 +56,10 @@ def main():
   road_data = json.load(road_data_open)
   frame_data = json.load(frame_data_open)
   
-  road_width = road_data["road_width"] # 使用していないっぽい
   road_edge_point_list = road_data["road_edge_point_list"]
   target_min_area = road_data["target_min_area"]
   target_max_area = road_data["target_max_area"]
   frame = frame_data["frame"]
-  least_maguti = frame_data["least_maguti"] # 使用していないっぽい
   
   #ふたつずつ座標をまとめる：road_edge
   # TODO: この処理はun_road_make.pyで行ってJsonに入れてもいいかも？
@@ -102,10 +99,6 @@ def main():
   road_end_point = target_road_frame.points[1]
   search_frame = frame.Get_search_frame(
       frame, search_depth_distance, road_start_point, road_end_point)
-
-  # 探索領域
-  # search_frame = frame
-  
   # 道路方向ベクトル取得
   road_vec = road_end_point.sub(road_start_point)
 
@@ -117,12 +110,6 @@ def main():
   binary_parcel_list = []
   count = 0
 
-  # target_area = 1000
-  # rate = 1000000
-  # target_min_area = 90000000 * rate
-  # target_max_area = 110000000 * rate
-
-
   # TODO:30回実行
   plan_list = []
   for executions in range(1):
@@ -130,7 +117,6 @@ def main():
     plan = get_plan(target_max_area, target_min_area, binary_parcel_list, search_frame, count, target_road_frame, move_line)
     plan_list.append(plan)
 
-  # print(plan_list)
   # 描写開始
   
   # for i in range(len(plan_list)):
