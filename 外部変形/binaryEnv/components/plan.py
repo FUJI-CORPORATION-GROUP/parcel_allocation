@@ -1,5 +1,3 @@
-from frame import Frame
-
 class Plan:
 
   # プランを作成する

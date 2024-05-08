@@ -1,6 +1,7 @@
 import numpy as np
-from point import Point
+from components.point import Point
 import binary_calc as Calc
+import draw_dxf as Draw
 
 class Frame:
     """区画を扱うクラス
@@ -224,3 +225,11 @@ class Frame:
       barycenter = Point(sum_x / num_points, sum_y / num_points)
 
       return barycenter
+
+    def draw_frame(self, color_index):
+      """区画をdxfファイルに描画する
+
+      Args:
+          color_index (int): 色
+      """
+      Draw.draw_line_by_point(self.points, color_index)
