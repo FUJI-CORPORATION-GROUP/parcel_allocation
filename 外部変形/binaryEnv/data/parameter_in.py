@@ -1,4 +1,3 @@
-import codecs
 import sys
 import re
 import json
@@ -18,10 +17,10 @@ for i in range(2,len(sys.argv)):
   #road_width(道幅)に代入
   if re.match(r"/road_width",data):
     road_width=float(data.split(':')[1]) * 1000
-  #maguti(間口)に代入
+  # 最小目標面積
   elif re.match(r"/target_min_area",data):
     target_min_area=float(data.split(':')[1]) * 1000000
-  #goal_area(目標面積)に代入
+  # 最大目標面積
   elif re.match(r"/target_max_area",data):
     target_max_area=float(data.split(':')[1]) * 1000000
 
