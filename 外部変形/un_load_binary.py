@@ -105,22 +105,22 @@ def binarysearch(vecs, targetarea):
     return temp_x
 
 
-def paramas_calc(count, road_edge, maguti, least_maguti, goal_area):
+def paramas_calc(count, road_edge, maguchi, least_maguchi, goal_area):
     """今後の計算で使用する値を算出する関数
 
     Args:
                     count (int): _計算のカウント
                     road_edge (list): _街区が道路に接している辺のリスト
-                    maguti (int): _間口の広さ
-                    least_maguti (int): _間口の下限(上限)値
+                    maguchi (int): _間口の広さ
+                    least_maguchi (int): _間口の下限(上限)値
                     goal_area (int): _目標面積
 
     Returns:
                     road_distance: _長辺の長さ
-                    use_maguti: _使用する間口
+                    use_maguchi: _使用する間口
                     home_cnt: _建てる家の戸数
                     home_depth: _使用する奥行き
-                    maguti_vector: _間口単位ベクトル
+                    maguchi_vector: _間口単位ベクトル
                     depth_vector: _奥行き単位ベクトル
     """
     # 指定街区の辺の長さ
@@ -129,28 +129,28 @@ def paramas_calc(count, road_edge, maguti, least_maguti, goal_area):
 
     # 関数に使用する変数の計算
     road_distance = np.linalg.norm(b-a)  # 長辺の長さ
-    use_maguti = random.randrange(maguti, least_maguti) if least_maguti >= maguti else random.randrange(
-        least_maguti, maguti)  # 使用する間口
-    home_cnt = int(road_distance / use_maguti)  # 辺に建てる戸数
-    home_depth = goal_area / use_maguti  # 奥行き
+    use_maguchi = random.randrange(maguchi, least_maguchi) if least_maguchi >= maguchi else random.randrange(
+        least_maguchi, maguchi)  # 使用する間口
+    home_cnt = int(road_distance / use_maguchi)  # 辺に建てる戸数
+    home_depth = goal_area / use_maguchi  # 奥行き
 
     # 区画に使うベクトルの計算
-    maguti_vector = [(road_edge[count][1][0] - road_edge[count][0][0]) / road_distance,
-                     (road_edge[count][1][1] - road_edge[count][0][1]) / road_distance]  # 間口単位ベクトル
-    depth_vector = [-maguti_vector[1] * home_depth,
-                    maguti_vector[0] * home_depth]  # 奥行き単位ベクトル
+    maguchi_vector = [(road_edge[count][1][0] - road_edge[count][0][0]) / road_distance,
+                      (road_edge[count][1][1] - road_edge[count][0][1]) / road_distance]  # 間口単位ベクトル
+    depth_vector = [-maguchi_vector[1] * home_depth,
+                    maguchi_vector[0] * home_depth]  # 奥行き単位ベクトル
 
-    print(maguti_vector, depth_vector)
-    return road_distance, use_maguti, home_cnt, home_depth, maguti_vector, depth_vector
+    print(maguchi_vector, depth_vector)
+    return road_distance, use_maguchi, home_cnt, home_depth, maguchi_vector, depth_vector
 
 
-def end_area_calc(goal_area, home_depth, maguti_vector, depth_vector, frame):
+def end_area_calc(goal_area, home_depth, maguchi_vector, depth_vector, frame):
     """端の区画を計算する関数
 
     Args:
                     goal_area (int): _目標面積
                     home_depth (int): _奥行きの長さ
-                    maguti_vector (list): _間口単位ベクトル
+                    maguchi_vector (list): _間口単位ベクトル
                     depth_vector (list): _奥行き単位ベクトル
                     frame (list): _街区リスト
 
@@ -167,14 +167,14 @@ def end_area_calc(goal_area, home_depth, maguti_vector, depth_vector, frame):
 
 
 #### 道を作成しないケースの区画割の実行####
-def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
+def unload_parcel_allocation(frame, road_edge, maguchi, least_maguchi, goal_area):
     """進入経路を確保しない際の区画割実行関数
 
     Args:
                     frame (list): _区画割に使用する街区のリスト
                     road_edge (list): _街区が道路に接している辺のリスト
-                    maguti (int): _間口の広さ
-                    least_maguti (int): _間口の下限(上限)値
+                    maguchi (int): _間口の広さ
+                    least_maguchi (int): _間口の下限(上限)値
                     goal_area (int): _目標面積
 
     Returns:
@@ -188,20 +188,20 @@ def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
     point_list = []
     total_score = []
     evaluation = []
-    maguti_vector = []
+    maguchi_vector = []
     depth_vector = []
 
     # 道路に隣接している辺の数だけ区画を作成
     for k in range(len(road_edge)):
 
         # 計算に使う値を算出   →もうちょい小分けにしてもいい気もする
-        road_distance, use_maguti, home_cnt, home_depth, maguti_vector, depth_vector = paramas_calc(
-            k, road_edge, maguti, least_maguti, goal_area)
+        road_distance, use_maguchi, home_cnt, home_depth, maguchi_vector, depth_vector = paramas_calc(
+            k, road_edge, maguchi, least_maguchi, goal_area)
         print("road_distance:" + str(road_distance))
-        print("use_maguti:" + str(use_maguti))
+        print("use_maguchi:" + str(use_maguchi))
         print("home_cnt:" + str(home_cnt))
         print("home_depth:" + str(home_depth))
-        print("maguti_vector:" + str(maguti_vector))
+        print("maguchi_vector:" + str(maguchi_vector))
         print("depth_vector:" + str(depth_vector))
 
         # 端区画を計算
@@ -209,13 +209,13 @@ def unload_parcel_allocation(frame, road_edge, maguti, least_maguti, goal_area):
         temp_x = binarysearch(frame_array, goal_area)
         print("##############")
         print("temp_x:" + str(temp_x))
-        temp_y = (temp_x/maguti_vector[0]) * maguti_vector[1]
+        temp_y = (temp_x/maguchi_vector[0]) * maguchi_vector[1]
         print("temp_y:" + str(temp_y))
         # temp2_x, temp2_y = temp_x + \
         #     (frame[1][0]-frame[2][0]), temp_y+(frame[1][1]-frame[2][1])
         # result.append([[temp_x, temp_y], [temp2_x, temp2_y]])
         # print(str(result))
         print("###finish###")
-        # unload_parcel_allocation(goal_area, home_depth, maguti_vector, depth_vector, frame)
+        # unload_parcel_allocation(goal_area, home_depth, maguchi_vector, depth_vector, frame)
 
     return result, point_list, total_score, evaluation
