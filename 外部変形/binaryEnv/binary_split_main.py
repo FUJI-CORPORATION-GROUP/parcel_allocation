@@ -8,11 +8,19 @@ import draw_dxf
 import json
 
 
-def get_plan(target_max_area, target_min_area, binary_parcel_list, search_frame, count, road_frame, move_line):
+def get_plan(
+    target_max_area,
+    target_min_area,
+    binary_parcel_list,
+    search_frame,
+    count,
+    road_frame,
+    move_line,
+):
     # frameListを作成して，Planを返す
     # 探索領域が目標面積取れなくなるまで区画割
-    while (True):
-        if (search_frame.area > target_max_area):
+    while True:
+        if search_frame.area > target_max_area:
             target_area = random.randint(target_min_area, target_max_area)
             print(f"\n{count} 回目 探索開始 ランダム目標面積：{target_area}")
         else:
@@ -20,16 +28,17 @@ def get_plan(target_max_area, target_min_area, binary_parcel_list, search_frame,
             print(f"\n{count} 回目 探索開始 最小目標面積：{target_area}")
 
         parcel_frame, remain_frame = binary_search.get_side_parcel(
-            search_frame, road_frame, target_area, move_line, count)
+            search_frame, road_frame, target_area, move_line, count
+        )
 
         count += 1
         binary_parcel_list.append(parcel_frame)
 
-        if (target_min_area > remain_frame.area):
-            print(f"探索終了 残り面積{math.floor(remain_frame.area/1000000)}㎡")
+        if target_min_area > remain_frame.area:
+            print(f"探索終了 残り面積{  math.floor(remain_frame.area/1000000)}㎡")
             break
 
-        if (count > 30):
+        if count > 30:
             # 念のため
             break
 
@@ -53,8 +62,8 @@ def main():
 
     # Json形式で取得する
     # TODO: pathの指定を変更 変数に入れる，相対パス？
-    road_data_open = open('./data/road_input_data.json', 'r')
-    frame_data_open = open('./data/frame_input_data.json', 'r')
+    road_data_open = open("./data/road_input_data.json", "r")
+    frame_data_open = open("./data/frame_input_data.json", "r")
     road_data = json.load(road_data_open)
     frame_data = json.load(frame_data_open)
 
@@ -66,8 +75,7 @@ def main():
     # ふたつずつ座標をまとめる：road_edge
     # TODO: この処理はun_road_make.pyで行ってJsonに入れてもいいかも？
     for i in range(int(len(road_edge_point_list) / 2)):
-        road_edge.append([road_edge_point_list[i * 2],
-                         road_edge_point_list[i * 2 + 1]])
+        road_edge.append([road_edge_point_list[i * 2], road_edge_point_list[i * 2 + 1]])
 
     # classの変更
     for i in range(len(frame)):
@@ -83,10 +91,10 @@ def main():
     # 区画・道路を原点に移動
     frame, road_frame_list = Frame.move_frame_and_road(frame, road_frame_list)
 
-    if (len(road_frame_list) > 1):
+    if len(road_frame_list) > 1:
         print("道路が2本以上あります")
         exit()
-    elif (len(road_frame_list) == 0):
+    elif len(road_frame_list) == 0:
         print("道路がありません")
         exit()
 
@@ -98,15 +106,16 @@ def main():
     # TODO: 動的に求める
     min_maguchi_distance = 7000
     max_maguchi_distance = 8000
-    maguchi_distance = random.randint(
-        min_maguchi_distance, max_maguchi_distance)
+    maguchi_distance = random.randint(min_maguchi_distance, max_maguchi_distance)
     search_depth_distance = get_depth_distance(
-        maguchi_distance, (target_min_area + target_max_area) / 2)
+        maguchi_distance, (target_min_area + target_max_area) / 2
+    )
 
     road_start_point = target_road_frame.points[0]
     road_end_point = target_road_frame.points[1]
     search_frame = frame.Get_search_frame(
-        frame, search_depth_distance, road_start_point, road_end_point)
+        frame, search_depth_distance, road_start_point, road_end_point
+    )
     # 道路方向ベクトル取得
     road_vec = road_end_point.sub(road_start_point)
 
@@ -122,8 +131,15 @@ def main():
     plan_list = []
     for executions in range(1):
         # frameListを作成して，Planを返す
-        plan = get_plan(target_max_area, target_min_area, binary_parcel_list,
-                        search_frame, count, target_road_frame, move_line)
+        plan = get_plan(
+            target_max_area,
+            target_min_area,
+            binary_parcel_list,
+            search_frame,
+            count,
+            target_road_frame,
+            move_line,
+        )
         plan_list.append(plan)
 
     # 描写開始

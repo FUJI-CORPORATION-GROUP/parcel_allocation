@@ -25,12 +25,15 @@ def getclossvecs(vecs, point):
     for i in range(len(vecs)):
         start = vecs[i]
         end = vecs[i + 1] if i + 1 < len(vecs) else vecs[0]
-        if (targetareaflag):
+        if targetareaflag:
             arrayList_clossvecs.append(start)
 
-        if (start[0] < point and point < end[0]) or (end[0] < point and point < start[0]):
-            y = (end[1] - start[1]) / (end[0] - start[0]) * \
-                (point - start[0]) + start[1]
+        if (start[0] < point and point < end[0]) or (
+            end[0] < point and point < start[0]
+        ):
+            y = (end[1] - start[1]) / (end[0] - start[0]) * (point - start[0]) + start[
+                1
+            ]
             arrayList_clossvecs.append([point, y])
             targetareaflag = not targetareaflag
 
@@ -68,7 +71,7 @@ def binarysearch(vecs, targetarea):
 
     while min_x < max_x:
         # 中央値を求める
-        temp_x = ((min_x + max_x) / 2)
+        temp_x = (min_x + max_x) / 2
 
         # 図形の取得 個々の処理を関数化したい（むずそう）
         temp_vec = getclossvecs(vecs, temp_x)
@@ -128,20 +131,34 @@ def paramas_calc(count, road_edge, maguchi, least_maguchi, goal_area):
     b = np.array(road_edge[count][1])
 
     # 関数に使用する変数の計算
-    road_distance = np.linalg.norm(b-a)  # 長辺の長さ
-    use_maguchi = random.randrange(maguchi, least_maguchi) if least_maguchi >= maguchi else random.randrange(
-        least_maguchi, maguchi)  # 使用する間口
+    road_distance = np.linalg.norm(b - a)  # 長辺の長さ
+    use_maguchi = (
+        random.randrange(maguchi, least_maguchi)
+        if least_maguchi >= maguchi
+        else random.randrange(least_maguchi, maguchi)
+    )  # 使用する間口
     home_cnt = int(road_distance / use_maguchi)  # 辺に建てる戸数
     home_depth = goal_area / use_maguchi  # 奥行き
 
     # 区画に使うベクトルの計算
-    maguchi_vector = [(road_edge[count][1][0] - road_edge[count][0][0]) / road_distance,
-                      (road_edge[count][1][1] - road_edge[count][0][1]) / road_distance]  # 間口単位ベクトル
-    depth_vector = [-maguchi_vector[1] * home_depth,
-                    maguchi_vector[0] * home_depth]  # 奥行き単位ベクトル
+    maguchi_vector = [
+        (road_edge[count][1][0] - road_edge[count][0][0]) / road_distance,
+        (road_edge[count][1][1] - road_edge[count][0][1]) / road_distance,
+    ]  # 間口単位ベクトル
+    depth_vector = [
+        -maguchi_vector[1] * home_depth,
+        maguchi_vector[0] * home_depth,
+    ]  # 奥行き単位ベクトル
 
     print(maguchi_vector, depth_vector)
-    return road_distance, use_maguchi, home_cnt, home_depth, maguchi_vector, depth_vector
+    return (
+        road_distance,
+        use_maguchi,
+        home_cnt,
+        home_depth,
+        maguchi_vector,
+        depth_vector,
+    )
 
 
 def end_area_calc(goal_area, home_depth, maguchi_vector, depth_vector, frame):
@@ -195,8 +212,14 @@ def unload_parcel_allocation(frame, road_edge, maguchi, least_maguchi, goal_area
     for k in range(len(road_edge)):
 
         # 計算に使う値を算出   →もうちょい小分けにしてもいい気もする
-        road_distance, use_maguchi, home_cnt, home_depth, maguchi_vector, depth_vector = paramas_calc(
-            k, road_edge, maguchi, least_maguchi, goal_area)
+        (
+            road_distance,
+            use_maguchi,
+            home_cnt,
+            home_depth,
+            maguchi_vector,
+            depth_vector,
+        ) = paramas_calc(k, road_edge, maguchi, least_maguchi, goal_area)
         print("road_distance:" + str(road_distance))
         print("use_maguchi:" + str(use_maguchi))
         print("home_cnt:" + str(home_cnt))
@@ -209,7 +232,7 @@ def unload_parcel_allocation(frame, road_edge, maguchi, least_maguchi, goal_area
         temp_x = binarysearch(frame_array, goal_area)
         print("##############")
         print("temp_x:" + str(temp_x))
-        temp_y = (temp_x/maguchi_vector[0]) * maguchi_vector[1]
+        temp_y = (temp_x / maguchi_vector[0]) * maguchi_vector[1]
         print("temp_y:" + str(temp_y))
         # temp2_x, temp2_y = temp_x + \
         #     (frame[1][0]-frame[2][0]), temp_y+(frame[1][1]-frame[2][1])

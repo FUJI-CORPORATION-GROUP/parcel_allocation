@@ -5,7 +5,7 @@ import re
 print("---parameter_in.py---")
 
 # 書き込み用のファイルを展開
-info = codecs.open('外部変形/information.txt', 'w', "shift-jis")
+info = codecs.open("外部変形/information.txt", "w", "shift-jis")
 
 # コマンドライン引数（道幅，間口，目標面積）
 road_width = 4000
@@ -16,13 +16,13 @@ goal_area = 100000000
 for i in range(2, len(sys.argv)):
     # aから始まる情報はroad_width(道幅)に代入
     if re.match(r"/a", sys.argv[i]):
-        road_width = float(sys.argv[i][2:len(sys.argv[i])]) * 1000
-  # bから始まる情報はmaguchi(間口)に代入
+        road_width = float(sys.argv[i][2 : len(sys.argv[i])]) * 1000
+    # bから始まる情報はmaguchi(間口)に代入
     elif re.match(r"/b", sys.argv[i]):
-        maguchi = float(sys.argv[i][2:len(sys.argv[i])]) * 1000
-  # cから始まる情報はgoal_area(目標面積)に代入
+        maguchi = float(sys.argv[i][2 : len(sys.argv[i])]) * 1000
+    # cから始まる情報はgoal_area(目標面積)に代入
     elif re.match(r"/c", sys.argv[i]):
-        goal_area = float(sys.argv[i][2:len(sys.argv[i])]) * 1000000
+        goal_area = float(sys.argv[i][2 : len(sys.argv[i])]) * 1000000
     #
 #
 

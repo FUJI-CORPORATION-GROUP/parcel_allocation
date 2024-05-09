@@ -6,23 +6,23 @@ print("----parameter_in.py----")
 # 道路情報を入力している
 # TODO: parameter_in.pyとun_road_make.pyの役割がファイル名でわかりにくいため，統合 or リネームする
 
-#コマンドライン引数（最小目標面積，最大目標面積）
-road_width=4000
+# コマンドライン引数（最小目標面積，最大目標面積）
+road_width = 4000
 target_min_area = 100000000
 target_max_area = 120000000
 
 # コマンドライン引数の二つ目から読み込み
-for i in range(2,len(sys.argv)):
-  data = sys.argv[i]
-  #road_width(道幅)に代入
-  if re.match(r"/road_width",data):
-    road_width=float(data.split(':')[1]) * 1000
-  # 最小目標面積
-  elif re.match(r"/target_min_area",data):
-    target_min_area=float(data.split(':')[1]) * 1000000
-  # 最大目標面積
-  elif re.match(r"/target_max_area",data):
-    target_max_area=float(data.split(':')[1]) * 1000000
+for i in range(2, len(sys.argv)):
+    data = sys.argv[i]
+    # road_width(道幅)に代入
+    if re.match(r"/road_width", data):
+        road_width = float(data.split(":")[1]) * 1000
+    # 最小目標面積
+    elif re.match(r"/target_min_area", data):
+        target_min_area = float(data.split(":")[1]) * 1000000
+    # 最大目標面積
+    elif re.match(r"/target_max_area", data):
+        target_max_area = float(data.split(":")[1]) * 1000000
 
 print(sys.argv)
 print(" ")
@@ -35,27 +35,39 @@ print(" ")
 road_edge_point_list = []
 xy = []
 
-#tempの中身を取得
+# tempの中身を取得
 tmp_file = sys.argv[1]
-f=open(tmp_file,mode="r")
+f = open(tmp_file, mode="r")
 for line in f:
-  if re.match(r"hp",line):
-    #一行ごとに読み込み
-    xy=line.split()
-    road_edge_point_list.append([float(xy[1]), float(xy[2])])
+    if re.match(r"hp", line):
+        # 一行ごとに読み込み
+        xy = line.split()
+        road_edge_point_list.append([float(xy[1]), float(xy[2])])
 for i in range(len(road_edge_point_list)):
-  for j in range(1, len(road_edge_point_list[i])):
-    print(" " + str(road_edge_point_list[i][j - 1]) + " " + str(road_edge_point_list[i][j]))
+    for j in range(1, len(road_edge_point_list[i])):
+        print(
+            " "
+            + str(road_edge_point_list[i][j - 1])
+            + " "
+            + str(road_edge_point_list[i][j])
+        )
 f.close()
+
 
 # 道路情報をjsonファイルに書き込む
 def input_to_json(road_width, target_min_area, target_max_area, road_edge_point_list):
-  # TODO: のちのちInputの構造体を作るとよりわかりやすい
-  input_data = {'road_width': road_width, 'target_min_area': target_min_area, 'target_max_area': target_max_area, 'road_edge_point_list': road_edge_point_list}
-  
-  input_json_data = json.dumps(input_data, indent=4)
-  
-  with open('data/road_input_data.json', 'w') as f:
-    f.write(input_json_data)
+    # TODO: のちのちInputの構造体を作るとよりわかりやすい
+    input_data = {
+        "road_width": road_width,
+        "target_min_area": target_min_area,
+        "target_max_area": target_max_area,
+        "road_edge_point_list": road_edge_point_list,
+    }
+
+    input_json_data = json.dumps(input_data, indent=4)
+
+    with open("data/road_input_data.json", "w") as f:
+        f.write(input_json_data)
+
 
 input_to_json(road_width, target_min_area, target_max_area, road_edge_point_list)

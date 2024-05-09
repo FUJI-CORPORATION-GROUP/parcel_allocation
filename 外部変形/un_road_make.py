@@ -8,7 +8,7 @@ import re
 
 # 書き込み用のファイルを展開
 # info = codecs.open('外部変形/information.txt','w',"shift-jis")
-info = codecs.open('外部変形/information.txt', 'a', "shift-jis")
+info = codecs.open("外部変形/information.txt", "a", "shift-jis")
 
 # コマンドライン引数(temp.txt)の受け取り
 least_maguchi = 6800
@@ -17,7 +17,7 @@ least_maguchi = 6800
 for i in range(2, len(sys.argv)):
     # aから始まる情報はroad_width(道幅)に代入
     if re.match(r"/a", sys.argv[i]):
-        least_maguchi = float(sys.argv[i][2:len(sys.argv[i])]) * 1000
+        least_maguchi = float(sys.argv[i][2 : len(sys.argv[i])]) * 1000
     #
 #
 
