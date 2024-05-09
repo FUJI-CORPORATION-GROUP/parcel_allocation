@@ -1,12 +1,7 @@
-from turtle import distance
 import Calc
 import numpy as np
 import math
 import copy
-import pandas as pd
-from matplotlib import pyplot as plt
-import six
-import decimal
 
 
 # 有効宅地面積の計算
@@ -284,11 +279,11 @@ def unload_area_rate(pt, goal_area):
 def unload_eval(section, goal_area):
     # 結果記入用配列・総合得点
     result = []
-    total_score = 0
+    # total_score = 0
     # 区画の戸数分ループ
     for i in range(len(section)):
         # 個別結果記入用配列
-        ind_result = []
+        # ind_result = []
 
         # 各宅地の敷地面積を70点満点で評価
         result.append(unload_area_rate(section[i], goal_area))

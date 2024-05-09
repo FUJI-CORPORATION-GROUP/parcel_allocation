@@ -1,5 +1,4 @@
 import ezdxf
-import numpy as np
 
 # 出力先DXFファイル
 output_file_name = "output.dxf"

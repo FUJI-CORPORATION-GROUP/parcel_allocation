@@ -1,5 +1,4 @@
 import math
-import numpy as np
 from components.point import Point
 from components.frame import Frame
 import binary_calc as Calc
