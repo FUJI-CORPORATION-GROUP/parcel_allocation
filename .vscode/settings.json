@@ -1,0 +1,7 @@
+{
+  "cSpell.words": ["dxfattribs", "ezdxf", "maguchi"],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "editor.formatOnSave": true
+}
