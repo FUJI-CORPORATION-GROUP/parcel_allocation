@@ -5,6 +5,7 @@
 !外部変形/*/*
 !外部変形/*/*/*
 !.gitignore
+!.gitattributes
 !jwc_temp1.txt
 !jwc_temp2.txt
 !line.dxf

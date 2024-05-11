@@ -1,0 +1,2 @@
+*.bat diff=sjis
+*.bat working-tree-encoding=cp932
