@@ -1,5 +1,7 @@
 {
     "road_width": 4000,
+    "min_maguchi": 6000.0,
+    "max_maguchi": 8000.0,
     "target_min_area": 100000000,
     "target_max_area": 120000000,
     "road_edge_point_list": [
