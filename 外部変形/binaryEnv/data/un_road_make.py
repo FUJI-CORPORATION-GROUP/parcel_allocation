@@ -13,8 +13,7 @@ least_maguchi = 6800
 for i in range(2, len(sys.argv)):
     # road_width(道幅)に代入
     if re.match(r"/road_width", sys.argv[i]):
-        least_maguchi = float(sys.argv[i].split(':')[1]) * 1000
-
+        least_maguchi = float(sys.argv[i].split(":")[1]) * 1000
 
 # 変数を宣言（接道辺，道作成辺，街区，座標，選択された連続線，枠上判定）
 frame = []
@@ -40,11 +39,11 @@ f.close()
 # 街区情報をjsonファイルに書き込む
 def input_to_json(least_maguchi, frame):
     # TODO: のちのちInputの構造体を作るとよりわかりやすい
-    input_data = {'least_maguchi': least_maguchi, 'frame': frame}
+    input_data = {"least_maguchi": least_maguchi, "frame": frame}
 
     input_json_data = json.dumps(input_data, indent=4)
 
-    with open('data/frame_input_data.json', 'w') as f:
+    with open("data/frame_input_data.json", "w") as f:
         f.write(input_json_data)
 
 

@@ -37,12 +37,15 @@ def unload_parcel_allocation(frame, road_edge, maguchi, least_maguchi, goal_area
         # 指定街区の辺の長さ
         a = np.array(road_edge[k][0])
         b = np.array(road_edge[k][1])
-    # 長さ計算
-        road_distance = np.linalg.norm(b-a)
+        # 長さ計算
+        road_distance = np.linalg.norm(b - a)
         # 使用する間口の決定
         # use_maguchi = random.randint(maguchi, least_maguchi)
-        use_maguchi = random.randrange(
-            maguchi, least_maguchi) if least_maguchi >= maguchi else random.randrange(least_maguchi, maguchi)
+        use_maguchi = (
+            random.randrange(maguchi, least_maguchi)
+            if least_maguchi >= maguchi
+            else random.randrange(least_maguchi, maguchi)
+        )
         # 辺上に建てられる戸数を決定
         home_cnt = int(road_distance / use_maguchi)
         if home_cnt > 1:
@@ -50,25 +53,39 @@ def unload_parcel_allocation(frame, road_edge, maguchi, least_maguchi, goal_area
             home_depth = goal_area / use_maguchi
             # 間口毎のベクトルの算出
             # edge[0]から[1]への単位ベクトルの算出
-            maguchi_deviation = [(road_edge[k][1][0] - road_edge[k][0][0]) / road_distance,
-                                 (road_edge[k][1][1] - road_edge[k][0][1]) / road_distance]
+            maguchi_deviation = [
+                (road_edge[k][1][0] - road_edge[k][0][0]) / road_distance,
+                (road_edge[k][1][1] - road_edge[k][0][1]) / road_distance,
+            ]
             # 直角内側(左に折れる)のベクトルの算出
-            depth_deviation = [-maguchi_deviation[1] *
-                               home_depth, maguchi_deviation[0] * home_depth]
-            print("vector_calc:" +
-                  str(road_edge[k][1][0] - road_edge[k][0][0]))
+            depth_deviation = [
+                -maguchi_deviation[1] * home_depth,
+                maguchi_deviation[0] * home_depth,
+            ]
+            print("vector_calc:" + str(road_edge[k][1][0] - road_edge[k][0][0]))
             print("maguchi_deviation:" + str(maguchi_deviation))
             print("depth_deviation:" + str(depth_deviation))
             # 間口座標(一つ目)の算出
-            maguchi_coor = [road_edge[k][0][0] + maguchi_deviation[0],
-                            road_edge[k][0][1] + maguchi_deviation[1]]
+            maguchi_coor = [
+                road_edge[k][0][0] + maguchi_deviation[0],
+                road_edge[k][0][1] + maguchi_deviation[1],
+            ]
             # 奥行き座標(一つ目)の算出
-            depth_coor = [road_edge[k][0][0] + depth_deviation[0],
-                          road_edge[k][0][1] + depth_deviation[1]]
+            depth_coor = [
+                road_edge[k][0][0] + depth_deviation[0],
+                road_edge[k][0][1] + depth_deviation[1],
+            ]
             # 奥行座標と間口間ベクトルで構成された直線と枠線の交点（二点）を算出
             for i in range(1, len(parcel_frame)):
-                intersection = Calc.line_cross_point(parcel_frame[i - 1], parcel_frame[i], [depth_coor[0], depth_coor[1]], [
-                                                     depth_coor[0] + maguchi_deviation[0], depth_coor[1] + maguchi_deviation[1]])
+                intersection = Calc.line_cross_point(
+                    parcel_frame[i - 1],
+                    parcel_frame[i],
+                    [depth_coor[0], depth_coor[1]],
+                    [
+                        depth_coor[0] + maguchi_deviation[0],
+                        depth_coor[1] + maguchi_deviation[1],
+                    ],
+                )
                 print("parcel_" + str(i - 1) + ":" + str(parcel_frame[i - 1]))
                 print("parcel_" + str(i) + ":" + str(parcel_frame[i]))
                 print("depth_coor[0]:" + str(depth_coor[0]))
@@ -88,15 +105,26 @@ def unload_parcel_allocation(frame, road_edge, maguchi, least_maguchi, goal_area
                     else:
                         a = np.array(depth_coor)
                         b = np.array(maguchi_coor)
-                        depth_distance = np.linalg.norm(b-a)
+                        depth_distance = np.linalg.norm(b - a)
                         need_area = goal_area - area
                         move_distance = need_area / depth_distance
-                        maguchi_coor = [maguchi_coor[0] + maguchi_deviation[0] * move_distance,
-                                        maguchi_coor[1] + maguchi_deviation[1] * move_distance]
-                        depth_coor = [depth_coor[0] + depth_deviation[0] * move_distance,
-                                      depth_coor[1] + depth_deviation[1] * move_distance]
-                        intersection = Calc.line_cross_point(parcel_frame[i - 1], parcel_frame[i], [depth_coor[0], depth_coor[1]], [
-                                                             depth_coor[0] + maguchi_deviation[0], depth_coor[1] + maguchi_deviation[1]])
+                        maguchi_coor = [
+                            maguchi_coor[0] + maguchi_deviation[0] * move_distance,
+                            maguchi_coor[1] + maguchi_deviation[1] * move_distance,
+                        ]
+                        depth_coor = [
+                            depth_coor[0] + depth_deviation[0] * move_distance,
+                            depth_coor[1] + depth_deviation[1] * move_distance,
+                        ]
+                        intersection = Calc.line_cross_point(
+                            parcel_frame[i - 1],
+                            parcel_frame[i],
+                            [depth_coor[0], depth_coor[1]],
+                            [
+                                depth_coor[0] + maguchi_deviation[0],
+                                depth_coor[1] + maguchi_deviation[1],
+                            ],
+                        )
 
                 else:
                     print("角度が小さすぎるので別の処理推奨")
@@ -106,8 +134,12 @@ def unload_parcel_allocation(frame, road_edge, maguchi, least_maguchi, goal_area
                 inter_coor.reverse()
             if len(inter_coor) == 2:
                 # 結果リストに格納(本来は図形内にあるかの確認が必要！！！)
-                result.append([[inter_coor[0][0], inter_coor[0][1]], [
-                              inter_coor[1][0], inter_coor[1][1]]])
+                result.append(
+                    [
+                        [inter_coor[0][0], inter_coor[0][1]],
+                        [inter_coor[1][0], inter_coor[1][1]],
+                    ]
+                )
                 # 各種数値の出力（デバッグ）
                 print("road_distance:" + str(road_distance))
                 print("home_cnt:" + str(home_cnt))
@@ -122,13 +154,13 @@ def unload_parcel_allocation(frame, road_edge, maguchi, least_maguchi, goal_area
                     cp_inter_coor = copy.deepcopy(inter_coor)
                     exist_flag = True
                     instant_coor_a.append(
-                        road_edge[k][0][0] + (i * maguchi_deviation[0] * maguchi))
+                        road_edge[k][0][0] + (i * maguchi_deviation[0] * maguchi)
+                    )
                     instant_coor_a.append(
-                        road_edge[k][0][1] + (i * maguchi_deviation[1] * maguchi))
-                    instant_coor_b.append(
-                        instant_coor_a[0] + depth_deviation[0])
-                    instant_coor_b.append(
-                        instant_coor_a[1] + depth_deviation[1])
+                        road_edge[k][0][1] + (i * maguchi_deviation[1] * maguchi)
+                    )
+                    instant_coor_b.append(instant_coor_a[0] + depth_deviation[0])
+                    instant_coor_b.append(instant_coor_a[1] + depth_deviation[1])
                     instant_coor.append(instant_coor_a)
                     instant_coor.append(instant_coor_b)
                     instant_result.extend(instant_coor)
@@ -146,46 +178,105 @@ def unload_parcel_allocation(frame, road_edge, maguchi, least_maguchi, goal_area
                     if exist_flag:
                         if k % 2 == 0:
                             if i == 1:
-                                evaluation.append([eva_coor[0], eva_coor[1], [
-                                                  cp_inter_coor[0][0], cp_inter_coor[0][1]], parcel_frame[0]])
+                                evaluation.append(
+                                    [
+                                        eva_coor[0],
+                                        eva_coor[1],
+                                        [cp_inter_coor[0][0], cp_inter_coor[0][1]],
+                                        parcel_frame[0],
+                                    ]
+                                )
                             elif i == home_cnt - 1:
                                 evaluation.append(
-                                    [eva_coor[i * 2 - 2], eva_coor[i * 2 - 1], eva_coor[i * 2 - 3], eva_coor[i * 2 - 4]])
-                                evaluation.append([parcel_frame[1], [cp_inter_coor[1][0], cp_inter_coor[1][1]], eva_coor[(
-                                    i - 1) * 2 - 1], eva_coor[(i - 1) * 2]])
+                                    [
+                                        eva_coor[i * 2 - 2],
+                                        eva_coor[i * 2 - 1],
+                                        eva_coor[i * 2 - 3],
+                                        eva_coor[i * 2 - 4],
+                                    ]
+                                )
+                                evaluation.append(
+                                    [
+                                        parcel_frame[1],
+                                        [cp_inter_coor[1][0], cp_inter_coor[1][1]],
+                                        eva_coor[(i - 1) * 2 - 1],
+                                        eva_coor[(i - 1) * 2],
+                                    ]
+                                )
                                 break
                             else:
                                 evaluation.append(
-                                    [eva_coor[i * 2 - 2], eva_coor[i * 2 - 1], eva_coor[i * 2 - 3], eva_coor[i * 2 - 4]])
+                                    [
+                                        eva_coor[i * 2 - 2],
+                                        eva_coor[i * 2 - 1],
+                                        eva_coor[i * 2 - 3],
+                                        eva_coor[i * 2 - 4],
+                                    ]
+                                )
                         else:
                             if i == 1:
                                 evaluation.append(
-                                    [[cp_inter_coor[0][0], cp_inter_coor[0][1]], parcel_frame[2], eva_coor[0], eva_coor[1]])
+                                    [
+                                        [cp_inter_coor[0][0], cp_inter_coor[0][1]],
+                                        parcel_frame[2],
+                                        eva_coor[0],
+                                        eva_coor[1],
+                                    ]
+                                )
                             elif i == home_cnt - 1:
                                 evaluation.append(
-                                    [eva_coor[i * 2 - 3], eva_coor[i * 2 - 4], eva_coor[i * 2 - 2], eva_coor[i * 2 - 1]])
-                                evaluation.append([parcel_frame[3], [cp_inter_coor[1][0], cp_inter_coor[1][1]], eva_coor[(
-                                    i - 1) * 2 - 1], eva_coor[(i - 1) * 2]])
+                                    [
+                                        eva_coor[i * 2 - 3],
+                                        eva_coor[i * 2 - 4],
+                                        eva_coor[i * 2 - 2],
+                                        eva_coor[i * 2 - 1],
+                                    ]
+                                )
+                                evaluation.append(
+                                    [
+                                        parcel_frame[3],
+                                        [cp_inter_coor[1][0], cp_inter_coor[1][1]],
+                                        eva_coor[(i - 1) * 2 - 1],
+                                        eva_coor[(i - 1) * 2],
+                                    ]
+                                )
                                 break
                             else:
                                 evaluation.append(
-                                    [eva_coor[i * 2 - 3], eva_coor[i * 2 - 4], eva_coor[i * 2 - 2], eva_coor[i * 2 - 1]])
+                                    [
+                                        eva_coor[i * 2 - 3],
+                                        eva_coor[i * 2 - 4],
+                                        eva_coor[i * 2 - 2],
+                                        eva_coor[i * 2 - 1],
+                                    ]
+                                )
                     else:
                         if k % 2 == 0:
-                            evaluation.append([parcel_frame[1], [inter_coor[1][0], inter_coor[1][1]], eva_coor[(
-                                i - 1) * 2 - 2], eva_coor[(i - 1) * 2 - 1]])
+                            evaluation.append(
+                                [
+                                    parcel_frame[1],
+                                    [inter_coor[1][0], inter_coor[1][1]],
+                                    eva_coor[(i - 1) * 2 - 2],
+                                    eva_coor[(i - 1) * 2 - 1],
+                                ]
+                            )
                             break
                         else:
-                            evaluation.append([eva_coor[(i - 1) * 2 - 1], eva_coor[(i - 1) * 2 - 2], [
-                                              inter_coor[1][0], inter_coor[1][1]], parcel_frame[3]])
+                            evaluation.append(
+                                [
+                                    eva_coor[(i - 1) * 2 - 1],
+                                    eva_coor[(i - 1) * 2 - 2],
+                                    [inter_coor[1][0], inter_coor[1][1]],
+                                    parcel_frame[3],
+                                ]
+                            )
                             break
                 exist_flag = False
                 eva_coor = []
                 for i in range(len(parcel_frame)):
                     for j in range(len(road_edge[k])):
                         if parcel_frame[i] == road_edge[k][j]:
-                            parcel_frame[i] = [
-                                inter_coor[j][0], inter_coor[j][1]]
+                            parcel_frame[i] = [inter_coor[j][0], inter_coor[j][1]]
                 eva_coor = []
                 inter_coor = []
                 print("evaluation:" + str(evaluation))

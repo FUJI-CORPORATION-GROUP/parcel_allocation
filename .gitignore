@@ -13,3 +13,4 @@
 !.github/*/*
 *.pyc
 !*md
+!.vscode/*
