@@ -70,6 +70,8 @@ def main():
     road_edge_point_list = road_data["road_edge_point_list"]
     target_min_area = road_data["target_min_area"]
     target_max_area = road_data["target_max_area"]
+    min_maguchi = road_data["min_maguchi"]
+    max_maguchi = road_data["max_maguchi"]
     frame = frame_data["frame"]
 
     # ふたつずつ座標をまとめる：road_edge
@@ -102,11 +104,9 @@ def main():
     # TODO: 他の道路も採用できるようにする
     target_road_frame = road_frame_list[0]
 
-    # 奥行の距離(Mock)
-    # TODO: 動的に求める
-    min_maguchi_distance = 7000
-    max_maguchi_distance = 8000
-    maguchi_distance = random.randint(min_maguchi_distance, max_maguchi_distance)
+    # 奥行の距離
+    maguchi_distance = random.randint(
+        min_maguchi, max_maguchi)
     search_depth_distance = get_depth_distance(
         maguchi_distance, (target_min_area + target_max_area) / 2
     )

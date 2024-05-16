@@ -19,6 +19,8 @@ REM #10 道路を選択してください.(L)free (R)Read
 REM #11-%d道路を選択してください.(L)free (R)Read
 REM #12 道路を選択してください.(L)free (R)Read
 REM #99#
+REM #c 最低間口 無指定:7m/_/min_maguchi:
+REM #c 最大間口 無指定:8m/_/max_maguchi:
 REM #c 最低目標面積 無指定:100㎡/_/target_min_area:
 REM #c 最大目標面積 無指定:120㎡/_/target_max_area:
 REM #hr
