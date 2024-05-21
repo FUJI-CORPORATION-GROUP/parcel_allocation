@@ -1,8 +1,13 @@
 import ezdxf
+from ezdxf import recover
+from ezdxf.addons.drawing import matplotlib
 
 # 出力先DXFファイル
-output_file_name = "output.dxf"
-output_file_path = "./out/" + output_file_name
+output_dir = "./out/"
+output_dxf_file_name = "output.dxf"
+output_dxf_file_path = output_dir + output_dxf_file_name
+output_dxf_img_name = "output.png"
+output_dxf_img_path = output_dir + output_dxf_img_name
 
 
 def draw_line_by_point(point_list, color_index=2):
@@ -11,11 +16,11 @@ def draw_line_by_point(point_list, color_index=2):
         point_list (list): Point型のリスト
     """
     dxfattribs = {"color": color_index}
-    doc = ezdxf.readfile(output_file_path)
+    doc = ezdxf.readfile(output_dxf_file_path)
     msp = doc.modelspace()
     draw_line_list(msp, point_list, dxfattribs)
 
-    doc.saveas(output_file_path)
+    doc.saveas(output_dxf_file_path)
 
 
 # FrameList型
@@ -28,13 +33,13 @@ def draw_line_by_frame_list(frame_list, color_index=2):
         color_index (int): 色
     """
     dxfattribs = {"color": color_index}
-    doc = ezdxf.readfile(output_file_path)
+    doc = ezdxf.readfile(output_dxf_file_path)
     msp = doc.modelspace()
     for i in range(len(frame_list)):
         point_list = frame_list[i].points
         draw_line_list(msp, point_list, dxfattribs)
 
-    doc.saveas(output_file_path)
+    doc.saveas(output_dxf_file_path)
 
 
 def draw_dxf_by_plan_list(plan_list, color_index=2):
@@ -44,7 +49,7 @@ def draw_dxf_by_plan_list(plan_list, color_index=2):
         plan_list (list): PlanList型のリスト
         color_index (int): 色
     """
-    doc = ezdxf.readfile(output_file_path)
+    doc = ezdxf.readfile(output_dxf_file_path)
     msp = doc.modelspace()
 
     dxfattribs = {"color": color_index}
@@ -56,13 +61,13 @@ def draw_dxf_by_plan_list(plan_list, color_index=2):
             point_list = frame_list[i].points
             draw_line_list(msp, point_list, dxfattribs)
 
-    doc.saveas(output_file_path)
+    doc.saveas(output_dxf_file_path)
 
 
 def clear_dxf():
     """dxfファイルをクリアする"""
     doc = ezdxf.new("R2010")
-    doc.saveas(output_file_path)
+    doc.saveas(output_dxf_file_path)
 
 
 def draw_line_list(msp, point_list, dxfattribs):
@@ -89,3 +94,19 @@ def draw_line(msp, start, end, dxfattribs):
         dxfattribs (Object): dxfの属性
     """
     msp.add_line(start.to_np_array(), end.to_np_array(), dxfattribs=dxfattribs)
+
+
+def convert_dxf_to_png():
+    """Convert dxf to png.
+    """
+    try:
+        dxf, auditor = recover.readfile(output_dxf_file_path)
+    except IOError as ioerror:
+        print(ioerror)
+        raise ioerror
+    except ezdxf.DXFStructureError as dxf_structure_error:
+        print(dxf_structure_error)
+        raise dxf_structure_error
+
+    if not auditor.has_errors:
+        matplotlib.qsave(dxf.modelspace(), output_dxf_img_path)
