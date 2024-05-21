@@ -1,25 +1,13 @@
 # -*- coding: utf-8 -*-
 # from audioop import reverse
-import codecs
-import importlib
 import math
-from operator import rshift
-import sys
-import re
-import os
-import math
-from turtle import right, width
-from cv2 import RETR_CCOMP
 import ezdxf
 import random
 import copy
 import numpy as np
-from numpy import linalg as LA
-from scipy.spatial import distance
 import Calc
 import evaluate_calc
 import collections
-import un_load
 import un_load_binary
 
 # 点が図形内部あるかどうかの判定

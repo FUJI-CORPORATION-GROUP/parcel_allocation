@@ -55,9 +55,27 @@ class Point:
         """
         array = np.array([self.x, self.y])
         return array
+    
+    def to_np_array_list(point_list):
+        np_array_list = []
+        for point in point_list:
+            np_array_list.append(point.to_np_array())
+        return np_array_list
 
     def get_str(self):
         return f"({int(self.x)}, {int(self.y)})"
+    
+    def is_same_points(A, B):
+        """2つの点が同じかどうかを判定する関数
+
+        Args:
+            A (Point): 点Aの座標
+            B (Point): 点Bの座標
+
+        Returns:
+            bool: 同じならTrue, 違うならFalse
+        """
+        return A.x == B.x and A.y == B.y
 
     def dot(A, B):
         """内積を求める関数

@@ -14,6 +14,8 @@ class Frame:
     """
 
     def __init__(self, points):
+        if Point.is_same_points(points[0], points[-1]):
+            del points[-1]
         self.points = points
         self.area = Calc.calc_area(self)
 
@@ -91,6 +93,7 @@ class Frame:
 
         return parcel_frame, remain_frame
 
+    # TODO: utilsとかに書き出し
     # frameと奥行ベクトルから，探索領域を求める
     def Get_search_frame(
         self, target_frame, search_depth_distance, road_start_point, road_end_point
@@ -110,7 +113,7 @@ class Frame:
 
         get_search_frame_flag = True
         search_point_list = []
-
+        remain_search_point_list = []
         for i in range(len(target_frame.points)):
             # 直線ABとtarget_frameの辺の交点を求める
             the_point = target_frame.points[i]
@@ -118,13 +121,17 @@ class Frame:
             cross_point = Calc.line_cross_point(the_point, the_next_point, A, B, 0, 0)
             if get_search_frame_flag:
                 search_point_list.append(the_point)
+            else:
+                remain_search_point_list.append(the_point)
 
             if cross_point is not None:
                 search_point_list.append(cross_point)
+                remain_search_point_list.append(cross_point)
                 get_search_frame_flag = False
 
-            search_frame = Frame(search_point_list)
-        return search_frame
+        search_frame = Frame(search_point_list)
+        remain_search_frame = Frame(remain_search_point_list)
+        return search_frame, remain_search_frame
 
     def move_frame(self, point):
         """区画自体を移動量ベクトル方向に動かす

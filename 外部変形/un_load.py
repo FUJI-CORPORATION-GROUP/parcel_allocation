@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from numpy import linalg as LA
 import Calc
 import random
-from scipy.spatial import distance
 import copy
 import evaluate_calc
 
-#### 道を作成しないケースの区画割の実行####
+# 道を作成しないケースの区画割の実行
 
 
 def unload_parcel_allocation(frame, road_edge, maguchi, least_maguchi, goal_area):
