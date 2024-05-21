@@ -1,5 +1,9 @@
 {
-  "cSpell.words": [
-    "maguchi"
-  ]
+  "cSpell.words": ["dxfattribs", "ezdxf", "maguchi"],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "editor.formatOnSave": true,
+  "black-formatter.args": ["--line-length=88"],
+  "flake8.args": ["--max-line-length=88", "--ignore=E203,W503,W504"]
 }
