@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from numpy import linalg as LA
 import Calc
 import random
-from scipy.spatial import distance
-import copy
-import evaluate_calc
 
 
 def getclossvecs(vecs, point):
