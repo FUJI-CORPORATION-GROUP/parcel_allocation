@@ -7,6 +7,10 @@ import binary_search
 import draw_dxf
 import json
 
+import copy
+import shapely
+from shapely.geometry import Polygon
+
 
 def get_plan(
     target_max_area,
@@ -44,9 +48,45 @@ def get_plan(
 
         search_frame = remain_frame
 
-    # ここでPlan生成
+    last_remain_frame = copy.deepcopy(remain_frame)
     plan = Plan(binary_parcel_list)
-    return plan
+
+    if last_remain_frame.area == 0:
+        return plan, None
+    else:
+        return plan, last_remain_frame
+
+
+def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
+
+    # Polygon正規化の許容範囲
+    tolerance = 100
+
+    if last_remain_frame is None:
+        remain_search_frame = last_remain_frame
+    else:
+        # last_remain_frameをPolygon型に変換
+        last_remain_polygon = Polygon(Point.to_np_array_list(last_remain_frame.points))
+
+        # remain_site_frameをPolygon型に変換
+        remain_site_polygon = Polygon(Point.to_np_array_list(remain_site_frame.points))
+
+        # shapelyのunary_unionを使ってremain_search_frameを取得
+        remain_search_polygon = shapely.unary_union(
+            [last_remain_polygon, remain_site_polygon]
+        )
+        remain_search_polygon = remain_search_polygon.normalize().simplify(tolerance)
+
+        remain_search_frame = Frame(
+            [
+                Point(
+                    remain_search_polygon.exterior.coords[i][0],
+                    remain_search_polygon.exterior.coords[i][1],
+                )
+                for i in range(len(remain_search_polygon.exterior.coords))
+            ]
+        )
+    return remain_search_frame
 
 
 def main():
@@ -57,7 +97,7 @@ def main():
     print("================================")
 
     # # 変数宣言
-    frame = []
+    site_frame = []
     road_edge = []
 
     # Json形式で取得する
@@ -72,7 +112,7 @@ def main():
     target_max_area = road_data["target_max_area"]
     min_maguchi = road_data["min_maguchi"]
     max_maguchi = road_data["max_maguchi"]
-    frame = frame_data["frame"]
+    site_frame = frame_data["frame"]
 
     # ふたつずつ座標をまとめる：road_edge
     # TODO: この処理はun_road_make.pyで行ってJsonに入れてもいいかも？
@@ -80,10 +120,10 @@ def main():
         road_edge.append([road_edge_point_list[i * 2], road_edge_point_list[i * 2 + 1]])
 
     # classの変更
-    for i in range(len(frame)):
-        frame[i] = Point(frame[i][0], frame[i][1])
+    for i in range(len(site_frame)):
+        site_frame[i] = Point(site_frame[i][0], site_frame[i][1])
     road_frame_list = []
-    frame = Frame(frame)
+    site_frame = Frame(site_frame)
     for i in range(len(road_edge)):
         road_start_point_list = Point(road_edge[i][0][0], road_edge[i][0][1])
         road_end_point_list = Point(road_edge[i][1][0], road_edge[i][1][1])
@@ -91,7 +131,7 @@ def main():
         road_frame_list.append(road_frame)
 
     # 区画・道路を原点に移動
-    frame, road_frame_list = Frame.move_frame_and_road(frame, road_frame_list)
+    site_frame, road_frame_list = Frame.move_frame_and_road(site_frame, road_frame_list)
 
     if len(road_frame_list) > 1:
         print("道路が2本以上あります")
@@ -105,17 +145,17 @@ def main():
     target_road_frame = road_frame_list[0]
 
     # 奥行の距離
-    maguchi_distance = random.randint(
-        min_maguchi, max_maguchi)
+    maguchi_distance = random.randint(min_maguchi, max_maguchi)
     search_depth_distance = get_depth_distance(
         maguchi_distance, (target_min_area + target_max_area) / 2
     )
 
     road_start_point = target_road_frame.points[0]
     road_end_point = target_road_frame.points[1]
-    search_frame = frame.Get_search_frame(
-        frame, search_depth_distance, road_start_point, road_end_point
+    search_frame, remain_site_frame = site_frame.Get_search_frame(
+        site_frame, search_depth_distance, road_start_point, road_end_point
     )
+
     # 道路方向ベクトル取得
     road_vec = road_end_point.sub(road_start_point)
 
@@ -131,7 +171,7 @@ def main():
     plan_list = []
     for executions in range(1):
         # frameListを作成して，Planを返す
-        plan = get_plan(
+        plan, last_remain_frame = get_plan(
             target_max_area,
             target_min_area,
             binary_parcel_list,
@@ -142,16 +182,19 @@ def main():
         )
         plan_list.append(plan)
 
-    # 描写開始
+    remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
 
-    # for i in range(len(plan_list)):
+    # 描写開始
+    draw_dxf.draw_line_by_frame_list([remain_search_frame], 1)
+
     # for i in range(len(plan_list)):
     #   point_shift = Point((i % 5) * 100000, (i // 5) * 80000)
     #   plan_list[i] = plan_list[i].move_plan(point_shift)
     #   # draw_dxf.draw_dxf_by_plan(plan_list[i].move_plan(point_shift), 1)
     #   # draw_dxf.draw_dxf_by_plan(plan_list[i], 1)
     # print("plan_list" + str(plan_list))
-    draw_dxf.draw_dxf_by_plan_list(plan_list, 1)
+
+    # draw_dxf.draw_dxf_by_plan_list(plan_list, 1)
 
 
 def get_depth_distance(maguchi_distance, target_area):
