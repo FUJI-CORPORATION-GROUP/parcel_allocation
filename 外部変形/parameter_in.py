@@ -16,13 +16,13 @@ goal_area = 100000000
 for i in range(2, len(sys.argv)):
     # aから始まる情報はroad_width(道幅)に代入
     if re.match(r"/a", sys.argv[i]):
-        road_width = float(sys.argv[i][2 : len(sys.argv[i])]) * 1000
+        road_width = int(float(sys.argv[i][2 : len(sys.argv[i])]) * 1000)
     # bから始まる情報はmaguchi(間口)に代入
     elif re.match(r"/b", sys.argv[i]):
-        maguchi = float(sys.argv[i][2 : len(sys.argv[i])]) * 1000
+        maguchi = int(float(sys.argv[i][2 : len(sys.argv[i])]) * 1000)
     # cから始まる情報はgoal_area(目標面積)に代入
     elif re.match(r"/c", sys.argv[i]):
-        goal_area = float(sys.argv[i][2 : len(sys.argv[i])]) * 1000000
+        goal_area = int(float(sys.argv[i][2 : len(sys.argv[i])]) * 1000000)
     #
 #
 
