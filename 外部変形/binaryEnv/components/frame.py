@@ -13,16 +13,21 @@ class Frame:
 
     """
 
-    def __init__(self, points):
+    def __new__(self, points):
+        print("Frame __new__")
+        print(points)
+        if len(points) == 0:
+            return None
         if Point.is_same_points(points[0], points[-1]):
             del points[-1]
+        return super(Frame, self).__new__(self)
+
+    def __init__(self, points):
         self.points = points
         self.area = Calc.calc_area(self)
 
     # 直線ABで区切られる区画を返す
-    def get_tmp_frame(
-        self, move_line_point, binary_point, min_point, max_point, count, calc_count
-    ):
+    def get_tmp_frame(self, move_line_point, binary_point, min_point, max_point, count, calc_count):
         """探索領域を直線ABで区切り,区画と残りの探索領域を取得する
 
         Args:
@@ -40,12 +45,8 @@ class Frame:
         get_frame_flag = True
         for i in range(len(self.points)):
             point_s = self.points[i]
-            point_e = (
-                self.points[i + 1] if (i + 1 < len(self.points)) else self.points[0]
-            )
-            line_cross = Calc.line_cross_point(
-                point_s, point_e, move_line_point, binary_point, count, calc_count
-            )
+            point_e = self.points[i + 1] if (i + 1 < len(self.points)) else self.points[0]
+            line_cross = Calc.line_cross_point(point_s, point_e, move_line_point, binary_point, count, calc_count)
 
             if get_frame_flag:
                 point_list_A.append(point_s)
@@ -60,52 +61,41 @@ class Frame:
         tmp_frame_A = Frame(point_list_A)
         tmp_frame_B = Frame(point_list_B)
 
-        if tmp_frame_A.get_point_counts() < 0 and tmp_frame_B.get_point_counts() < 0:
+        print("point_list_B", len(point_list_B))
+        print("point_list_A", len(point_list_A))
+        print("tmp_frame_A", tmp_frame_A)
+        print("tmp_frame_B", tmp_frame_B)
+
+        if tmp_frame_A is None and tmp_frame_B is None:
             # ERR
             print("ERR: 2分探索失敗")
             raise ValueError("2分探索失敗")
             exit()
-        elif tmp_frame_A.get_point_counts() < 1:
+        elif tmp_frame_A is None:
             parcel_frame = tmp_frame_A
             remain_frame = tmp_frame_B
-        elif tmp_frame_B.get_point_counts() < 1:
+        elif tmp_frame_B is None:
             parcel_frame = tmp_frame_B
             remain_frame = tmp_frame_A
         else:
-            tmp_barycenter_A = Calc.Get_vertical_intersection(
-                min_point, max_point, tmp_frame_A.get_barycenter()
-            )
-            tmp_barycenter_B = Calc.Get_vertical_intersection(
-                min_point, max_point, tmp_frame_B.get_barycenter()
-            )
+            tmp_barycenter_A = Calc.Get_vertical_intersection(min_point, max_point, tmp_frame_A.get_barycenter())
+            tmp_barycenter_B = Calc.Get_vertical_intersection(min_point, max_point, tmp_frame_B.get_barycenter())
             tmp_distance_A_min = tmp_barycenter_A.distance(min_point)
             tmp_distance_B_min = tmp_barycenter_B.distance(min_point)
-            parcel_frame = (
-                tmp_frame_A
-                if (tmp_distance_A_min < tmp_distance_B_min)
-                else tmp_frame_B
-            )
-            remain_frame = (
-                tmp_frame_B
-                if (tmp_distance_A_min < tmp_distance_B_min)
-                else tmp_frame_A
-            )
+            parcel_frame = tmp_frame_A if (tmp_distance_A_min < tmp_distance_B_min) else tmp_frame_B
+            remain_frame = tmp_frame_B if (tmp_distance_A_min < tmp_distance_B_min) else tmp_frame_A
 
         return parcel_frame, remain_frame
 
     # TODO: utilsとかに書き出し
     # frameと奥行ベクトルから，探索領域を求める
-    def Get_search_frame(
-        self, target_frame, search_depth_distance, road_start_point, road_end_point
-    ):
+    def Get_search_frame(self, target_frame, search_depth_distance, road_start_point, road_end_point):
         # 道路方向ベクトル取得
         # TODO:0番目しかないと仮定．今後の入力形態に入力形態によって変更
         road_vec = road_end_point.sub(road_start_point)
 
         # 奥行ベクトル
-        search_depth_vec = Point.unit(Point(-1 * road_vec.y, road_vec.x)).mul(
-            search_depth_distance
-        )
+        search_depth_vec = Point.unit(Point(-1 * road_vec.y, road_vec.x)).mul(search_depth_distance)
 
         # 切り出すための直線の始点と終点
         A = road_start_point.add(search_depth_vec)

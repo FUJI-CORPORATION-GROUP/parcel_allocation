@@ -48,13 +48,12 @@ def get_plan(
 
         search_frame = remain_frame
 
-    last_remain_frame = copy.deepcopy(remain_frame)
     plan = Plan(binary_parcel_list)
 
-    if last_remain_frame.area == 0:
-        return plan, None
-    else:
-        return plan, last_remain_frame
+    print("remain_frame:" + str(remain_frame))
+    last_remain_frame = remain_frame if remain_frame is not None else None
+
+    return plan, last_remain_frame
 
 
 def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
@@ -123,7 +122,9 @@ def main():
     for i in range(len(site_frame)):
         site_frame[i] = Point(site_frame[i][0], site_frame[i][1])
     road_frame_list = []
+    print("site_frame:" + str(site_frame))
     site_frame = Frame(site_frame)
+    print("site_frame:" + str(site_frame))
     for i in range(len(road_edge)):
         road_start_point_list = Point(road_edge[i][0][0], road_edge[i][0][1])
         road_end_point_list = Point(road_edge[i][1][0], road_edge[i][1][1])
