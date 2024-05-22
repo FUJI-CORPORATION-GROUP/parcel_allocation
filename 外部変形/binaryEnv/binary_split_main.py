@@ -204,3 +204,4 @@ def get_depth_distance(maguchi_distance, target_area):
 
 
 main()
+draw_dxf.convert_dxf_to_png()
