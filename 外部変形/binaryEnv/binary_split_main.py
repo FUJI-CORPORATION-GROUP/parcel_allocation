@@ -6,8 +6,6 @@ from components.plan import Plan
 import binary_search
 import draw_dxf
 import json
-
-import copy
 import shapely
 from shapely.geometry import Polygon
 
@@ -50,19 +48,28 @@ def get_plan(
 
     plan = Plan(binary_parcel_list)
 
-    print("remain_frame:" + str(remain_frame))
     last_remain_frame = remain_frame if remain_frame is not None else None
 
     return plan, last_remain_frame
 
 
 def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
+    """remain_search_frameを取得する
+
+    Args:
+        last_remain_frame (Frame): 前回の探索領域の残り
+        remain_site_frame (Frame): 残りの敷地
+    """
 
     # Polygon正規化の許容範囲
     tolerance = 100
 
-    if last_remain_frame is None:
-        remain_search_frame = last_remain_frame
+    if remain_site_frame is None:
+        remain_search_frame = None
+    
+    elif last_remain_frame is None:
+        remain_search_frame = remain_site_frame
+    
     else:
         # last_remain_frameをPolygon型に変換
         last_remain_polygon = Polygon(Point.to_np_array_list(last_remain_frame.points))
@@ -134,68 +141,66 @@ def main():
     # 区画・道路を原点に移動
     site_frame, road_frame_list = Frame.move_frame_and_road(site_frame, road_frame_list)
 
-    if len(road_frame_list) > 1:
-        print("道路が2本以上あります")
-        exit()
-    elif len(road_frame_list) == 0:
+    if len(road_frame_list) == 0:
         print("道路がありません")
         exit()
 
-    # 今回は0番目の道路を採用
-    # TODO: 他の道路も採用できるようにする
-    target_road_frame = road_frame_list[0]
-
-    # 奥行の距離
-    maguchi_distance = random.randint(min_maguchi, max_maguchi)
-    search_depth_distance = get_depth_distance(
-        maguchi_distance, (target_min_area + target_max_area) / 2
-    )
-
-    road_start_point = target_road_frame.points[0]
-    road_end_point = target_road_frame.points[1]
-    search_frame, remain_site_frame = site_frame.Get_search_frame(
-        site_frame, search_depth_distance, road_start_point, road_end_point
-    )
-
-    # 道路方向ベクトル取得
-    road_vec = road_end_point.sub(road_start_point)
-
-    # 道路方向ベクトルを回転させてMoveLineを取得
-    move_line = Point(-1 * road_vec.y, road_vec.x)
-
-    # 参照しているDXFファイルをリセット
     draw_dxf.clear_dxf()
-    binary_parcel_list = []
-    count = 0
+    tmp_site_frame = site_frame
+    for i in range(len(road_frame_list)):
+        target_road_frame = road_frame_list[i]
 
-    # TODO:30回実行
-    plan_list = []
-    for executions in range(1):
-        # frameListを作成して，Planを返す
-        plan, last_remain_frame = get_plan(
-            target_max_area,
-            target_min_area,
-            binary_parcel_list,
-            search_frame,
-            count,
-            target_road_frame,
-            move_line,
+        # 奥行の距離
+        maguchi_distance = random.randint(min_maguchi, max_maguchi)
+        search_depth_distance = get_depth_distance(
+            maguchi_distance, (target_min_area + target_max_area) / 2
         )
-        plan_list.append(plan)
 
-    remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
+        road_start_point = target_road_frame.points[0]
+        road_end_point = target_road_frame.points[1]
+        search_frame, remain_site_frame = tmp_site_frame.Get_search_frame(
+            tmp_site_frame, search_depth_distance, road_start_point, road_end_point
+        )
 
-    # 描写開始
-    draw_dxf.draw_line_by_frame_list([remain_search_frame], 1)
+        # 道路方向ベクトル取得
+        road_vec = road_end_point.sub(road_start_point)
 
-    # for i in range(len(plan_list)):
-    #   point_shift = Point((i % 5) * 100000, (i // 5) * 80000)
-    #   plan_list[i] = plan_list[i].move_plan(point_shift)
-    #   # draw_dxf.draw_dxf_by_plan(plan_list[i].move_plan(point_shift), 1)
-    #   # draw_dxf.draw_dxf_by_plan(plan_list[i], 1)
-    # print("plan_list" + str(plan_list))
+        # 道路方向ベクトルを回転させてMoveLineを取得
+        move_line = Point(-1 * road_vec.y, road_vec.x)
 
-    # draw_dxf.draw_dxf_by_plan_list(plan_list, 1)
+        # 参照しているDXFファイルをリセット
+        binary_parcel_list = []
+        count = 0
+
+        # TODO:30回実行
+        plan_list = []
+        for executions in range(1):
+            # frameListを作成して，Planを返す
+            plan, last_remain_frame = get_plan(
+                target_max_area,
+                target_min_area,
+                binary_parcel_list,
+                search_frame,
+                count,
+                target_road_frame,
+                move_line,
+            )
+            plan_list.append(plan)
+
+        remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
+        draw_dxf.draw_line_by_frame_list([remain_search_frame], 1)
+        tmp_site_frame = remain_search_frame
+        
+        # 描写開始
+
+        # for i in range(len(plan_list)):
+        #   point_shift = Point((i % 5) * 100000, (i // 5) * 80000)
+        #   plan_list[i] = plan_list[i].move_plan(point_shift)
+        #   # draw_dxf.draw_dxf_by_plan(plan_list[i].move_plan(point_shift), 1)
+        #   # draw_dxf.draw_dxf_by_plan(plan_list[i], 1)
+        # print("plan_list" + str(plan_list))
+
+        draw_dxf.draw_dxf_by_plan_list(plan_list, 2)
 
 
 def get_depth_distance(maguchi_distance, target_area):
