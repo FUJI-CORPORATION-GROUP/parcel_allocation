@@ -36,6 +36,8 @@ def draw_line_by_frame_list(frame_list, color_index=2):
     doc = ezdxf.readfile(output_dxf_file_path)
     msp = doc.modelspace()
     for i in range(len(frame_list)):
+        if frame_list[i] is None:
+            continue
         point_list = frame_list[i].points
         draw_line_list(msp, point_list, dxfattribs)
 
@@ -97,8 +99,7 @@ def draw_line(msp, start, end, dxfattribs):
 
 
 def convert_dxf_to_png():
-    """Convert dxf to png.
-    """
+    """Convert dxf to png."""
     try:
         dxf, auditor = recover.readfile(output_dxf_file_path)
     except IOError as ioerror:
