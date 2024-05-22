@@ -15,3 +15,4 @@
 !*md
 !.vscode/*
 !requirements.txt
+/外部変形/binaryEnv/out/*
