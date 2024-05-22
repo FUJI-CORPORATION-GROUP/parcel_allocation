@@ -61,22 +61,15 @@ class Frame:
         tmp_frame_A = Frame(point_list_A)
         tmp_frame_B = Frame(point_list_B)
 
-        print("point_list_B", len(point_list_B))
-        print("point_list_A", len(point_list_A))
-        print("tmp_frame_A", tmp_frame_A)
-        print("tmp_frame_B", tmp_frame_B)
 
         if tmp_frame_A is None and tmp_frame_B is None:
             # ERR
             print("ERR: 2分探索失敗")
             raise ValueError("2分探索失敗")
             exit()
-        elif tmp_frame_A is None:
-            parcel_frame = tmp_frame_A
-            remain_frame = tmp_frame_B
-        elif tmp_frame_B is None:
-            parcel_frame = tmp_frame_B
-            remain_frame = tmp_frame_A
+        elif tmp_frame_A is None or tmp_frame_B is None:
+            parcel_frame = tmp_frame_A if tmp_frame_A is not None else tmp_frame_B
+            remain_frame = tmp_frame_A if tmp_frame_A is not None else tmp_frame_B
         else:
             tmp_barycenter_A = Calc.Get_vertical_intersection(min_point, max_point, tmp_frame_A.get_barycenter())
             tmp_barycenter_B = Calc.Get_vertical_intersection(min_point, max_point, tmp_frame_B.get_barycenter())
