@@ -5,27 +5,26 @@ from ezdxf.addons.drawing import matplotlib
 # 出力先DXFファイル
 output_dir = "./out/"
 output_dxf_file_name = "output.dxf"
-output_dxf_file_path = output_dir + output_dxf_file_name
 output_dxf_img_name = "output.png"
-output_dxf_img_path = output_dir + output_dxf_img_name
 
 
-def draw_line_by_point(point_list, color_index=2):
+def draw_line_by_point(point_list, color_index=2, dxf_file_name=output_dxf_file_name):
     """Point型のリストからdxf出力
     Args:
         point_list (list): Point型のリスト
     """
     dxfattribs = {"color": color_index}
-    doc = ezdxf.readfile(output_dxf_file_path)
+    dxf_file_path = output_dir + dxf_file_name
+    doc = ezdxf.readfile(dxf_file_path)
     msp = doc.modelspace()
     draw_line_list(msp, point_list, dxfattribs)
 
-    doc.saveas(output_dxf_file_path)
+    doc.saveas(dxf_file_name)
 
 
 # FrameList型
 # TODO: Frame内のメソッドとして実装してもいいかも
-def draw_line_by_frame_list(frame_list, color_index=2):
+def draw_line_by_frame_list(frame_list, color_index=2, dxf_file_name=output_dxf_file_name):
     """FrameList型のリストと色指定してdxf出力
 
     Args:
@@ -33,7 +32,8 @@ def draw_line_by_frame_list(frame_list, color_index=2):
         color_index (int): 色
     """
     dxfattribs = {"color": color_index}
-    doc = ezdxf.readfile(output_dxf_file_path)
+    dxf_file_path = output_dir + dxf_file_name
+    doc = ezdxf.readfile(dxf_file_path)
     msp = doc.modelspace()
     for i in range(len(frame_list)):
         if frame_list[i] is None:
@@ -41,17 +41,18 @@ def draw_line_by_frame_list(frame_list, color_index=2):
         point_list = frame_list[i].points
         draw_line_list(msp, point_list, dxfattribs)
 
-    doc.saveas(output_dxf_file_path)
+    doc.saveas(dxf_file_path)
 
 
-def draw_dxf_by_plan_list(plan_list, color_index=2):
+def draw_dxf_by_plan_list(plan_list, color_index=2, dxf_file_name=output_dxf_file_name):
     """PlanList型のリストと色指定してdxf出力
 
     Args:
         plan_list (list): PlanList型のリスト
         color_index (int): 色
     """
-    doc = ezdxf.readfile(output_dxf_file_path)
+    dxf_file_path = output_dir + dxf_file_name
+    doc = ezdxf.readfile(dxf_file_path)
     msp = doc.modelspace()
 
     dxfattribs = {"color": color_index}
@@ -63,13 +64,20 @@ def draw_dxf_by_plan_list(plan_list, color_index=2):
             point_list = frame_list[i].points
             draw_line_list(msp, point_list, dxfattribs)
 
-    doc.saveas(output_dxf_file_path)
+    doc.saveas(dxf_file_path)
 
 
-def clear_dxf():
+def clear_dxf(dxf_file_name=output_dxf_file_name):
     """dxfファイルをクリアする"""
     doc = ezdxf.new("R2010")
-    doc.saveas(output_dxf_file_path)
+    dxf_file_path = output_dir + dxf_file_name
+    doc.saveas(dxf_file_path)
+
+
+def create_dxf(new_dxf_file_name):
+    doc = ezdxf.new("R2010")
+    new_dxf_file_path = output_dir + new_dxf_file_name
+    doc.saveas(new_dxf_file_path)
 
 
 def draw_line_list(msp, point_list, dxfattribs):
@@ -98,10 +106,20 @@ def draw_line(msp, start, end, dxfattribs):
     msp.add_line(start.to_np_array(), end.to_np_array(), dxfattribs=dxfattribs)
 
 
-def convert_dxf_to_png():
-    """Convert dxf to png."""
+def convert_dxf_to_png(dxf_file_name=output_dxf_file_name, output_dxf_img_name=output_dxf_img_name):
+    """dxfファイルをpngに変換する
+
+    Args:
+        dxf_file_name (_type_, optional): _description_. Defaults to output_dxf_file_name.
+        output_dxf_img_name (_type_, optional): _description_. Defaults to output_dxf_img_name.
+
+    Raises:
+        ioerror: _description_
+        dxf_structure_error: _description_
+    """
     try:
-        dxf, auditor = recover.readfile(output_dxf_file_path)
+        dxf_file_path = output_dir + dxf_file_name
+        dxf, auditor = recover.readfile(dxf_file_path)
     except IOError as ioerror:
         print(ioerror)
         raise ioerror
@@ -110,4 +128,5 @@ def convert_dxf_to_png():
         raise dxf_structure_error
 
     if not auditor.has_errors:
-        matplotlib.qsave(dxf.modelspace(), output_dxf_img_path)
+        output_img_path = output_dir + output_dxf_img_name
+        matplotlib.qsave(dxf.modelspace(), output_img_path)
