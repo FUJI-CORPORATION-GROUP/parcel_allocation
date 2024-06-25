@@ -66,10 +66,10 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
 
     if remain_site_frame is None:
         remain_search_frame = None
-    
+
     elif last_remain_frame is None:
         remain_search_frame = remain_site_frame
-    
+
     else:
         # last_remain_frameをPolygon型に変換
         last_remain_polygon = Polygon(Point.to_np_array_list(last_remain_frame.points))
@@ -78,21 +78,42 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
         remain_site_polygon = Polygon(Point.to_np_array_list(remain_site_frame.points))
 
         # shapelyのunary_unionを使ってremain_search_frameを取得
-        remain_search_polygon = shapely.unary_union(
-            [last_remain_polygon, remain_site_polygon]
-        )
+        remain_search_polygon = shapely.unary_union([last_remain_polygon, remain_site_polygon])
         remain_search_polygon = remain_search_polygon.normalize().simplify(tolerance)
 
-        remain_search_frame = Frame(
-            [
-                Point(
-                    remain_search_polygon.exterior.coords[i][0],
-                    remain_search_polygon.exterior.coords[i][1],
+        try:
+            remain_search_frame = Frame(
+                [
+                    Point(
+                        remain_search_polygon.exterior.coords[i][0],
+                        remain_search_polygon.exterior.coords[i][1],
+                    )
+                    for i in range(len(remain_search_polygon.exterior.coords))
+                ]
+            )
+            return remain_search_frame
+        except Exception as e:
+            # マルチポリゴン発生時
+            print("error:" + str(e))
+            polygons = list(remain_search_polygon.geoms)
+            multi_frame = []
+            for polygon in polygons:
+                multi_frame.append(
+                    Frame(
+                        [
+                            Point(polygon.exterior.coords[i][0], polygon.exterior.coords[i][1])
+                            for i in range(len(polygon.exterior.coords))
+                        ]
+                    )
                 )
-                for i in range(len(remain_search_polygon.exterior.coords))
-            ]
-        )
-    return remain_search_frame
+
+            # multi_frameの描写
+            new_dxf_name = "multi.dxf"
+            draw_dxf.create_dxf(new_dxf_name)
+            for frame in multi_frame:
+                draw_dxf.draw_line_by_frame_list([frame], 1, new_dxf_name)
+            draw_dxf.convert_dxf_to_png(new_dxf_name, "multi.png")
+            print("polygons:" + str(polygons))
 
 
 def main():
@@ -152,9 +173,7 @@ def main():
 
         # 奥行の距離
         maguchi_distance = random.randint(min_maguchi, max_maguchi)
-        search_depth_distance = get_depth_distance(
-            maguchi_distance, (target_min_area + target_max_area) / 2
-        )
+        search_depth_distance = get_depth_distance(maguchi_distance, (target_min_area + target_max_area) / 2)
 
         road_start_point = target_road_frame.points[0]
         road_end_point = target_road_frame.points[1]
@@ -190,7 +209,7 @@ def main():
         remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
         draw_dxf.draw_line_by_frame_list([remain_search_frame], 1)
         tmp_site_frame = remain_search_frame
-        
+
         # 描写開始
 
         # for i in range(len(plan_list)):
