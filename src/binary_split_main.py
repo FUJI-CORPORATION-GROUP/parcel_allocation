@@ -8,7 +8,7 @@ import binary_search
 import draw_dxf
 import json
 import shapely
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon, MultiPolygon
 
 
 def get_plan(
@@ -79,8 +79,22 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
         remain_site_polygon = Polygon(Point.to_np_array_list(remain_site_frame.points))
 
         # shapelyのunary_unionを使ってremain_search_frameを取得
-        remain_search_polygon = shapely.unary_union([last_remain_polygon, remain_site_polygon])
+        buffer_distance = 10
+        last_remain_polygon = last_remain_polygon.buffer(buffer_distance)
+        remain_site_polygon = remain_site_polygon.buffer(buffer_distance)
+        # remain_search_polygon = shapely.unary_union([last_remain_polygon, remain_site_polygon])
+        remain_search_polygon = remain_site_polygon.union(last_remain_polygon)
         remain_search_polygon = remain_search_polygon.normalize().simplify(tolerance)
+
+        # unionの返り血判定
+        print(type(remain_search_polygon))
+        if isinstance(remain_search_polygon, Polygon):
+            print("Polygon")
+        elif isinstance(remain_search_polygon, MultiPolygon):
+            print("MultiPolygon")
+            print("Multi is valid:" + str(remain_search_polygon.is_valid))
+        else :
+            print("Un expected type:" + str(type(remain_search_polygon)))
 
         try:
             remain_search_frame = Frame(
@@ -92,6 +106,11 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
                     for i in range(len(remain_search_polygon.exterior.coords))
                 ]
             )
+            
+            # 適切に残り領域が取得できるかどうかの描写
+            
+            
+            
             return remain_search_frame
         except Exception as e:
             # マルチポリゴン発生時
@@ -109,13 +128,8 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
                 )
 
             # multi_frameの描写
-            date = datetime.datetime.now().strftime("%m%d-%H%M%S")
-            new_dxf_name = "ERR multipolygons " + date + ".dxf"
-            new_png_name = "ERR multipolygons " + date + ".png"
-            draw_dxf.create_dxf(new_dxf_name)
             for frame in multi_frame:
-                draw_dxf.draw_line_by_frame_list([frame], 1, new_dxf_name)
-            draw_dxf.convert_dxf_to_png(new_dxf_name, new_png_name)
+                draw_dxf.debug_png_by_frame_list([frame])
             print("polygons:" + str(polygons))
 
 
@@ -184,6 +198,10 @@ def main():
             tmp_site_frame, search_depth_distance, road_start_point, road_end_point
         )
 
+        # デバッグ用に描写
+        # draw_dxf.draw_line_by_frame_list([search_frame])
+        # draw_dxf.draw_line_by_frame_list([remain_site_frame])
+
         # 道路方向ベクトル取得
         road_vec = road_end_point.sub(road_start_point)
 
@@ -209,10 +227,14 @@ def main():
             )
             plan_list.append(plan)
 
+        # デバッグ用に描画
+        draw_dxf.debug_png_by_plan_list(plan_list)
+        
         if i != len(road_frame_list) - 1:
             remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
-            draw_dxf.draw_line_by_frame_list([remain_search_frame], 1)
+            # draw_dxf.draw_line_by_frame_list([remain_search_frame], 1)
             tmp_site_frame = remain_search_frame
+
 
         # 描写開始(描画毎に位置変え)
 
@@ -223,7 +245,7 @@ def main():
         #   # draw_dxf.draw_dxf_by_plan(plan_list[i], 1)
         # print("plan_list" + str(plan_list))
 
-        draw_dxf.draw_dxf_by_plan_list(plan_list, 2)
+        # draw_dxf.draw_dxf_by_plan_list(plan_list, 2)
 
 
 def get_depth_distance(maguchi_distance, target_area):
