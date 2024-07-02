@@ -93,7 +93,7 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
         elif isinstance(remain_search_polygon, MultiPolygon):
             print("MultiPolygon")
             print("Multi is valid:" + str(remain_search_polygon.is_valid))
-        else :
+        else:
             print("Un expected type:" + str(type(remain_search_polygon)))
 
         try:
@@ -106,11 +106,9 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
                     for i in range(len(remain_search_polygon.exterior.coords))
                 ]
             )
-            
+
             # 適切に残り領域が取得できるかどうかの描写
-            
-            
-            
+
             return remain_search_frame
         except Exception as e:
             # マルチポリゴン発生時
@@ -229,12 +227,11 @@ def main():
 
         # デバッグ用に描画
         draw_dxf.debug_png_by_plan_list(plan_list)
-        
+
         if i != len(road_frame_list) - 1:
             remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
             # draw_dxf.draw_line_by_frame_list([remain_search_frame], 1)
             tmp_site_frame = remain_search_frame
-
 
         # 描写開始(描画毎に位置変え)
 
