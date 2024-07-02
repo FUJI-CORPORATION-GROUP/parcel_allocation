@@ -1,4 +1,3 @@
-import datetime
 import math
 import random
 from components.point import Point
@@ -7,7 +6,6 @@ from components.plan import Plan
 import binary_search
 import draw_dxf
 import json
-import shapely
 from shapely.geometry import Polygon, MultiPolygon
 
 
@@ -20,6 +18,8 @@ def get_plan(
     road_frame,
     move_line,
 ):
+    draw_dxf.debug_png_by_frame_list([search_frame], "search_frame")
+
     # frameListを作成して，Planを返す
     # 探索領域が目標面積取れなくなるまで区画割
     while True:
@@ -51,6 +51,10 @@ def get_plan(
 
     last_remain_frame = remain_frame if remain_frame is not None else None
 
+    # last_remain_frameの描写
+    draw_dxf.debug_png_by_frame_list([last_remain_frame], "last_remain")
+    # plan
+    draw_dxf.debug_png_by_plan_list([plan], "plan")
     return plan, last_remain_frame
 
 
@@ -108,6 +112,7 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
             )
 
             # 適切に残り領域が取得できるかどうかの描写
+            draw_dxf.debug_png_by_frame_list([remain_search_frame], "remain_search_frame")
 
             return remain_search_frame
         except Exception as e:
@@ -226,7 +231,7 @@ def main():
             plan_list.append(plan)
 
         # デバッグ用に描画
-        draw_dxf.debug_png_by_plan_list(plan_list)
+        draw_dxf.debug_png_by_plan_list(plan_list, "first action")
 
         if i != len(road_frame_list) - 1:
             remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
