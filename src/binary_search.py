@@ -167,8 +167,11 @@ def binary_search(search_frame, search_range, move_line, target_area, count):
         search_frame, move_line, tmp_point, first_min, first_max, count, calc_count
     )
 
+    parcel_area_rate = math.floor(int(parcel_frame.area) / target_area)
+    parcel_are_m2 = math.floor(int(parcel_frame.area) / 1000000 * 1000) / 1000
+    target_area_m2 = int(target_area) / 1000000
     print(
-        f"探索終了 計算回数:{calc_count}回 比率：{math.floor(int(parcel_frame.area) / target_area)}  面積:{math.floor(int(parcel_frame.area)/1000000*1000)/1000}㎡ / 目標面積：{int (target_area)/1000000}㎡"
+        f"探索終了 計算回数:{calc_count}回 比率：{parcel_area_rate}  面積:{parcel_are_m2}㎡ / 目標面積：{target_area_m2}㎡"
     )
     return parcel_frame, remain_frame
 
