@@ -1,3 +1,4 @@
+import datetime
 import math
 import random
 from components.point import Point
@@ -7,7 +8,7 @@ import binary_search
 import draw_dxf
 import json
 import shapely
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon, MultiPolygon
 
 
 def get_plan(
@@ -66,10 +67,10 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
 
     if remain_site_frame is None:
         remain_search_frame = None
-    
+
     elif last_remain_frame is None:
         remain_search_frame = remain_site_frame
-    
+
     else:
         # last_remain_frameをPolygon型に変換
         last_remain_polygon = Polygon(Point.to_np_array_list(last_remain_frame.points))
@@ -78,21 +79,56 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
         remain_site_polygon = Polygon(Point.to_np_array_list(remain_site_frame.points))
 
         # shapelyのunary_unionを使ってremain_search_frameを取得
-        remain_search_polygon = shapely.unary_union(
-            [last_remain_polygon, remain_site_polygon]
-        )
+        buffer_distance = 10
+        last_remain_polygon = last_remain_polygon.buffer(buffer_distance)
+        remain_site_polygon = remain_site_polygon.buffer(buffer_distance)
+        # remain_search_polygon = shapely.unary_union([last_remain_polygon, remain_site_polygon])
+        remain_search_polygon = remain_site_polygon.union(last_remain_polygon)
         remain_search_polygon = remain_search_polygon.normalize().simplify(tolerance)
 
-        remain_search_frame = Frame(
-            [
-                Point(
-                    remain_search_polygon.exterior.coords[i][0],
-                    remain_search_polygon.exterior.coords[i][1],
+        # unionの返り血判定
+        print(type(remain_search_polygon))
+        if isinstance(remain_search_polygon, Polygon):
+            print("Polygon")
+        elif isinstance(remain_search_polygon, MultiPolygon):
+            print("MultiPolygon")
+            print("Multi is valid:" + str(remain_search_polygon.is_valid))
+        else:
+            print("Un expected type:" + str(type(remain_search_polygon)))
+
+        try:
+            remain_search_frame = Frame(
+                [
+                    Point(
+                        remain_search_polygon.exterior.coords[i][0],
+                        remain_search_polygon.exterior.coords[i][1],
+                    )
+                    for i in range(len(remain_search_polygon.exterior.coords))
+                ]
+            )
+
+            # 適切に残り領域が取得できるかどうかの描写
+
+            return remain_search_frame
+        except Exception as e:
+            # マルチポリゴン発生時
+            print("error:" + str(e))
+            polygons = list(remain_search_polygon.geoms)
+            multi_frame = []
+            for polygon in polygons:
+                multi_frame.append(
+                    Frame(
+                        [
+                            Point(polygon.exterior.coords[i][0], polygon.exterior.coords[i][1])
+                            for i in range(len(polygon.exterior.coords))
+                        ]
+                    )
                 )
-                for i in range(len(remain_search_polygon.exterior.coords))
-            ]
-        )
-    return remain_search_frame
+
+            # multi_frameの描写
+            for frame in multi_frame:
+                draw_dxf.debug_png_by_frame_list([frame])
+            print("polygons:" + str(polygons))
 
 
 def main():
@@ -152,15 +188,17 @@ def main():
 
         # 奥行の距離
         maguchi_distance = random.randint(min_maguchi, max_maguchi)
-        search_depth_distance = get_depth_distance(
-            maguchi_distance, (target_min_area + target_max_area) / 2
-        )
+        search_depth_distance = get_depth_distance(maguchi_distance, (target_min_area + target_max_area) / 2)
 
         road_start_point = target_road_frame.points[0]
         road_end_point = target_road_frame.points[1]
         search_frame, remain_site_frame = tmp_site_frame.Get_search_frame(
             tmp_site_frame, search_depth_distance, road_start_point, road_end_point
         )
+
+        # デバッグ用に描写
+        # draw_dxf.draw_line_by_frame_list([search_frame])
+        # draw_dxf.draw_line_by_frame_list([remain_site_frame])
 
         # 道路方向ベクトル取得
         road_vec = road_end_point.sub(road_start_point)
@@ -187,11 +225,15 @@ def main():
             )
             plan_list.append(plan)
 
-        remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
-        draw_dxf.draw_line_by_frame_list([remain_search_frame], 1)
-        tmp_site_frame = remain_search_frame
-        
-        # 描写開始
+        # デバッグ用に描画
+        draw_dxf.debug_png_by_plan_list(plan_list)
+
+        if i != len(road_frame_list) - 1:
+            remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
+            # draw_dxf.draw_line_by_frame_list([remain_search_frame], 1)
+            tmp_site_frame = remain_search_frame
+
+        # 描写開始(描画毎に位置変え)
 
         # for i in range(len(plan_list)):
         #   point_shift = Point((i % 5) * 100000, (i // 5) * 80000)
@@ -200,7 +242,7 @@ def main():
         #   # draw_dxf.draw_dxf_by_plan(plan_list[i], 1)
         # print("plan_list" + str(plan_list))
 
-        draw_dxf.draw_dxf_by_plan_list(plan_list, 2)
+        # draw_dxf.draw_dxf_by_plan_list(plan_list, 2)
 
 
 def get_depth_distance(maguchi_distance, target_area):

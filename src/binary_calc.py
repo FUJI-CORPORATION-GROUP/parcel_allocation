@@ -113,3 +113,18 @@ def Get_search_frame(
 
         search_frame = Frame(search_point_list)
     return search_frame
+
+
+def is_clockwise(points):
+    """リストが時計回りかどうかを判定する
+
+    Args:
+        points ([Point]): Point型のリスト
+
+    Returns:
+        bool: 時計回りならTrue
+    """
+    sum = 0
+    for i in range(len(points)):
+        sum += (points[(i + 1) % len(points)].x - points[i].x) * (points[(i + 1) % len(points)].y + points[i].y)
+    return sum > 0
