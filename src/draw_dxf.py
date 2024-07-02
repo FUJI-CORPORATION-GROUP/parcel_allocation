@@ -1,5 +1,6 @@
 import datetime
 import os
+import shutil
 import ezdxf
 from ezdxf import recover
 from ezdxf.addons.drawing import matplotlib
@@ -155,3 +156,9 @@ def debug_png_by_frame_list(frame_list, file_name):
     draw_line_by_frame_list(frame_list, 1, new_dxf_name)
     convert_dxf_to_png(new_dxf_name, new_png_name)
     os.remove(output_dir + new_dxf_name)
+
+
+def delete_output_files():
+    """出力ファイルを削除する"""
+    shutil.rmtree(output_dir)
+    os.mkdir(output_dir)
