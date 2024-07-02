@@ -101,6 +101,7 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
             print("Un expected type:" + str(type(remain_search_polygon)))
 
         try:
+            remain_search_polygon = remain_search_polygon.buffer(-buffer_distance)
             remain_search_frame = Frame(
                 [
                     Point(
@@ -256,5 +257,6 @@ def get_depth_distance(maguchi_distance, target_area):
     return depth_distance
 
 
+draw_dxf.delete_output_files()
 main()
 draw_dxf.convert_dxf_to_png()
