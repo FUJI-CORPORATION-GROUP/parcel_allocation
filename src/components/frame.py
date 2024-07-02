@@ -1,6 +1,7 @@
 from components.point import Point
 import binary_calc as Calc
 import draw_dxf as Draw
+from collections import deque
 
 
 class Frame:
@@ -90,6 +91,20 @@ class Frame:
         A = road_start_point.add(search_depth_vec)
         B = road_end_point.add(search_depth_vec)
 
+        # target_frameがroad_start_pointの値から始まるように回転させる
+        for i in range(len(target_frame.points)):
+            if Point.is_same_points(target_frame.points[i], road_start_point):
+                print(i)
+                target_frame = target_frame.retate_frame(i)
+                break
+
+        # road_start_pointとtarget_frameの先頭が一致しているか確認
+        if not Point.is_same_points(road_start_point, target_frame.points[0]):
+            print("Aとtarget_frameの先頭が一致していません")
+            print(f"road_start_point: {road_start_point.get_str()}")
+            print(f"target_frame.points[0]: {target_frame.points[0].get_str()}")
+            print("###############################################")
+
         get_search_frame_flag = True
         search_point_list = []
         remain_search_point_list = []
@@ -108,8 +123,17 @@ class Frame:
                 remain_search_point_list.append(cross_point)
                 get_search_frame_flag = False
 
+        # リストが時計回りの時に反転させる
+        if Calc.is_clockwise(search_point_list):
+            search_point_list.reverse()
+
+        # serch_point_listを出力
+        for i in range(len(search_point_list)):
+            print(f"search_point_list[{i}]: {search_point_list[i].get_str()}")
+
         search_frame = Frame(search_point_list)
         remain_search_frame = Frame(remain_search_point_list)
+        Draw.draw_line_by_frame_list([remain_search_frame])
         return search_frame, remain_search_frame
 
     def move_frame(self, point):
@@ -239,3 +263,17 @@ class Frame:
             color_index (int): 色
         """
         Draw.draw_line_by_point(self.points, color_index)
+
+    def retate_frame(self, rotate_count):
+        """区画を回転させる
+
+        Args:
+            rotate_count (int): 回転させる回数
+
+        Returns:
+            Frame: 回転させた区画
+        """
+        # rotate_count = rotate_count % len(self.points)
+        rotated_points = deque(self.points)
+        rotated_points.rotate(rotate_count)
+        return Frame(list(rotated_points))
