@@ -84,6 +84,8 @@ class Frame:
         # TODO:0番目しかないと仮定．今後の入力形態に入力形態によって変更
         road_vec = road_end_point.sub(road_start_point)
 
+        Draw.debug_png_by_frame_list([target_frame], "target_frame")
+
         # 奥行ベクトル
         search_depth_vec = Point.unit(Point(-1 * road_vec.y, road_vec.x)).mul(search_depth_distance)
 
@@ -92,11 +94,18 @@ class Frame:
         B = road_end_point.add(search_depth_vec)
 
         # target_frameがroad_start_pointの値から始まるように回転させる
+        min_distance = A.distance(target_frame.points[0])
+        close_point_index = 0
         for i in range(len(target_frame.points)):
-            if Point.is_same_points(target_frame.points[i], road_start_point):
-                print(i)
-                target_frame = target_frame.retate_frame(i)
-                break
+            distance = A.distance(target_frame.points[i])
+
+            if distance < min_distance:
+                min_distance = distance
+                close_point_index = i
+        print("A:" + A.get_str() + " closeindex:" +  str(close_point_index) + " close_point:" + target_frame.points[close_point_index].get_str())
+        print("target_frame:" + target_frame.get_points_str())
+        target_frame = target_frame.rotate_frame(close_point_index)
+        print("target_frame:" + target_frame.get_points_str())
 
         # road_start_pointとtarget_frameの先頭が一致しているか確認
         if not Point.is_same_points(road_start_point, target_frame.points[0]):
@@ -134,6 +143,10 @@ class Frame:
         search_frame = Frame(search_point_list)
         remain_search_frame = Frame(remain_search_point_list)
         Draw.draw_line_by_frame_list([remain_search_frame])
+
+        Draw.debug_png_by_frame_list([search_frame], "search_frame")
+        Draw.debug_png_by_frame_list([remain_search_frame], "remain_search_frame")
+
         return search_frame, remain_search_frame
 
     def move_frame(self, point):
@@ -264,7 +277,7 @@ class Frame:
         """
         Draw.draw_line_by_point(self.points, color_index)
 
-    def retate_frame(self, rotate_count):
+    def rotate_frame(self, rotate_count):
         """区画を回転させる
 
         Args:
