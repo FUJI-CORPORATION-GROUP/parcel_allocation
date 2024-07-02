@@ -1,3 +1,4 @@
+import datetime
 import math
 import random
 from components.point import Point
@@ -108,11 +109,13 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
                 )
 
             # multi_frameの描写
-            new_dxf_name = "multi.dxf"
+            date = datetime.datetime.now().strftime("%m%d-%H%M%S")
+            new_dxf_name = "ERR multipolygons " + date + ".dxf"
+            new_png_name = "ERR multipolygons " + date + ".png"
             draw_dxf.create_dxf(new_dxf_name)
             for frame in multi_frame:
                 draw_dxf.draw_line_by_frame_list([frame], 1, new_dxf_name)
-            draw_dxf.convert_dxf_to_png(new_dxf_name, "multi.png")
+            draw_dxf.convert_dxf_to_png(new_dxf_name, new_png_name)
             print("polygons:" + str(polygons))
 
 

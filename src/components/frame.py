@@ -1,4 +1,3 @@
-import numpy as np
 from components.point import Point
 import binary_calc as Calc
 import draw_dxf as Draw
@@ -14,8 +13,6 @@ class Frame:
     """
 
     def __new__(self, points):
-        print("Frame __new__")
-        print(points)
         if len(points) == 0:
             return None
         if Point.is_same_points(points[0], points[-1]):
@@ -53,14 +50,13 @@ class Frame:
             else:
                 point_list_B.append(point_s)
 
-            if line_cross != None:
+            if line_cross is not None:
                 point_list_A.append(line_cross)
                 point_list_B.append(line_cross)
                 get_frame_flag = not get_frame_flag
 
         tmp_frame_A = Frame(point_list_A)
         tmp_frame_B = Frame(point_list_B)
-
 
         if tmp_frame_A is None and tmp_frame_B is None:
             # ERR
