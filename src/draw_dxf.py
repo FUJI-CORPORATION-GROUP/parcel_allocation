@@ -1,3 +1,4 @@
+import datetime
 import ezdxf
 from ezdxf import recover
 from ezdxf.addons.drawing import matplotlib
@@ -130,3 +131,25 @@ def convert_dxf_to_png(dxf_file_name=output_dxf_file_name, output_dxf_img_name=o
     if not auditor.has_errors:
         output_img_path = output_dir + output_dxf_img_name
         matplotlib.qsave(dxf.modelspace(), output_img_path)
+
+
+def debug_png_by_plan_list(plan_list):
+    """dxfファイルをpngに変換するデバッグ用
+    """
+    date = datetime.datetime.now().strftime("%m%d-%H%M%S")
+    new_dxf_name = "first_action " + date + ".dxf"
+    new_png_name = "first_action " + date + ".png"
+    create_dxf(new_dxf_name)
+    draw_dxf_by_plan_list(plan_list, 1, new_dxf_name)
+    convert_dxf_to_png(new_dxf_name, new_png_name)
+
+
+def debug_png_by_frame_list(frame_list):
+    """dxfファイルをpngに変換するデバッグ用
+    """
+    date = datetime.datetime.now().strftime("%m%d-%H%M%S")
+    new_dxf_name = "first_action " + date + ".dxf"
+    new_png_name = "first_action " + date + ".png"
+    create_dxf(new_dxf_name)
+    draw_line_by_frame_list(frame_list, 1, new_dxf_name)
+    convert_dxf_to_png(new_dxf_name, new_png_name)
