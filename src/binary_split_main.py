@@ -206,11 +206,12 @@ def main():
             )
             plan_list.append(plan)
 
-        remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
-        draw_dxf.draw_line_by_frame_list([remain_search_frame], 1)
-        tmp_site_frame = remain_search_frame
+        if i != len(road_frame_list) - 1:
+            remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
+            draw_dxf.draw_line_by_frame_list([remain_search_frame], 1)
+            tmp_site_frame = remain_search_frame
 
-        # 描写開始
+        # 描写開始(描画毎に位置変え)
 
         # for i in range(len(plan_list)):
         #   point_shift = Point((i % 5) * 100000, (i // 5) * 80000)
