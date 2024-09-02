@@ -49,7 +49,7 @@ def draw_line_by_frame_list(frame_list, color_index=3, dxf_file_name=output_dxf_
     doc.saveas(dxf_file_path)
 
 
-def draw_dxf_by_plan_list(plan_list, color_index=3, dxf_file_name=output_dxf_file_name):
+def draw_dxf_by_plan_list(plan_list, target_frame=None, color_index=3, dxf_file_name=output_dxf_file_name):
     """PlanList型のリストと色指定してdxf出力
 
     Args:
@@ -62,12 +62,21 @@ def draw_dxf_by_plan_list(plan_list, color_index=3, dxf_file_name=output_dxf_fil
 
     dxfattribs = {"color": color_index}
 
+
+    # 基準となるtarget_flameの描写
+    if target_frame is not None:
+        point_list = target_frame.points
+        draw_line_list(msp, point_list, dxfattribs)
+
     for plan in plan_list:
         frame_list = plan.get_frame_list()
         for i in range(len(frame_list)):
             # モデル空間に新しいエンティティを作成
             point_list = frame_list[i].points
+            # print(type(frame_list[i]))
             draw_line_list(msp, point_list, dxfattribs)
+
+    
 
     doc.saveas(dxf_file_path)
 
@@ -144,7 +153,7 @@ def debug_png_by_plan_list(plan_list, file_name):
     new_dxf_name = date + " " + file_name + caller_name + ".dxf"
     new_png_name = date + " " + file_name + caller_name + ".png"
     create_dxf(new_dxf_name)
-    draw_dxf_by_plan_list(plan_list, 2, new_dxf_name)
+    draw_dxf_by_plan_list(plan_list, None, 2, new_dxf_name)
     convert_dxf_to_png(new_dxf_name, new_png_name)
     os.remove(output_dir + new_dxf_name)
 
