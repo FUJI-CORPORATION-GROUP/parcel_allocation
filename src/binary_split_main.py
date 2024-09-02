@@ -19,17 +19,17 @@ def get_plan(
     move_line,
 ):
     
-    draw_dxf.debug_png_by_frame_list([search_frame], "search_frame")
+    # draw_dxf.debug_png_by_frame_list([search_frame], "search_frame")
 
     # frameListを作成して，Planを返す
     # 探索領域が目標面積取れなくなるまで区画割
     while True:
         if search_frame.area > target_max_area:
             target_area = random.randint(target_min_area, target_max_area)
-            print(f"\n{count} 回目 探索開始 ランダム目標面積：{target_area}")
+            # print(f"\n{count} 回目 探索開始 ランダム目標面積：{target_area}")
         else:
             target_area = target_max_area
-            print(f"\n{count} 回目 探索開始 最小目標面積：{target_area}")
+            # print(f"\n{count} 回目 探索開始 最小目標面積：{target_area}")
 
         parcel_frame, remain_frame = binary_search.get_side_parcel(
             search_frame, road_frame, target_area, move_line, count
@@ -39,7 +39,7 @@ def get_plan(
         binary_parcel_list.append(parcel_frame)
 
         if target_min_area > remain_frame.area:
-            print(f"探索終了 残り面積{  math.floor(remain_frame.area/1000000)}㎡")
+            # print(f"探索終了 残り面積{  math.floor(remain_frame.area/1000000)}㎡")
             break
 
         if count > 30:
@@ -48,14 +48,15 @@ def get_plan(
 
         search_frame = remain_frame
 
+    # TODO: プランとは何かを話し合う
     plan = Plan(binary_parcel_list)
 
     last_remain_frame = remain_frame if remain_frame is not None else None
 
     # last_remain_frameの描写
-    draw_dxf.debug_png_by_frame_list([last_remain_frame], "last_remain")
+    # draw_dxf.debug_png_by_frame_list([last_remain_frame], "last_remain")
     # plan
-    draw_dxf.debug_png_by_plan_list([plan], "plan")
+    # draw_dxf.debug_png_by_plan_list([plan], "plan")
     return plan, last_remain_frame
 
 
@@ -114,7 +115,7 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
             )
 
             # 適切に残り領域が取得できるかどうかの描写
-            draw_dxf.debug_png_by_frame_list([remain_search_frame], "remain_search_frame")
+            # draw_dxf.debug_png_by_frame_list([remain_search_frame], "remain_search_frame")
 
             return remain_search_frame
         except Exception as e:
@@ -133,8 +134,8 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
                 )
 
             # multi_frameの描写
-            for frame in multi_frame:
-                draw_dxf.debug_png_by_frame_list([frame])
+            # for frame in multi_frame:
+            #     draw_dxf.debug_png_by_frame_list([frame])
             print("polygons:" + str(polygons))
 
 
@@ -187,10 +188,52 @@ def main():
     if len(road_frame_list) == 0:
         print("道路がありません")
         exit()
+    
+    # site_frameのx,yの最大値を取得
+    max_x = 0
+    max_y = 0
+    for i in range(len(site_frame.points)):
+        if site_frame.points[i].x > max_x:
+            max_x = site_frame.points[i].x
+        if site_frame.points[i].y > max_y:
+            max_y = site_frame.points[i].y
+
+    # それぞれの最大値にバッファを設ける
+    max_x += 10000
+    max_y += 10000
 
     draw_dxf.clear_dxf()
+    
+    plan_list_list = []
+    
+    # 描写数分のプランを作成
+    for i in range(30):
+        plan_list = parcel_allocation(site_frame, road_frame_list, target_min_area, target_max_area, min_maguchi, max_maguchi)
+        plan_list_list.append(plan_list)
+
+    # 描写
+    moved_plan_list_list = []
+    moved_site_frame_list = []
+    for i in range(len(plan_list_list)):
+        move_point = Point(i % 5 * max_x, int(i/5) * max_y)
+        # planの移動
+        plan_list_list[i] = Plan.move_plan_list(plan_list_list[i], move_point)
+        moved_plan_list_list.append(plan_list_list[i])
+        # siteの移動
+        moved_site_frame = site_frame.debug_move_frame(move_point)
+        moved_site_frame_list.append(moved_site_frame)
+
+    draw_dxf.draw_dxf_plan_list_list(plan_list_list)
+    draw_dxf.draw_line_by_frame_list(moved_site_frame_list, 2)
+    
+
+
+def parcel_allocation(site_frame, road_frame_list, target_min_area, target_max_area, min_maguchi, max_maguchi):
+    
     tmp_site_frame = site_frame
 
+    plan_list = []
+    
     for i in range(len(road_frame_list)):
         target_road_frame = road_frame_list[i]
 
@@ -220,23 +263,20 @@ def main():
         binary_parcel_list = []
         count = 0
 
-        # TODO:30回実行
-        plan_list = []
-        for executions in range(1):
-            # frameListを作成して，Planを返す
-            plan, last_remain_frame = get_plan(
-                target_max_area,
-                target_min_area,
-                binary_parcel_list,
-                search_frame,
-                count,
-                target_road_frame,
-                move_line,
-            )
-            plan_list.append(plan)
+        # frameListを作成して，Planを返す
+        plan, last_remain_frame = get_plan(
+            target_max_area,
+            target_min_area,
+            binary_parcel_list,
+            search_frame,
+            count,
+            target_road_frame,
+            move_line,
+        )
+        plan_list.append(plan)
 
         # デバッグ用に描画
-        draw_dxf.debug_png_by_plan_list(plan_list, "first action")
+        # draw_dxf.debug_png_by_plan_list(plan_list, "first action")
 
         if i != len(road_frame_list) - 1:
             remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
@@ -251,9 +291,8 @@ def main():
         #   # draw_dxf.draw_dxf_by_plan(plan_list[i].move_plan(point_shift), 1)
         #   # draw_dxf.draw_dxf_by_plan(plan_list[i], 1)
         # print("plan_list" + str(plan_list))
-        
-        draw_dxf.draw_dxf_by_plan_list(plan_list, site_frame)
 
+    return plan_list
 
 def get_depth_distance(maguchi_distance, target_area):
     # 奥行の距離の取得
