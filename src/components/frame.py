@@ -109,11 +109,9 @@ class Frame:
         close_point_index = 0
         for i in range(len(target_frame.points)):
             distance = road_start_point.distance(target_frame.points[i])
-
             if distance < min_distance:
                 min_distance = distance
                 close_point_index = i
-
 
         # 道路始点が0番目になるように座標回転
         target_frame = target_frame.rotate_frame(close_point_index)
@@ -121,10 +119,14 @@ class Frame:
         get_search_frame_flag = True
         search_point_list = []
         remain_search_point_list = []
+
+        # Draw.debug_png_by_frame_list([Frame([cat_line_start_point, cat_line_end_point])], "cat_line", [target_frame])
+
         for i in range(len(target_frame.points)):
             # cat_lineとtarget_frameの辺の交点を求める
             the_point = target_frame.points[i]
             the_next_point = target_frame.points[(i + 1) % len(target_frame.points)]
+
             cross_point = Calc.line_cross_point(the_point, the_next_point, cat_line_start_point, cat_line_end_point, 0, 0)
             if get_search_frame_flag:
                 search_point_list.append(the_point)
@@ -134,13 +136,13 @@ class Frame:
             if cross_point is not None:
                 search_point_list.append(cross_point)
                 remain_search_point_list.append(cross_point)
-                get_search_frame_flag = False
+                get_search_frame_flag = not get_search_frame_flag
 
         # リストが時計回りの時に反転させる
         if Calc.is_clockwise(search_point_list):
             search_point_list.reverse()
 
-        # serch_point_listを出力
+        # search_point_listを出力
         for i in range(len(search_point_list)):
             print(f"search_point_list[{i}]: {search_point_list[i].get_str()}")
 
