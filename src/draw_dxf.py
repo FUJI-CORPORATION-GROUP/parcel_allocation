@@ -48,7 +48,6 @@ def draw_line_by_frame_list(frame_list, color_index=3, dxf_file_name=output_dxf_
 
     doc.saveas(dxf_file_path)
 
-
 def draw_dxf_by_plan_list(plan_list, target_frame=None, color_index=3, dxf_file_name=output_dxf_file_name):
     """PlanList型のリストと色指定してdxf出力
 
@@ -76,10 +75,32 @@ def draw_dxf_by_plan_list(plan_list, target_frame=None, color_index=3, dxf_file_
             # print(type(frame_list[i]))
             draw_line_list(msp, point_list, dxfattribs)
 
-    
-
     doc.saveas(dxf_file_path)
 
+
+def draw_dxf_plan_list_list(plan_list_list, color_index=3, dxf_file_name=output_dxf_file_name):
+    """PlanListのリスト型の描写
+
+    Args:
+        plan_list (list): PlanList型のリスト
+        color_index (int): 色
+    """
+    dxf_file_path = output_dir + dxf_file_name
+    doc = ezdxf.readfile(dxf_file_path)
+    msp = doc.modelspace()
+
+    dxfattribs = {"color": color_index}
+
+    for plan_list in plan_list_list:
+        for plan in plan_list:
+            frame_list = plan.get_frame_list()
+            for i in range(len(frame_list)):
+                # モデル空間に新しいエンティティを作成
+                point_list = frame_list[i].points
+                # print(type(frame_list[i]))
+                draw_line_list(msp, point_list, dxfattribs)
+
+    doc.saveas(dxf_file_path)
 
 def clear_dxf(dxf_file_name=output_dxf_file_name):
     """dxfファイルをクリアする"""

@@ -95,7 +95,7 @@ class Frame:
         # TODO:0番目しかないと仮定．今後の入力形態に入力形態によって変更
         road_vec = road_end_point.sub(road_start_point)
 
-        Draw.debug_png_by_frame_list([target_frame], "target_frame from Get_search_frame")
+        # Draw.debug_png_by_frame_list([target_frame], "target_frame from Get_search_frame")
 
         # 奥行ベクトル
         search_depth_vec = Point.unit(Point(-1 * road_vec.y, road_vec.x)).mul(search_depth_distance)
@@ -143,14 +143,14 @@ class Frame:
             search_point_list.reverse()
 
         # search_point_listを出力
-        for i in range(len(search_point_list)):
-            print(f"search_point_list[{i}]: {search_point_list[i].get_str()}")
+        # for i in range(len(search_point_list)):
+        #     print(f"search_point_list[{i}]: {search_point_list[i].get_str()}")
 
         search_frame = Frame(search_point_list)
         remain_search_frame = Frame(remain_search_point_list)
 
-        Draw.debug_png_by_frame_list([search_frame], "search_frame", [target_frame])
-        Draw.debug_png_by_frame_list([remain_search_frame], "remain_search_frame", [target_frame])
+        # Draw.debug_png_by_frame_list([search_frame], "search_frame", [target_frame])
+        # Draw.debug_png_by_frame_list([remain_search_frame], "remain_search_frame", [target_frame])
 
         return search_frame, remain_search_frame
 
@@ -178,6 +178,7 @@ class Frame:
         debug_points = []
         for i in range(len(self.points)):
             debug_points.append(self.points[i].add(point))
+        
         return Frame(debug_points)
 
     def get_points_str(self):
