@@ -190,6 +190,7 @@ def main():
 
     draw_dxf.clear_dxf()
     tmp_site_frame = site_frame
+
     for i in range(len(road_frame_list)):
         target_road_frame = road_frame_list[i]
 
@@ -250,8 +251,8 @@ def main():
         #   # draw_dxf.draw_dxf_by_plan(plan_list[i].move_plan(point_shift), 1)
         #   # draw_dxf.draw_dxf_by_plan(plan_list[i], 1)
         # print("plan_list" + str(plan_list))
-
-        draw_dxf.draw_dxf_by_plan_list(plan_list, 3)
+        
+        draw_dxf.draw_dxf_by_plan_list(plan_list, site_frame)
 
 
 def get_depth_distance(maguchi_distance, target_area):
