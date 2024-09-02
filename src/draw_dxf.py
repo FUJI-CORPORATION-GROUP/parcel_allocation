@@ -149,13 +149,19 @@ def debug_png_by_plan_list(plan_list, file_name):
     os.remove(output_dir + new_dxf_name)
 
 
-def debug_png_by_frame_list(frame_list, file_name):
+def debug_png_by_frame_list(frame_list, file_name, target_flame=None):
     """dxfファイルをpngに変換するデバッグ用"""
+    
     date = datetime.datetime.now().strftime("%m%d-%H%M-%S.%f")[:-3]
     caller_name = f" from {inspect.stack()[1].function}"
     new_dxf_name = date + " " + file_name + caller_name + ".dxf"
     new_png_name = date + " " + file_name + caller_name + ".png"
     create_dxf(new_dxf_name)
+
+    # 基準となるtarget_flameの描写
+    if target_flame is not None:
+        draw_line_by_frame_list(target_flame, 7, new_dxf_name)
+
     draw_line_by_frame_list(frame_list, 2, new_dxf_name)
     convert_dxf_to_png(new_dxf_name, new_png_name)
     os.remove(output_dir + new_dxf_name)

@@ -3,7 +3,6 @@ import binary_calc as Calc
 import draw_dxf as Draw
 from collections import deque
 
-
 class Frame:
     """区画を扱うクラス
 
@@ -148,8 +147,8 @@ class Frame:
         search_frame = Frame(search_point_list)
         remain_search_frame = Frame(remain_search_point_list)
 
-        Draw.debug_png_by_frame_list([search_frame], "search_frame")
-        Draw.debug_png_by_frame_list([remain_search_frame], "remain_search_frame")
+        Draw.debug_png_by_frame_list([search_frame], "search_frame", [target_frame])
+        Draw.debug_png_by_frame_list([remain_search_frame], "remain_search_frame", [target_frame])
 
         return search_frame, remain_search_frame
 
