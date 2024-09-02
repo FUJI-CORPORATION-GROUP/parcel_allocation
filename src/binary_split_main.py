@@ -1,4 +1,3 @@
-import datetime
 import math
 import random
 from components.point import Point
@@ -7,7 +6,6 @@ from components.plan import Plan
 import binary_search
 import draw_dxf
 import json
-import shapely
 from shapely.geometry import Polygon, MultiPolygon
 
 
@@ -20,6 +18,9 @@ def get_plan(
     road_frame,
     move_line,
 ):
+    
+    draw_dxf.debug_png_by_frame_list([search_frame], "search_frame")
+
     # frameListを作成して，Planを返す
     # 探索領域が目標面積取れなくなるまで区画割
     while True:
@@ -51,6 +52,10 @@ def get_plan(
 
     last_remain_frame = remain_frame if remain_frame is not None else None
 
+    # last_remain_frameの描写
+    draw_dxf.debug_png_by_frame_list([last_remain_frame], "last_remain")
+    # plan
+    draw_dxf.debug_png_by_plan_list([plan], "plan")
     return plan, last_remain_frame
 
 
@@ -97,6 +102,7 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
             print("Un expected type:" + str(type(remain_search_polygon)))
 
         try:
+            remain_search_polygon = remain_search_polygon.buffer(-buffer_distance)
             remain_search_frame = Frame(
                 [
                     Point(
@@ -108,6 +114,7 @@ def get_remain_search_frame(last_remain_frame: Frame, remain_site_frame: Frame):
             )
 
             # 適切に残り領域が取得できるかどうかの描写
+            draw_dxf.debug_png_by_frame_list([remain_search_frame], "remain_search_frame")
 
             return remain_search_frame
         except Exception as e:
@@ -192,6 +199,8 @@ def main():
 
         road_start_point = target_road_frame.points[0]
         road_end_point = target_road_frame.points[1]
+
+        # 探索領域の取得
         search_frame, remain_site_frame = tmp_site_frame.Get_search_frame(
             tmp_site_frame, search_depth_distance, road_start_point, road_end_point
         )
@@ -226,7 +235,7 @@ def main():
             plan_list.append(plan)
 
         # デバッグ用に描画
-        draw_dxf.debug_png_by_plan_list(plan_list)
+        draw_dxf.debug_png_by_plan_list(plan_list, "first action")
 
         if i != len(road_frame_list) - 1:
             remain_search_frame = get_remain_search_frame(last_remain_frame, remain_site_frame)
@@ -242,7 +251,7 @@ def main():
         #   # draw_dxf.draw_dxf_by_plan(plan_list[i], 1)
         # print("plan_list" + str(plan_list))
 
-        # draw_dxf.draw_dxf_by_plan_list(plan_list, 2)
+        draw_dxf.draw_dxf_by_plan_list(plan_list, 3)
 
 
 def get_depth_distance(maguchi_distance, target_area):
@@ -251,5 +260,6 @@ def get_depth_distance(maguchi_distance, target_area):
     return depth_distance
 
 
+draw_dxf.delete_output_files()
 main()
 draw_dxf.convert_dxf_to_png()

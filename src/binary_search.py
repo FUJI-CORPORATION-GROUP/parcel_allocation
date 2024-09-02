@@ -31,9 +31,7 @@ def get_side_parcel(search_frame, load_frame, target_area, move_line, count):
     search_line_range = [min, max]
 
     # 一時的なポイント処理
-    parcel_frame, remain_frame = binary_search(
-        search_frame, search_line_range, move_line, target_area, count
-    )
+    parcel_frame, remain_frame = binary_search(search_frame, search_line_range, move_line, target_area, count)
     return parcel_frame, remain_frame
 
 
@@ -59,9 +57,7 @@ def get_search_range(search_frame, search_line, count):
 
     # 判定軸上の座標取得
     for i in range(len(search_frame)):
-        point = Calc.Get_vertical_intersection(
-            search_line_start_point, search_line_end_point, search_frame[i]
-        )
+        point = Calc.Get_vertical_intersection(search_line_start_point, search_line_end_point, search_frame[i])
         point_list_on_line.append(point)
 
     distance_max_A = 0
@@ -123,9 +119,7 @@ def binary_search(search_frame, search_range, move_line, target_area, count):
     while first_min.distance(min) < first_min.distance(max):
         # 中央値取得
         tmp_point = Point.get_middle_point(max, min)
-        tmp_frame = Frame.get_tmp_frame(
-            search_frame, move_line, tmp_point, first_min, first_max, count, calc_count
-        )[0]
+        tmp_frame = Frame.get_tmp_frame(search_frame, move_line, tmp_point, first_min, first_max, count, calc_count)[0]
 
         # プラス側
         tmp_inc_point = tmp_point.add(inc_point)
@@ -173,8 +167,11 @@ def binary_search(search_frame, search_range, move_line, target_area, count):
         search_frame, move_line, tmp_point, first_min, first_max, count, calc_count
     )
 
+    parcel_area_rate = math.floor(int(parcel_frame.area) / target_area)
+    parcel_are_m2 = math.floor(int(parcel_frame.area) / 1000000 * 1000) / 1000
+    target_area_m2 = int(target_area) / 1000000
     print(
-        f"探索終了 計算回数:{calc_count}回 比率：{math.floor(int(parcel_frame.area) / target_area)}  面積:{math.floor(int(parcel_frame.area)/1000000*1000)/1000}㎡ / 目標面積：{int (target_area)/1000000}㎡"
+        f"探索終了 計算回数:{calc_count}回 比率：{parcel_area_rate}  面積:{parcel_are_m2}㎡ / 目標面積：{target_area_m2}㎡"
     )
     return parcel_frame, remain_frame
 
@@ -212,9 +209,7 @@ def debug_main():
     # 探索領域が目標面積取れなくなるまで区画割
     while True:
         print(f"\n{count} 回目")
-        parcel_frame, remain_frame = get_side_parcel(
-            search_frame, load_frame, target_area, move_line
-        )
+        parcel_frame, remain_frame = get_side_parcel(search_frame, load_frame, target_area, move_line)
 
         count += 1
         binary_parcel_list.append(parcel_frame)
