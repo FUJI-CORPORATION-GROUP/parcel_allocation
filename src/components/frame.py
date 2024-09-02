@@ -80,48 +80,53 @@ class Frame:
     # TODO: utilsとかに書き出し
     # frameと奥行ベクトルから，探索領域を求める
     def Get_search_frame(self, target_frame, search_depth_distance, road_start_point, road_end_point):
+        """
+        Args:
+            target_frame (Frame): _対象区画_
+            search_depth_distance (float): _探索する奥行きベクトル_
+            road_start_point (Point): _道路の始点_
+            road_end_point (Point): _道路の終点_
+        
+        Returns:
+            search_frame (Frame): _探索領域_
+            remain_search_frame (Frame): _残りの探索領域_
+        """
+
         # 道路方向ベクトル取得
         # TODO:0番目しかないと仮定．今後の入力形態に入力形態によって変更
         road_vec = road_end_point.sub(road_start_point)
 
-        Draw.debug_png_by_frame_list([target_frame], "target_frame")
+        Draw.debug_png_by_frame_list([target_frame], "target_frame from Get_search_frame")
 
         # 奥行ベクトル
         search_depth_vec = Point.unit(Point(-1 * road_vec.y, road_vec.x)).mul(search_depth_distance)
 
         # 切り出すための直線の始点と終点
-        A = road_start_point.add(search_depth_vec)
-        B = road_end_point.add(search_depth_vec)
+        cat_line_start_point = road_start_point.add(search_depth_vec)
+        cat_line_end_point = road_end_point.add(search_depth_vec)
 
         # target_frameがroad_start_pointの値から始まるように回転させる
-        min_distance = A.distance(target_frame.points[0])
+        min_distance = road_start_point.distance(target_frame.points[0])
         close_point_index = 0
         for i in range(len(target_frame.points)):
-            distance = A.distance(target_frame.points[i])
+            distance = road_start_point.distance(target_frame.points[i])
 
             if distance < min_distance:
                 min_distance = distance
                 close_point_index = i
-        print("A:" + A.get_str() + " closeindex:" +  str(close_point_index) + " close_point:" + target_frame.points[close_point_index].get_str())
-        print("target_frame:" + target_frame.get_points_str())
-        target_frame = target_frame.rotate_frame(close_point_index)
-        print("target_frame:" + target_frame.get_points_str())
 
-        # road_start_pointとtarget_frameの先頭が一致しているか確認
-        if not Point.is_same_points(road_start_point, target_frame.points[0]):
-            print("Aとtarget_frameの先頭が一致していません")
-            print(f"road_start_point: {road_start_point.get_str()}")
-            print(f"target_frame.points[0]: {target_frame.points[0].get_str()}")
-            print("###############################################")
+
+        # 道路始点が0番目になるように座標回転
+        target_frame = target_frame.rotate_frame(close_point_index)
 
         get_search_frame_flag = True
         search_point_list = []
         remain_search_point_list = []
         for i in range(len(target_frame.points)):
-            # 直線ABとtarget_frameの辺の交点を求める
+            # cat_lineとtarget_frameの辺の交点を求める
             the_point = target_frame.points[i]
             the_next_point = target_frame.points[(i + 1) % len(target_frame.points)]
-            cross_point = Calc.line_cross_point(the_point, the_next_point, A, B, 0, 0)
+            cross_point = Calc.line_cross_point(the_point, the_next_point, cat_line_start_point, cat_line_end_point, 0, 0)
             if get_search_frame_flag:
                 search_point_list.append(the_point)
             else:
@@ -142,7 +147,6 @@ class Frame:
 
         search_frame = Frame(search_point_list)
         remain_search_frame = Frame(remain_search_point_list)
-        Draw.draw_line_by_frame_list([remain_search_frame])
 
         Draw.debug_png_by_frame_list([search_frame], "search_frame")
         Draw.debug_png_by_frame_list([remain_search_frame], "remain_search_frame")

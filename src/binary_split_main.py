@@ -18,6 +18,7 @@ def get_plan(
     road_frame,
     move_line,
 ):
+    
     draw_dxf.debug_png_by_frame_list([search_frame], "search_frame")
 
     # frameListを作成して，Planを返す
@@ -198,6 +199,8 @@ def main():
 
         road_start_point = target_road_frame.points[0]
         road_end_point = target_road_frame.points[1]
+
+        # 探索領域の取得
         search_frame, remain_site_frame = tmp_site_frame.Get_search_frame(
             tmp_site_frame, search_depth_distance, road_start_point, road_end_point
         )
@@ -248,7 +251,7 @@ def main():
         #   # draw_dxf.draw_dxf_by_plan(plan_list[i], 1)
         # print("plan_list" + str(plan_list))
 
-        # draw_dxf.draw_dxf_by_plan_list(plan_list, 2)
+        draw_dxf.draw_dxf_by_plan_list(plan_list, 3)
 
 
 def get_depth_distance(maguchi_distance, target_area):
