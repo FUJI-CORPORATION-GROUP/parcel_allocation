@@ -1,11 +1,5 @@
-*
-*/
-!*/
-!外部変形/*
-!外部変形/*/*
-!.gitignore
-!jwc_temp1.txt
-!jwc_temp2.txt
-!line.dxf
-!四角形区画割.bat
-*.pyc
+*_pycache_*
+
+# 出力ファイル
+/src/out/*
+!/src/out/.gitkeep
