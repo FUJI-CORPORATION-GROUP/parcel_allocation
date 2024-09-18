@@ -1,2 +1,5 @@
 *_pycache_*
+
+# 出力ファイル
 /src/out/*
+!/src/out/.gitkeep
