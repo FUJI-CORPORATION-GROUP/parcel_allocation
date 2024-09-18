@@ -293,6 +293,7 @@ class Frame:
             Frame: 回転させた区画
         """
         # rotate_count = rotate_count % len(self.points)
+        # TODO: 正常に動いていない可能性
         rotated_points = deque(self.points)
         rotated_points.rotate(rotate_count)
         return Frame(list(rotated_points))
