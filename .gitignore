@@ -1,2 +1,5 @@
 *_pycache_*
+
+# 出力ディレクトリ
 /src/out/*
+!/src/out/.gitkeep
