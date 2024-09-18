@@ -64,9 +64,7 @@ C:jww
 
 どちらかの方法で下の画像のウィンドウが表示されたら起動完了です．
 
-![コマンドプロンプト画面](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8b6870b0-4546-4c94-9fc1-212a0a047468/Untitled.png)
-
-コマンドプロンプト画面
+![コマンドプロンプト画面](./img/cmd.png)
 
 ### 4.2 パッケージインストール
 
@@ -76,3 +74,7 @@ C:jww
 cd C:\jww\parcel_allocation-main
 pip install -r requirements.txt
 ```
+
+下記画面のように実行が完了すればセットアップの完了です
+
+![パッケージインストール画面](./img/cmd_pip.png)
