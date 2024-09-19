@@ -37,14 +37,7 @@
 
 下のようなファイル構造になっていれば完了です．
 
-```
-C:jww
-└─parcel_allocation-main
-    ├─.github
-    ├─.vscode
-    ├─doc
-    └─src
-```
+![jww直下のファイル構造](./img/jww_dir.png)
 
 ## 3. Pythonインストール
 
