@@ -18,19 +18,19 @@ for i in range(2, len(sys.argv)):
     data = sys.argv[i]
     # road_width(道幅)に代入
     if re.match(r"/road_width", data):
-        road_width = float(data.split(":")[1]) * 1000
+        road_width = int(float(data.split(":")[1]) * 1000)
     # 最小間口 m -> mm
     elif re.match(r"/min_maguchi", data):
-        min_maguchi = float(data.split(":")[1]) * 1000
+        min_maguchi = int(float(data.split(":")[1]) * 1000)
     # 最大間口 m -> mm
     elif re.match(r"/max_maguchi", data):
-        max_maguchi = float(data.split(":")[1]) * 1000
+        max_maguchi = int(float(data.split(":")[1]) * 1000)
     # 最小目標面積 m^2 -> mm^2
     elif re.match(r"/target_min_area", data):
-        target_min_area = float(data.split(":")[1]) * 1000000
+        target_min_area = int(float(data.split(":")[1]) * 1000000)
     # 最大目標面積 m^2 -> mm^2
     elif re.match(r"/target_max_area", data):
-        target_max_area = float(data.split(":")[1]) * 1000000
+        target_max_area = int(float(data.split(":")[1]) * 1000000)
 
 print(sys.argv)
 print(" ")
