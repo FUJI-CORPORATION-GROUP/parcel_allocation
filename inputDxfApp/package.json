@@ -141,7 +141,8 @@
     "electron-packager": "^17.1.2"
   },
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-packager ."
   },
   "keywords": [],
   "author": "",
