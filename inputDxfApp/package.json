@@ -2,7 +2,7 @@
   "name": "inputdxfapp",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "dependencies": {
     "at-least-node": "^1.0.0",
     "author-regex": "^1.0.0",
@@ -141,7 +141,7 @@
     "electron": "^33.0.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron ."
   },
   "keywords": [],
   "author": "",
