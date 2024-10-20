@@ -4,6 +4,12 @@ const context = canvas.getContext("2d");
 const fs = require("fs");
 const path = require("path");
 
+const outJsonFilePath = "./out/";
+const frameInputDataJsonFileName = "frame_input_data.json";
+const roadInputDataJsonFileName = "road_input_data.json";
+
+let selectedEdges = []; // 複数の選択されたエッジを保持
+
 document.getElementById("loadDxfButton").addEventListener("click", () => {
   // メインプロセスにDXFファイル読み込みのリクエストを送信
   filePath = "./dxf/30571-1.dxf";
@@ -109,8 +115,6 @@ function calculateBoundingBox(dxfData) {
   return { minX, minY, maxX, maxY };
 }
 
-let selectedEdges = []; // 複数の選択されたエッジを保持
-
 canvas.addEventListener("click", (event) => {
   const rect = canvas.getBoundingClientRect();
   const mouseX = event.clientX - rect.left;
@@ -164,10 +168,14 @@ function findClickedEdge(x, y, dxfData) {
 
 function saveSelectedEdges() {
   console.log(selectedEdges);
-  const json = JSON.stringify(selectedEdges, null, 2); // JSONに変換
+  const frame = edgeToFrame(selectedEdges);
+  const json = JSON.stringify(frame, null, 2); // JSONに変換
 
-  // 保存するファイルパスを指定 ./output/selectedEdges.json
-  const filePath = "./out/selectedEdges.json";
+  // 保存するファイルパスを指定
+  const filePath = path.join(
+    __dirname,
+    outJsonFilePath + frameInputDataJsonFileName
+  );
 
   // ファイルに書き込む
   fs.writeFile(filePath, json, (err) => {
@@ -187,4 +195,29 @@ function isPointNearLineSegment(px, py, x1, y1, x2, y2, tolerance) {
 
   console.log("isPointNearLineSegment", dist <= tolerance);
   return dist <= tolerance;
+}
+
+function edgeToFrame(edges) {
+  // edges: [{x1, y1, x2, y2}, ...]
+  // frame: { [x1, y1], [x2, y2], ... }
+
+  // TODO: dxf側で辺の始点終点になっていない場合できないことに気づいてしまった
+  // 座標集めて，左回りにするみたいなことをしよう
+  // ただ，この処理をしやすくするための変形は入力ではなくて，区画割処理内でやりたい
+  // けど一旦，こっちで実装します
+
+  let framePosList = [];
+  edges.forEach((edge) => {
+    framePosList.push([edge.x1, edge.y1]);
+    // frameでは辺の始点のみ格納していく
+    // frame.push([edge.x2, edge.y2]);
+    // 最後だけ終点を追加
+    if (edges.indexOf(edge) === edges.length - 1) {
+      framePosList.push([edge.x2, edge.y2]);
+    }
+  });
+
+  const frame = { frame: framePosList };
+
+  return frame;
 }
