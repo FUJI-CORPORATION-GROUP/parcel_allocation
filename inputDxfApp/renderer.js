@@ -83,9 +83,9 @@ function getFormattedDxfEntitiesData(dxfData) {
       return {
         type: "LINE",
         x1: entity.vertices[0].x * scale + offsetX,
-        y1: entity.vertices[0].y * scale + offsetY,
+        y1: canvas.height - (entity.vertices[0].y * scale + offsetY),
         x2: entity.vertices[1].x * scale + offsetX,
-        y2: entity.vertices[1].y * scale + offsetY,
+        y2: canvas.height - (entity.vertices[1].y * scale + offsetY),
       };
     }
   });
