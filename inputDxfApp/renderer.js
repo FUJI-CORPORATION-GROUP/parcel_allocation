@@ -14,6 +14,7 @@ document.getElementById("loadDxfButton").addEventListener("click", () => {
   // メインプロセスにDXFファイル読み込みのリクエストを送信
   filePath = "./dxf/30571-1.dxf";
   filePath = "./dxf/sample.dxf";
+  selectedEdges = [];
   ipcRenderer.send("load-dxf-file", filePath);
 });
 
