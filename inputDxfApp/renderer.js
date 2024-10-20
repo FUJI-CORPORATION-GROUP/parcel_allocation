@@ -15,6 +15,13 @@ document.getElementById("makeJsonButton").addEventListener("click", () => {
   saveSelectedEdges();
 });
 
+document.getElementById("runPythonButton").addEventListener("click", () => {
+  // ./test.pyを実行
+  console.log("runPythonButton clicked");
+  const { spawn } = require("child_process");
+  const pythonProcess = spawn("python", ["./test.py"]);
+});
+
 ipcRenderer.on("dxf-data", (event, dxfData) => {
   console.log("DXF data received:", dxfData);
   this.formattedDxfEntityData = getFormattedDxfEntitiesData(dxfData);
