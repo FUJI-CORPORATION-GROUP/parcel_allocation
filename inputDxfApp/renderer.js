@@ -1,12 +1,18 @@
 const { ipcRenderer } = require("electron");
 const canvas = document.getElementById("dxfCanvas");
 const context = canvas.getContext("2d");
+const fs = require("fs");
+const path = require("path");
 
 document.getElementById("loadDxfButton").addEventListener("click", () => {
   // メインプロセスにDXFファイル読み込みのリクエストを送信
   filePath = "./dxf/30571-1.dxf";
   filePath = "./dxf/sample.dxf";
   ipcRenderer.send("load-dxf-file", filePath);
+});
+
+document.getElementById("makeJsonButton").addEventListener("click", () => {
+  saveSelectedEdges();
 });
 
 ipcRenderer.on("dxf-data", (event, dxfData) => {
@@ -150,13 +156,20 @@ function findClickedEdge(x, y, dxfData) {
 }
 
 function saveSelectedEdges() {
-  const selectedEdgeData = selectedEdges.map((edge) => {
-    return {
-      vertices: edge.vertices,
-    };
+  console.log(selectedEdges);
+  const json = JSON.stringify(selectedEdges, null, 2); // JSONに変換
+
+  // 保存するファイルパスを指定 ./output/selectedEdges.json
+  const filePath = "./out/selectedEdges.json";
+
+  // ファイルに書き込む
+  fs.writeFile(filePath, json, (err) => {
+    if (err) {
+      console.error("ファイルの保存に失敗しました:", err);
+    } else {
+      console.log("選択されたエッジを保存しました:", filePath);
+    }
   });
-  const json = JSON.stringify(selectedEdgeData);
-  console.log(json); // 保存したい場所にJSONを送るか、ファイルに書き出す
 }
 
 // 点と線分の距離を計算して、クリックがエッジに近いかどうかを判定

@@ -6,3 +6,6 @@
 
 # Ignore the dist directory
 /dxf*
+
+# Json files
+/out*
