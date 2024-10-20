@@ -201,23 +201,54 @@ function edgeToFrame(edges) {
   // edges: [{x1, y1, x2, y2}, ...]
   // frame: { [x1, y1], [x2, y2], ... }
 
-  // TODO: dxf側で辺の始点終点になっていない場合できないことに気づいてしまった
-  // 座標集めて，左回りにするみたいなことをしよう
-  // ただ，この処理をしやすくするための変形は入力ではなくて，区画割処理内でやりたい
-  // けど一旦，こっちで実装します
+  // このへんの処理は区画割処理の入力受け取り処理でやってもいいかも
+  // 影響範囲が大きくなるのでい一旦現状の入力を再現するためにここでやる
 
-  let framePosList = [];
+  // pointList: [[x1, y1], [x2, y2], ...]
+  let pointList = [];
   edges.forEach((edge) => {
-    framePosList.push([edge.x1, edge.y1]);
-    // frameでは辺の始点のみ格納していく
-    // frame.push([edge.x2, edge.y2]);
-    // 最後だけ終点を追加
-    if (edges.indexOf(edge) === edges.length - 1) {
-      framePosList.push([edge.x2, edge.y2]);
-    }
+    pointList.push([edge.x1, edge.y1]);
+    pointList.push([edge.x2, edge.y2]);
   });
+
+  console.log("pointList", pointList);
+
+  // 重複削除
+  console.log("pointList", pointList);
+  pointList = pointList.filter(
+    (pos, index, self) =>
+      self.findIndex(
+        (otherPos) => otherPos[0] === pos[0] && otherPos[1] === pos[1]
+      ) === index
+  );
+  console.log("delete same point pointList", pointList);
+
+  // pointListを時計回り順にソート
+  let framePosList = sortPointsClockwise(pointList);
 
   const frame = { frame: framePosList };
 
   return frame;
+}
+
+function sortPointsClockwise(points) {
+  // points: [[x1, y1], [x2, y2], ...]
+  // 重心を求める
+  let cx = 0;
+  let cy = 0;
+  for (let i = 0; i < points.length; i++) {
+    cx += points[i][0];
+    cy += points[i][1];
+  }
+  cx /= points.length;
+  cy /= points.length;
+
+  // 重心からの角度でソート
+  points.sort((a, b) => {
+    let angleA = Math.atan2(a[1] - cy, a[0] - cx);
+    let angleB = Math.atan2(b[1] - cy, b[0] - cx);
+    return angleA - angleB;
+  });
+
+  return points;
 }
