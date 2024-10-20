@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>マイアプリ</title>
+    <title>DXF Viewer</title>
   </head>
   <body>
-    <h1>Hello, world.</h1>
+    <button id="loadDxfButton">Load DXF</button>
+    <canvas
+      id="dxfCanvas"
+      width="800"
+      height="600"
+      style="border: 1px solid black"
+    ></canvas>
 
-    <script src="app.js"></script>
+    <script src="renderer.js"></script>
   </body>
 </html>
