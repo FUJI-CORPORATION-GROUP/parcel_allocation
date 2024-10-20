@@ -13,7 +13,8 @@ let selectedEdges = []; // 複数の選択されたエッジを保持
 document.getElementById("loadDxfButton").addEventListener("click", () => {
   // メインプロセスにDXFファイル読み込みのリクエストを送信
   filePath = "./dxf/30571-1.dxf";
-  filePath = "./dxf/sample.dxf";
+  // filePath = "./dxf/sample.dxf";
+  filePath = "./dxf/30571-1_only_one_frame.dxf";
   selectedEdges = [];
   ipcRenderer.send("load-dxf-file", filePath);
 });
@@ -39,6 +40,8 @@ function drawDxfOnCanvas(entityData) {
   context.clearRect(0, 0, canvas.width, canvas.height);
   console.log("drawDxfOnCanvas", entityData);
   entityData.forEach((entity) => {
+    if (entity === undefined) return;
+
     if (entity.type === "LINE") {
       context.beginPath();
 
@@ -151,6 +154,7 @@ function findClickedEdge(x, y, dxfData) {
   console.log("findClickedEdge", dxfData);
 
   dxfData.forEach((entity) => {
+    if (entity === undefined) return;
     if (entity.type === "LINE") {
       x1 = entity.x1;
       y1 = entity.y1;
