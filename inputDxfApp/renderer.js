@@ -86,8 +86,8 @@ function drawDxfOnCanvas(entityData) {
         context.strokeStyle = "black";
       }
 
-      context.moveTo(entity.x1, entity.y1);
-      context.lineTo(entity.x2, entity.y2);
+      context.moveTo(entity.startX, entity.startY);
+      context.lineTo(entity.endX, entity.endY);
       context.stroke();
     }
   });
@@ -115,12 +115,16 @@ function getFormattedDxfEntitiesData(dxfData) {
   console.log("scale", scale, offsetX, offsetY);
   const formattedDxfEntitiesData = dxfData.entities.map((entity) => {
     if (entity.type === "LINE") {
+      startX = entity.vertices[0].x * scale + offsetX;
+      startY = canvas.height - (entity.vertices[0].y * scale + offsetY);
+      endX = entity.vertices[1].x * scale + offsetX;
+      endY = canvas.height - (entity.vertices[1].y * scale + offsetY);
       return {
         type: "LINE",
-        x1: entity.vertices[0].x * scale + offsetX,
-        y1: canvas.height - (entity.vertices[0].y * scale + offsetY),
-        x2: entity.vertices[1].x * scale + offsetX,
-        y2: canvas.height - (entity.vertices[1].y * scale + offsetY),
+        startX: startX,
+        startY: startY,
+        endX: endX,
+        endY: endY,
       };
     }
   });
@@ -139,15 +143,15 @@ function calculateBoundingBox(dxfData) {
 
   dxfData.entities.forEach((entity) => {
     if (entity.type === "LINE") {
-      x1 = entity.vertices[0].x;
-      y1 = entity.vertices[0].y;
-      x2 = entity.vertices[1].x;
-      y2 = entity.vertices[1].y;
+      startX = entity.vertices[0].x;
+      startY = entity.vertices[0].y;
+      endX = entity.vertices[1].x;
+      endY = entity.vertices[1].y;
 
-      minX = Math.min(minX, x1, x2);
-      minY = Math.min(minY, y1, y2);
-      maxX = Math.max(maxX, x1, x2);
-      maxY = Math.max(maxY, y1, y2);
+      minX = Math.min(minX, startX, endX);
+      minY = Math.min(minY, startY, endY);
+      maxX = Math.max(maxX, startX, endX);
+      maxY = Math.max(maxY, startY, endY);
     }
   });
 
@@ -194,13 +198,13 @@ function findClickedEdge(x, y, dxfData) {
   dxfData.forEach((entity) => {
     if (entity === undefined) return;
     if (entity.type === "LINE") {
-      x1 = entity.x1;
-      y1 = entity.y1;
-      x2 = entity.x2;
-      y2 = entity.y2;
-      console.log("x-y", x1, y1, x2, y2);
+      startX = entity.startX;
+      startY = entity.startY;
+      endX = entity.endX;
+      endY = entity.endY;
+      console.log("x-y", startX, startY, endX, endY);
 
-      if (isPointNearLineSegment(x, y, x1, y1, x2, y2, tolerance)) {
+      if (isPointNearLineSegment(x, y, startX, startY, endX, endY, tolerance)) {
         clickedEdge = entity;
       }
     }
@@ -251,21 +255,21 @@ function saveSelectedEdges() {
 }
 
 // 点と線分の距離を計算して、クリックがエッジに近いかどうかを判定
-function isPointNearLineSegment(px, py, x1, y1, x2, y2, tolerance) {
+function isPointNearLineSegment(px, py, startX, startY, endX, endY, tolerance) {
   const dist =
-    Math.abs((y2 - y1) * px - (x2 - x1) * py + x2 * y1 - y2 * x1) /
-    Math.sqrt((y2 - y1) ** 2 + (x2 - x1) ** 2);
+    Math.abs((endY - startY) * px - (endX - startX) * py + endX * startY - endY * startX) /
+    Math.sqrt((endY - startY) ** 2 + (endX - startX) ** 2);
 
   console.log("isPointNearLineSegment", dist <= tolerance);
   return dist <= tolerance;
 }
 function edgeToRoads(edges) {
-  // edges: [{x1, y1, x2, y2}, ...]
-  // frame: { [x1, y1], [x2, y2], ... }
+  // edges: [{startX, startY, endX, endY}, ...]
+  // frame: { [startX, startY], [endX, endY], ... }
   let pointList = [];
   edges.forEach((edge) => {
-    pointList.push([edge.x1, edge.y1]);
-    pointList.push([edge.x2, edge.y2]);
+    pointList.push([edge.startX, edge.startY]);
+    pointList.push([edge.endX, edge.endY]);
   });
 
   const roads = { road_edge_point_list: pointList };
@@ -274,17 +278,17 @@ function edgeToRoads(edges) {
 }
 
 function edgeToFrame(edges) {
-  // edges: [{x1, y1, x2, y2}, ...]
-  // frame: { [x1, y1], [x2, y2], ... }
+  // edges: [{startX, startY, endX, endY}, ...]
+  // frame: { [startX, startY], [endX, endY], ... }
 
   // このへんの処理は区画割処理の入力受け取り処理でやってもいいかも
   // 影響範囲が大きくなるのでい一旦現状の入力を再現するためにここでやる
 
-  // pointList: [[x1, y1], [x2, y2], ...]
+  // pointList: [[startX, startY], [endX, endY], ...]
   let pointList = [];
   edges.forEach((edge) => {
-    pointList.push([edge.x1, edge.y1]);
-    pointList.push([edge.x2, edge.y2]);
+    pointList.push([edge.startX, edge.startY]);
+    pointList.push([edge.endX, edge.endY]);
   });
 
   console.log("pointList", pointList);
@@ -308,7 +312,7 @@ function edgeToFrame(edges) {
 }
 
 function sortPointsClockwise(points) {
-  // points: [[x1, y1], [x2, y2], ...]
+  // points: [[startX, startY], [endX, endY], ...]
   // 重心を求める
   let cx = 0;
   let cy = 0;
