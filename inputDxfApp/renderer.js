@@ -1,5 +1,7 @@
+const { boolean } = require("boolean");
 const { ipcRenderer } = require("electron");
 const canvas = document.getElementById("dxfCanvas");
+const RoadCanvas = document.getElementById("dxfRoadCanvas");
 const context = canvas.getContext("2d");
 const fs = require("fs");
 const path = require("path");
@@ -8,21 +10,34 @@ const outJsonFilePath = "./out/";
 const frameInputDataJsonFileName = "frame_input_data.json";
 const roadInputDataJsonFileName = "road_input_data.json";
 
-let selectedEdges = []; // 複数の選択されたエッジを保持
+let rawDxfData = null;
+let selectedFrameEdges = []; // 複数の選択されたエッジを保持
+let selectedRoadEdges = []; // 複数の選択されたエッジを保持
 
+let isFrameInput = true;
+
+// dxfファイルの読み込み
+// TODO: ファイル選択ダイアログを表示してファイルを選択するようにする
 document.getElementById("loadDxfButton").addEventListener("click", () => {
   // メインプロセスにDXFファイル読み込みのリクエストを送信
   filePath = "./dxf/30571-1.dxf";
-  // filePath = "./dxf/sample.dxf";
-  filePath = "./dxf/30571-1_only_one_frame.dxf";
-  selectedEdges = [];
+  filePath = "./dxf/sample.dxf";
+  // filePath = "./dxf/30571-1_only_one_frame.dxf";
+
+  // 初期化処理
+  isFrameInput = true;
+  selectedFrameEdges = [];
+  selectedRoadEdges = [];
+
   ipcRenderer.send("load-dxf-file", filePath);
 });
 
+// jsonファイルの作成処理
 document.getElementById("makeJsonButton").addEventListener("click", () => {
   saveSelectedEdges();
 });
 
+// pythonスクリプトの実行
 document.getElementById("runPythonButton").addEventListener("click", () => {
   // ./test.pyを実行
   console.log("runPythonButton clicked");
@@ -30,15 +45,35 @@ document.getElementById("runPythonButton").addEventListener("click", () => {
   const pythonProcess = spawn("python", ["./test.py"]);
 });
 
+document
+  .getElementById("inputLandFinishButton")
+  .addEventListener("click", () => {
+    console.log("inputLandFinishButton clicked");
+    console.log("selectedEdges", selectedFrameEdges);
+    // selectedEdgesをjsonに保存
+    saveSelectedEdges();
+    // selectedEdgesをcanvasに描画
+    drawDxfOnCanvas(selectedFrameEdges);
+
+    isFrameInput = false;
+    this.targetEntityList = selectedFrameEdges;
+  });
+
 ipcRenderer.on("dxf-data", (event, dxfData) => {
   console.log("DXF data received:", dxfData);
-  this.formattedDxfEntityData = getFormattedDxfEntitiesData(dxfData);
-  drawDxfOnCanvas(this.formattedDxfEntityData);
+  this.rawDxfData = dxfData;
+  this.targetEntityList = getFormattedDxfEntitiesData(dxfData);
+  drawDxfOnCanvas(this.targetEntityList);
 });
 
+// dxfの描写
 function drawDxfOnCanvas(entityData) {
+  console.log("drawDxfOnCanvas", canvas.id);
   context.clearRect(0, 0, canvas.width, canvas.height);
   console.log("drawDxfOnCanvas", entityData);
+
+  selectedEdges = isFrameInput ? selectedFrameEdges : selectedRoadEdges;
+
   entityData.forEach((entity) => {
     if (entity === undefined) return;
 
@@ -124,26 +159,29 @@ canvas.addEventListener("click", (event) => {
   const mouseX = event.clientX - rect.left;
   const mouseY = event.clientY - rect.top;
 
-  const clickedEdge = findClickedEdge(
-    mouseX,
-    mouseY,
-    this.formattedDxfEntityData
-  );
+  const clickedEdge = findClickedEdge(mouseX, mouseY, this.targetEntityList);
   console.log("canvas click event", mouseX, mouseY, clickedEdge);
+
   if (clickedEdge) {
     console.log("Clicked edge:", clickedEdge);
     // selectedEdge = clickedEdge; // エッジがクリックされたら選択
-    const index = selectedEdges.indexOf(clickedEdge);
+    const index = isFrameInput
+      ? selectedFrameEdges.indexOf(clickedEdge)
+      : selectedRoadEdges.indexOf(clickedEdge);
 
     if (index === -1) {
       // エッジが未選択なら追加
-      selectedEdges.push(clickedEdge);
+      isFrameInput
+        ? selectedFrameEdges.push(clickedEdge)
+        : selectedRoadEdges.push(clickedEdge);
     } else {
       // エッジが選択済みなら選択解除
-      selectedEdges.splice(index, 1);
+      isFrameInput
+        ? selectedFrameEdges.splice(index, 1)
+        : selectedRoadEdges.splice(index, 1);
     }
 
-    drawDxfOnCanvas(this.formattedDxfEntityData); // 再描画
+    drawDxfOnCanvas(this.targetEntityList); // 再描画
   }
 });
 
@@ -172,22 +210,42 @@ function findClickedEdge(x, y, dxfData) {
 }
 
 function saveSelectedEdges() {
-  console.log(selectedEdges);
-  const frame = edgeToFrame(selectedEdges);
-  const json = JSON.stringify(frame, null, 2); // JSONに変換
+  console.log(selectedFrameEdges);
+  console.log(selectedRoadEdges);
+
+  const frame = edgeToFrame(selectedFrameEdges);
+  const frameJson = JSON.stringify(frame, null, 2); // JSONに変換
 
   // 保存するファイルパスを指定
-  const filePath = path.join(
+  const frameFilePath = path.join(
     __dirname,
     outJsonFilePath + frameInputDataJsonFileName
   );
 
   // ファイルに書き込む
-  fs.writeFile(filePath, json, (err) => {
+  fs.writeFile(frameFilePath, frameJson, (err) => {
     if (err) {
       console.error("ファイルの保存に失敗しました:", err);
     } else {
-      console.log("選択されたエッジを保存しました:", filePath);
+      console.log("選択されたエッジを保存しました:", frameFilePath);
+    }
+  });
+
+  const road = edgeToRoads(selectedRoadEdges);
+  const roadJson = JSON.stringify(road, null, 2); // JSONに変換
+
+  // 保存するファイルパスを指定
+  const roadFilePath = path.join(
+    __dirname,
+    outJsonFilePath + roadInputDataJsonFileName
+  );
+
+  // ファイルに書き込む
+  fs.writeFile(roadFilePath, roadJson, (err) => {
+    if (err) {
+      console.error("ファイルの保存に失敗しました:", err);
+    } else {
+      console.log("選択されたエッジを保存しました:", roadFilePath);
     }
   });
 }
@@ -200,6 +258,19 @@ function isPointNearLineSegment(px, py, x1, y1, x2, y2, tolerance) {
 
   console.log("isPointNearLineSegment", dist <= tolerance);
   return dist <= tolerance;
+}
+function edgeToRoads(edges) {
+  // edges: [{x1, y1, x2, y2}, ...]
+  // frame: { [x1, y1], [x2, y2], ... }
+  let pointList = [];
+  edges.forEach((edge) => {
+    pointList.push([edge.x1, edge.y1]);
+    pointList.push([edge.x2, edge.y2]);
+  });
+
+  const roads = { road_edge_point_list: pointList };
+
+  return roads;
 }
 
 function edgeToFrame(edges) {
