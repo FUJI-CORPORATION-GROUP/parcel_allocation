@@ -236,7 +236,24 @@ function saveSelectedEdges() {
   });
 
   const road = edgeToRoads(selectedRoadEdges);
-  const roadJson = JSON.stringify(road, null, 2); // JSONに変換
+  const roadWidth = document.getElementById("roadWidth").value * 1000; // m -> mm
+  const minMaguchi = document.getElementById("minMaguchi").value * 1000; // m -> mm
+  const maxMaguchi = document.getElementById("maxMaguchi").value * 1000; // m -> mm
+  const targetMinArea =
+    document.getElementById("targetMinArea").value * 1000 * 1000; // m2 -> mm2
+  const targetMaxArea =
+    document.getElementById("targetMaxArea").value * 1000 * 1000; // m2 -> mm2
+
+  const roadJsonData = {
+    road_width: roadWidth,
+    min_maguchi: minMaguchi,
+    max_maguchi: maxMaguchi,
+    target_min_area: targetMinArea,
+    target_max_area: targetMaxArea,
+    road_edge_point_list: road.road_edge_point_list,
+  };
+
+  const roadJson = JSON.stringify(roadJsonData, null, 2); // JSONに変換
 
   // 保存するファイルパスを指定
   const roadFilePath = path.join(
@@ -257,8 +274,12 @@ function saveSelectedEdges() {
 // 点と線分の距離を計算して、クリックがエッジに近いかどうかを判定
 function isPointNearLineSegment(px, py, startX, startY, endX, endY, tolerance) {
   const dist =
-    Math.abs((endY - startY) * px - (endX - startX) * py + endX * startY - endY * startX) /
-    Math.sqrt((endY - startY) ** 2 + (endX - startX) ** 2);
+    Math.abs(
+      (endY - startY) * px -
+        (endX - startX) * py +
+        endX * startY -
+        endY * startX
+    ) / Math.sqrt((endY - startY) ** 2 + (endX - startX) ** 2);
 
   console.log("isPointNearLineSegment", dist <= tolerance);
   return dist <= tolerance;
