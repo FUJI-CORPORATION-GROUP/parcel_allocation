@@ -1,4 +1,3 @@
-const { boolean } = require("boolean");
 const { ipcRenderer } = require("electron");
 const canvas = document.getElementById("dxfCanvas");
 const RoadCanvas = document.getElementById("dxfRoadCanvas");
@@ -20,9 +19,9 @@ let isFrameInput = true;
 // TODO: ファイル選択ダイアログを表示してファイルを選択するようにする
 document.getElementById("loadDxfButton").addEventListener("click", () => {
   // メインプロセスにDXFファイル読み込みのリクエストを送信
-  filePath = "./dxf/30571-1.dxf";
-  filePath = "./dxf/sample.dxf";
-  // filePath = "./dxf/30571-1_only_one_frame.dxf";
+  // filePath = "./dxf/30571-1.dxf";
+  // filePath = "./dxf/sample.dxf";
+  filePath = "./dxf/30571-1_only_one_frame.dxf";
 
   // 初期化処理
   isFrameInput = true;
@@ -189,28 +188,44 @@ canvas.addEventListener("click", (event) => {
   }
 });
 
+// クリックされた辺の探索
 function findClickedEdge(x, y, dxfData) {
   const tolerance = 5; // クリック位置とエッジの距離の許容範囲
   let clickedEdge = null;
-  console.log("findClickedEdge", x, y);
-  console.log("findClickedEdge", dxfData);
 
   dxfData.forEach((entity) => {
     if (entity === undefined) return;
-    if (entity.type === "LINE") {
-      startX = entity.startX;
-      startY = entity.startY;
-      endX = entity.endX;
-      endY = entity.endY;
-      console.log("x-y", startX, startY, endX, endY);
-
-      if (isPointNearLineSegment(x, y, startX, startY, endX, endY, tolerance)) {
-        clickedEdge = entity;
-      }
+    if (isEdgeClicked(x, y, entity)) {
+      clickedEdge = entity;
     }
   });
 
   return clickedEdge;
+}
+
+// 辺を選択したかどうかの判定
+function isEdgeClicked(x, y, dxfData) {
+  const { startX, startY, endX, endY } = dxfData;
+  const tolerance = 5; // クリック位置とエッジの距離の許容範囲
+
+  // 辺が水平または垂直でない場合、エラーになることを避けるため計算
+  const edgeLengthSquared = (endX - startX) ** 2 + (endY - startY) ** 2;
+  if (edgeLengthSquared === 0) return false; // 辺が点になっている場合
+
+  // 辺上の最近傍の点を計算する
+  let t =
+    ((x - startX) * (endX - startX) + (y - startY) * (endY - startY)) /
+    edgeLengthSquared;
+  t = Math.max(0, Math.min(1, t)); // tの範囲を0から1に制限
+
+  const nearestX = startX + t * (endX - startX);
+  const nearestY = startY + t * (endY - startY);
+
+  // クリック位置と最近傍の点の距離を計算
+  const distance = Math.sqrt((nearestX - x) ** 2 + (nearestY - y) ** 2);
+
+  // 最近傍の点が辺の範囲内で、クリックが近ければその辺が選択される
+  return distance < tolerance && t >= 0 && t <= 1;
 }
 
 function saveSelectedEdges() {
@@ -271,19 +286,6 @@ function saveSelectedEdges() {
   });
 }
 
-// 点と線分の距離を計算して、クリックがエッジに近いかどうかを判定
-function isPointNearLineSegment(px, py, startX, startY, endX, endY, tolerance) {
-  const dist =
-    Math.abs(
-      (endY - startY) * px -
-        (endX - startX) * py +
-        endX * startY -
-        endY * startX
-    ) / Math.sqrt((endY - startY) ** 2 + (endX - startX) ** 2);
-
-  console.log("isPointNearLineSegment", dist <= tolerance);
-  return dist <= tolerance;
-}
 function edgeToRoads(edges) {
   // edges: [{startX, startY, endX, endY}, ...]
   // frame: { [startX, startY], [endX, endY], ... }
