@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DXF Viewer</title>
+  </head>
+  <body>
+    <!-- パラメータ入力フォーム -->
+    <div>
+      <label for="roadWidth">道路幅 (m):</label>
+      <input type="number" id="roadWidth" value="4" /><br />
+
+      <label for="maguchiRange">指定間口範囲 (m):</label>
+      <input type="number" id="minMaguchi" value="7" style="width: 80px" /> ~
+      <input
+        type="number"
+        id="maxMaguchi"
+        value="8"
+        style="width: 80px"
+      /><br />
+
+      <label for="areaRange">区画面積範囲 (m²):</label>
+      <input type="number" id="targetMinArea" value="90" style="width: 100px" />
+      ~
+      <input
+        type="number"
+        id="targetMaxArea"
+        value="105"
+        style="width: 100px"
+      /><br />
+    </div>
+
+    <button id="loadDxfButton">Load DXF</button>
+
+    <!-- 敷地入力完了ボタン -->
+    <button id="inputLandFinishButton">敷地入力完了</button>
+
+    <button id="makeJsonButton">Make Json</button>
+    <button id="runPythonButton">Run Python</button>
+
+    <canvas
+      id="dxfCanvas"
+      width="800"
+      height="600"
+      style="border: 1px solid black"
+    ></canvas>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
